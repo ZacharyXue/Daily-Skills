@@ -1,0 +1,38 @@
+# ============================================================
+# 仓库配置模板
+# 复制此文件到 ~/.hermes/code-study/repos/{name}.yaml 并填写
+# ============================================================
+
+# ===== 标识与路径 =====
+name: ""                              # 仓库简称，用于文件命名
+git_url: ""                           # 远程 git 地址（可选，用于参考）
+local_path: ""                        # 本地绝对路径
+
+# ===== 推送 =====
+feishu_chat_id: ""                    # 知识卡片推送目标飞书群
+schedule: "0 8 * * *"                 # cron 表达式，控制每日阅读时间
+enabled: true                         # false 可暂停此仓库的阅读
+
+# ===== 阅读引导 =====
+# 留空则使用 defaults.yaml 的全局 custom_prompt
+# custom_prompt: |
+#   本仓库专属关注点...
+
+# ===== 范围控制 =====
+exclude_paths:                        # 扫描时跳过的目录
+  - "tests/"
+  # - "docs/"
+  # - "frontend/"
+
+# ===== 模块与进度 =====
+# 首次使用时 modules 可以为空，AI 会自动扫描目录结构生成建议
+# 确认后写入此列表
+modules: []
+  # - path: src/core/
+  #   focus: "本模块的关注重点"
+  #   status: pending                # pending → reading → done
+  #   reading_log:
+  #     - date: "2026-08-10"
+  #       scope: "L1 结构扫读"
+  #       files: ["file1.py", "file2.py"]
+  #       takeaway: "核心收获一句话"
