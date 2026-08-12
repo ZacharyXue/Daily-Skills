@@ -192,15 +192,46 @@ Phase 2: 每日自动（cron 无人值守）
 
 ## Cron 设置
 
-每个仓库一个 cron job。Hermes cron 的 `deliver` 参数支持 `feishu:chat_id` 格式：
+每个仓库一个 cron job。Hermes cron 的 `deliver` 参数支持 `feishu:chat_id` 格式。
+
+### ⚠️ Cron 推送的关键陷阱（已踩坑）
+
+**cron 的 deliver 机制是将 agent 的最终回复推送给目标平台。** 如果你的 prompt 让 agent 做了很多工作（写文件、更新 YAML），但最终回复只是一句"✅ 已完成"，那么推送到飞书群的就只有这一句话，而不是知识卡片。
+
+**正确做法：**
+1. **不要在 cron 中加载 code-study skill** — skill 的复杂指令会覆盖 prompt，导致 agent 行为不可控
+2. **prompt 中直接内联卡片格式模板** — 简单直接，不依赖外部文件
+3. **指示 agent 直接输出卡片作为唯一回复** — 不要写文件、不要摘要
+4. **卡片存档由 cron agent 的副作用完成**（write_file 到 notes/），但最终回复必须是卡片内容
+
+### 经过验证的 Cron Prompt 模板
 
 ```
-cron: code-study-{name}
-schedule: {从 YAML 读取}
-prompt: 执行代码阅读任务：读 repos/{name}.yaml，按工作流产出知识卡片
-deliver: feishu:{feishu_chat_id}
-skills: [code-study]
+你是代码阅读助手。当前任务：
+
+1. 读取 ~/.hermes/code-study/repos/{name}.yaml，找到第一个 status=pending 的模块
+2. 用 read_file + search_files 阅读该模块源码
+3. 按以下格式直接输出知识卡片（这是你的唯一回复）：
+
+## {模块路径}
+> {一句话概括}
+
+### 关键设计决策
+1. {决策及原因}
+2. ...
+
+### 代表性代码
+```语言
+{代码}
 ```
+
+### 可迁移收获
+{收获}
+
+输出后，将卡片保存到 ~/.hermes/code-study/notes/{name}/ 并在 YAML 的 reading_log 追加记录。
+```
+
+关键点：`skills: []`（空数组）、`enabled_toolsets: ["terminal","file"]`。
 
 ## 全局默认配置
 
