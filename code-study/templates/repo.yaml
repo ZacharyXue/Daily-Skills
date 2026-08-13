@@ -9,7 +9,7 @@ git_url: ""                           # 远程 git 地址（可选，用于参�
 local_path: ""                        # 本地绝对路径
 
 # ===== 推送 =====
-feishu_chat_id: ""                    # 知识卡片推送目标飞书群
+feishu_chat_id: ""                    # 排查笔记推送目标飞书群
 schedule: "0 8 * * *"                 # cron 表达式，控制每日阅读时间
 enabled: true                         # false 可暂停此仓库的阅读
 
@@ -24,15 +24,13 @@ exclude_paths:                        # 扫描时跳过的目录
   # - "docs/"
   # - "frontend/"
 
-# ===== 模块与进度 =====
-# 首次使用时 modules 可以为空，AI 会自动扫描目录结构生成建议
+# ===== 问题与进度 =====
+# 首次使用时 questions 可以为空，AI 会结合用户可见行为生成建议问题
 # 确认后写入此列表
-modules: []
-  # - path: src/core/
-  #   focus: "本模块的关注重点"
-  #   status: pending                # pending → reading → done
-  #   reading_log:
-  #     - date: "2026-08-10"
-  #       scope: "L1 结构扫读"
-  #       files: ["file1.py", "file2.py"]
-  #       takeaway: "核心收获一句话"
+questions: []
+  # - q: "用户敲下 XX 命令后，底层一步步发生了什么？"
+  #   status: pending                # pending → done
+  #   answer_log:
+  #     - date: "2026-08-12"
+  #       note: "notes/xxx/2026-08-12-问题简述.md"
+  #       summary: "一句话摘要"
