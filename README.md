@@ -30,6 +30,8 @@ ln -sfn $(pwd)/career-coach ~/.hermes/skills/career-coach
 ```
 zach-skills/
 ├── README.md            ← 本文件：本目录 skill 说明 + 下载方式
+├── docs/
+│   └── used-skills.md   ← 使用中的重要外部/开源 skill 记录（如天天基金、微信读书）
 └── <skill-name>/        ← 每个重要自建 skill 一个目录（SKILL.md + references/ + scripts/）
 ```
 
