@@ -20,6 +20,14 @@
 - **网关**：`https://i.weread.qq.com/api/agent/gateway`（API key 在 `WEREAD_API_KEY`，请求必带 `skill_version`）
 - **工作流要点**：搜书 → bookId → 进度/划线/评论 → 读书笔记 → 博客；逐章确认后再落盘
 
+### 3. 知识星球（zsxq-skill）
+
+- **用途**：通过对话操作知识星球——浏览星球、搜索/查看/发布/编辑主题、评论回答、管理标签/精华、笔记管理、成员足迹、NPS 反馈等
+- **来源**：知识星球官方开源（GitHub `unnoo/zsxq-skill`，2026-08 上线，v2.1.0），安装入口 https://garden.zsxq.com/skill/INSTALL.md
+- **CLI 认证**：`zsxq-cli auth login` 设备码授权（浏览器打开授权链接+确认码），token 存系统钥匙串
+- **能力亮点**：单一 skill 覆盖旧版 5 个技能(zsxq-shared/group/topic/user/note)；内置场景模式——每日巡场、评论区运营、提问管理、精华标签整理、运营日报/周报、日报海报生成、竖版视频、负面内容监控、批量打标签、成员续费关怀、专栏收录
+- **关键要点**：写入/删除操作前必须向用户确认内容；group_id/topic_id 不确定时先查询再写
+
 ## 如何新增记录
 
 遇到重要的外部/开源 skill 时，在此文件追加条目（名称、用途、来源、工作流要点）。
