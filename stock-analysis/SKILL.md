@@ -24,7 +24,7 @@ Phase 0 文件就位 → Phase 1 PDF提取 → Phase 2 商业模式 → Phase 3 
 → Phase 8 芒格逆向评估 → 输出结构化报告
 ```
 
-各 Phase 通用，周期股在 Phase 7 走 `references/cycle-stock.md` 模板，芒格评估见 `references/munger-evaluation.md`。
+各 Phase 通用，周期股在 Phase 7 走 `references/cycle-stock.md` 模板，芒格评估见 `references/munger-evaluation.md`。**所有数据接口（东财 datacenter/腾讯行情/研报/K线）见 `references/data-apis.md`**。
 
 ---
 
