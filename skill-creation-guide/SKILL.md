@@ -1,21 +1,34 @@
 ---
 name: skill-creation-guide
-description: 创建/管理自己的 Hermes skill 的完整引导 — 目录结构、SKILL.md 规范、软链接入 Hermes、README/开源清单维护。触发时机：用户说「新建一个 skill」「把这个流程存成 skill」「怎么创建自己的 skill」、zach-skills 仓库维护。
+description: 创建/管理**重要** Hermes skill 的完整引导 — 判断哪些 skill 值得入库、目录结构、SKILL.md 规范、软链接入 Hermes、README 维护。触发时机：用户说「新建一个 skill」「把这个流程存成 skill」「怎么创建自己的 skill」、zach-skills 仓库维护。
 version: 1.0.0
 tags: [hermes, skill, meta, workflow, zach-skills]
 ---
 
-# 自建 Skill 引导（zach-skills 仓库）
+# 重要自建 Skill 引导（zach-skills 仓库）
 
-本 skill 是「创建自己的 skill」的流程引导。所有自建 skill 统一存放在 `/root/zach-skills/`（git 仓库，remote: `git@github.com:ZacharyXue/Daily-Skills.git`），通过软链接入 Hermes。
+本 skill 是「创建重要 skill」的流程引导。zach-skills 仓库（`/root/zach-skills/`，remote: `git@github.com:ZacharyXue/Daily-Skills.git`）**只收录重要、长期可复用的自建 skill**——不是所有创建的 skill 都放这里。
+
+## 判断标准：要不要放入 zach-skills？
+
+**应该放**：
+- 长期复用的核心工作流（如职业复盘、源码阅读、持仓跟踪）
+- 会和 cron 任务、跨会话反复使用的
+- 积累了多轮经验教训、值得版本管理的
+
+**不要放（直接建在 ~/.hermes/skills/ 下）**：
+- 一次性小任务
+- 短期实验性 skill
+- 依赖某个临时环境的技能
+
+拿不准时问用户，让用户决定是否入库。
 
 ## 仓库结构
 
 ```
 /root/zach-skills/
-├── README.md              # 自建 skill 索引表（必须同步维护）
-├── OPENSOURCE_SKILLS.md   # 使用的开源 skill 清单（升级后核对）
-└── <skill-name>/          # 每个自建 skill 一个目录
+├── README.md              # 本目录 skill 索引表（必须同步维护）
+└── <skill-name>/          # 每个重要自建 skill 一个目录
     ├── SKILL.md           # 必需：frontmatter + 正文
     ├── references/        # 可选：长文档/附表
     ├── scripts/           # 可选：可执行脚本
@@ -71,15 +84,6 @@ cd /root/zach-skills && git add -A && git commit -m "feat(<skill-name>): <一句
 - **直接改仓库文件**（`/root/zach-skills/<name>/...`），**不要用 skill_manage 操作**——skill 是软链，skill_manage 写 symlink 会失败。
 - 改完 commit。
 - 内容重大变化时 bump `version`。
-
-## 维护 OPENSOURCE_SKILLS.md
-
-记录的是 Hermes **bundled**（内置开源）skill，非自建。Hermes 升级后：
-
-```bash
-cat /root/.hermes/skills/.bundled_manifest   # 核对数量与 hash
-# 数量/内容变化 → 更新 /root/zach-skills/OPENSOURCE_SKILLS.md
-```
 
 ## 陷阱
 
