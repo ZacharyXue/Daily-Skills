@@ -49,21 +49,37 @@ python3 scripts/fetch_13f.py diff --cik 0001709323
 python3 scripts/fetch_13f.py diff --cik 0001709323 --json
 ```
 
-## 常用机构 CIK 速查表
+## 常用机构 CIK 速查表（关注清单）
 
-| 机构 | CIK | 备注 |
+> **当前关注**：★ = 巴菲特的伯克希尔、李录的喜马拉雅资本。后续依次查看：按表格顺序逐个 `diff`。
+
+| 机构 | CIK | 状态 |
 |------|-----|------|
-| Himalaya Capital Management（李录/喜马拉雅） | 0001709323 | ✅ 已验证 |
-| Berkshire Hathaway（巴菲特） | 0001067983 | ✅ 已验证 |
-| Scion Asset Management（Michael Burry） | 0001649339 | |
-| Pershing Square（Bill Ackman） | 0001336528 | |
-| Bridgewater Associates（桥水） | 0001350694 | |
-| Baupost Group（Seth Klarman） | 0001061768 | |
-| Greenlight Capital（David Einhorn） | 0001079114 | |
-| Appaloosa（David Tepper） | 0001029305 | |
-| Hillhouse Capital（高瓴） | 0001700066 | |
+| ★ Himalaya Capital Management（李录/喜马拉雅） | 0001709323 | ✅ 已验证 |
+| ★ Berkshire Hathaway（巴菲特） | 0001067983 | ✅ 已验证 |
+| Scion Asset Management（Michael Burry） | 0001649339 | ✅ 已验证 |
+| Pershing Square（Bill Ackman） | 0001336528 | 待验证 |
+| Bridgewater Associates（桥水） | 0001350694 | 待验证 |
+| Baupost Group（Seth Klarman） | 0001061768 | 待验证 |
+| Greenlight Capital（David Einhorn） | 0001079114 | 待验证 |
+| Appaloosa（David Tepper） | 0001029305 | 待验证 |
+| Hillhouse Capital（高瓴） | 0001700066 | 待验证 |
 
-> 除喜马拉雅、伯克希尔外未经本轮逐一验证。若 `fetch` 报错或结果不符，先用 `search` 重新确认 CIK（机构改名、CIK 变更、多实体时常见）。
+> 除标注 ✅ 的外未经逐一验证。若 `fetch` 报错或结果不符，先用 `search` 重新确认 CIK（机构改名、CIK 变更、多实体时常见）。
+>
+> 每次查看完更新此表状态（已验证/待验证），保持清单准确。
+
+## 当前关注查看顺序
+
+按关注优先级，逐个执行季度对比：
+
+```bash
+# 1. 李录/喜马拉雅（拼多多大加仓那家）
+python3 scripts/fetch_13f.py diff --cik 0001709323
+
+# 2. 巴菲特/伯克希尔（最大重仓股变化）
+python3 scripts/fetch_13f.py diff --cik 0001067983
+```
 
 ## 直接 curl 手动流程（脚本不可用时）
 
