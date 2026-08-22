@@ -28,7 +28,15 @@
 - **能力亮点**：单一 skill 覆盖旧版 5 个技能(zsxq-shared/group/topic/user/note)；内置场景模式——每日巡场、评论区运营、提问管理、精华标签整理、运营日报/周报、日报海报生成、竖版视频、负面内容监控、批量打标签、成员续费关怀、专栏收录
 - **关键要点**：写入/删除操作前必须向用户确认内容；group_id/topic_id 不确定时先查询再写
 
-## 如何新增记录
+### 4. 飞书 / Lark 全家桶（lark-* 系列）
+
+- **用途**：批量覆盖飞书全生态操作——通讯录（lark-contact）、IM（lark-im）、云文档（lark-doc/drive/wiki/slides/sheets/base/markdown）、日历（lark-calendar）、任务（lark-task）、审批（lark-approval）、考勤（lark-attendance）、妙记/会议（lark-minutes/vc/vc-agent/note）、邮件（lark-mail）、画板（lark-whiteboard）、事件监听（lark-event）、原生 OpenAPI 探索（lark-openapi-explorer）、自定义 skill 封装（lark-skill-maker）、工作流编排（lark-workflow-*）、OKR（lark-okr）等，共 27 个 skill
+- **来源**：Lark/飞书官方 CLI 生态（`@larksuite/cli`，npm 全局安装于 `~/.npm-global/bin`），通过 Hermes agent-entry 分发，软链挂入。单个 skill 依赖 `lark-cli` bin（lark-shared 提供共享认证/授权/URL 二维码规则）
+- **常用流程**：先 `lark-cli auth` 确认身份（user vs bot，`--domain` 区分全量/文档/云盘权限）→ 各业务域用对应 lark-* skill 操作
+- **关键要点**：
+  - bot 身份收不到群附件 → 用 user 身份 `im +chat-messages-list → messages-resources-download` 拉
+  - 授权/配置类命令输出的 URL 必须配 `lark-cli auth qrcode` 二维码一起展示
+  - group_id/topic_id/token 不确定时先查询再写；写操作前向用户确认
 
 遇到重要的外部/开源 skill 时，在此文件追加条目（名称、用途、来源、工作流要点）。
 **不要记录文件位置**（每台机器不同）；也不要移动文件到本仓库——zach-skills 只收录自建 skill。
