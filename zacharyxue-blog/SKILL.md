@@ -77,8 +77,8 @@ Before embedding external HTML (resumes, documents) into public pages, confirm w
 
 The blog supports Mermaid diagrams natively via code fences with `mermaid` language tag. Use them to replace dense prose — state diagrams, flowcharts, and mindmaps all render inline. Build output confirms they're processed without errors.
 
-### Alternative/overlapping skills
-There are **two skills for this same blog repo**: `zacharyxue-blog` (this one) and `astro-blog` (software-development category, `/root/.hermes/skills/software-development/astro-blog/`). Both cover the same ZacharyXue.github.io Astro repo. Load whichever, but note they can diverge — keep important durable facts (like the TOC build here) in sync mentally or consolidate via curator.
+### Canonical blog skill
+This is the **唯一 canonical skill** for the ZacharyXue.github.io repo — the former `astro-blog` was merged into it (content consolidated). Both lived under the same external dir `/root/zach-skills`; now only this one remains. Its technical references (mermaid CSS/global.css/astro escaping) are either in this file or in `references/`.
 
 ## Blog post table-of-contents (TOC)
 
@@ -136,3 +136,10 @@ status: active | archived
 ## 参考
 
 - `references/wechat-to-blog-workflow.md` — WeChat 文章提取 → 博客发布的完整工作流，含图片下载、Mermaid 图替换文字、构建验证。
+- `references/astro-join-escaping-bug.md` — Astro `{}` 表达式 HTML 转义 bug 完整复现与修复（.join() 渲染成字面文本的坑）。
+- `references/reading-notes-to-article.md` — 微信读书笔记 → 文章（Phase 2 叙述化改写）完整示例。
+- `references/weread-api.md` — 微信读书数据提取 API 全参考（搜索/bookinfo/bookmarklist/review 等）。
+- `references/resume-privacy-architecture.md` — 嵌入外部 HTML（简历等）到项目页的隐私与 @scope 样式隔离。
+- `references/table-styles.css` — Canonical 表格样式（边框/斑马纹/暗色主题）。
+
+> 原 `astro-blog` skill 已并入本 skill（内容重叠合并去重）。本文件即为博客技能唯一主干；技术细节（mermaid 渲染机制、global.css 样式坑）正文已有，可安心使用。
