@@ -81,6 +81,34 @@ python3 scripts/fetch_13f.py diff --cik 0001709323
 python3 scripts/fetch_13f.py diff --cik 0001067983
 ```
 
+## 大佬言论订阅（手动触发）
+
+在 13F 持仓跟踪之外，新增「大佬言论」维度：订阅关注的大佬在**知识星球**上的公开言论，手动触发拉取一段时间内的言论汇总。**不设 cron、不实时**——用户主动要求时（如「看看老大佬最近说了什么」）才拉取；也可定时（见文末）。
+
+### 订阅源清单
+
+| 来源 | 平台 | 关注对象(user_id) | 内容特征 |
+|------|------|-------------------|----------|
+| 人生要选对 (`222588821821`) | 知识星球 | **老钱** (`8444584182`) | 投资观点：美债/美股/A股/个股(段永平)、宏观、趋势策略。星球宗旨「信息环境比方法更重要」 |
+
+> 注意：关注对象按 **user_id** 过滤（如老钱 `8444584182`），**不是** group 的 admin_ids——星主身份以实际发帖 owner 为准。新增订阅源时在 `scripts/fetch_whale_posts.py` 的 `SOURCES` 里登记。
+
+### 手动拉取
+
+```bash
+cd scripts
+python3 fetch_whale_posts.py --limit 30      # 默认: 人生要选对/老钱, 最近30条候选
+python3 fetch_whale_posts.py --limit 30 --json
+# 其他星球: --group-id <id> --watch <user_id>
+```
+
+### 关联平台
+
+| 平台 | 状态 | 说明 |
+|------|------|------|
+| 知识星球 | ✅ 可用 | `zsxq-cli` 已登录（`~/.config/zsxq-cli/config.json`），`group +topics` 拉取 |
+| 雪球 | ⚠️ 待 cookie | 无 cookie 返回阿里云 WAF 反爬页，需配用户 `xq_a_token` 才能拉真实动态 |
+
 ## 直接 curl 手动流程（脚本不可用时）
 
 ```bash
