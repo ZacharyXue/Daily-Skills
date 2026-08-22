@@ -1,0 +1,34 @@
+/* Canonical table styles for the blog — add to src/styles/global.css under the article img block.
+   Paste the whole block; it includes light + dark mode. */
+
+article table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 1rem;
+  font-size: 0.95em;
+}
+article table th,
+article table td {
+  border: 1px solid #ddd;
+  padding: 0.6em 0.8em;
+  text-align: left;
+}
+article table th {
+  background: #f5f6fa;
+  font-weight: 600;
+  white-space: nowrap;
+}
+article table tr:nth-child(even) {
+  background: #fafbfc;
+}
+
+[data-theme="dark"] article table th,
+[data-theme="dark"] article table td {
+  border-color: #3a3a4e;
+}
+[data-theme="dark"] article table th {
+  background: #252540;
+}
+[data-theme="dark"] article table tr:nth-child(even) {
+  background: #1e1e35;
+}
