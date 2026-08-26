@@ -22,6 +22,7 @@ ln -sfn $(pwd)/<skill-name> ~/.hermes/skills/<skill-name>
 | [code-study](code-study/) | 问题驱动源码阅读系统：从用户可见行为出发追踪调用链，产出排查笔记推送飞书群 | 每日 cron 源码阅读、搞懂 bug 根因 |
 | [skill-creation-guide](skill-creation-guide/) | 创建/管理重要自建 skill 的完整流程：规范、目录结构、挂载、README 维护 | 新建重要 skill、维护本仓库 |
 | [skill-health-check](skill-health-check/) | Skill 健康度检查：发现重叠去重、按用户画像补盲区维度、检查引用/脚本/索引完整性 | 「看看 skill 有没有重叠」「skill 健康度检查」「按我的画像补 skill」 |
+| [etf-dashboard](etf-dashboard/) | ETF 红利温度看板：5年估值分位+技术面+实时行情，双视角信号，生成 HTML 落博客 public/exports/，手动触发更新 | 「更新ETF看板」「看红利该不该买/加仓」「改看板标的池」 |
 | [stock-analysis](stock-analysis/) | 股票基本面深度分析：PDF 财报提取→商业模式→财务三表→利润构成→风险排查→企业道德/治理→同行对比→估值→芒格评估 | 分析个股、看商业模式/财务/同行 |
 | [whale-holdings](whale-holdings/) | 大佬持仓跟踪：SEC 13F 机构持仓披露，巴菲特/李录/Burry 等买什么、加仓、清仓 | 说「看下 XX 的持仓」「13F」 |
 | [zacharyxue-blog](zacharyxue-blog/) | 维护 ZacharyXue.github.io Astro 博客：写作偏好（图标多文字少/先提纲）、技术细节、部署 | 写博客、修渲染、发文章 |

@@ -1,84 +1,106 @@
 ---
 name: etf-dashboard
-description: ETF/指数技术·估值温度看板 — 用免费行情源拉取实时价、N日涨跌幅、BIAS乖离率、目标价、估值分位、回撤，渲染成 PNG 看板推飞书指导买卖。触发时机：用户说"做ETF看板/指数温度/红利看板"、或每日cron自动推送。数据源已验证稳定。
-version: 1.0.0
-tags: [etf, index, dashboard, technical, valuation, dividend]
+description: ETF 红利 · 技术温度看板的维护与更新 — 综合 5 年估值分位(中证官网历史PE自算) + 技术面(MA20/BIAS/回撤/N日涨跌) + 实时行情，交叉生成加仓/分批/过热减仓信号，生成 HTML 落到博客 public/exports/。触发时机：用户说「更新ETF看板」「看看红利该不该买/加仓」「跑一下看板」「改动看板标的池」。
+version: 1.1.0
+tags: [etf, 红利, 看板, valuation, technical]
 ---
 
-# ETF/指数 技术·估值温度看板
+# ETF 红利 · 技术温度看板（维护与更新）
 
-用**免费行情源**做个性化指数温度看板（比 Wind 灵活），渲染成深色 PNG 看板推飞书。核心价值：把「估值分位（买点锚）」和「技术指标（择时锚）」放在一张图上，交叉验证，避免只看分位误判。
+一套"能指导交易"的红利 ETF 看板系统：**5 年估值分位 + 技术面 + 实时行情**双视角交叉，输出加仓/分批/过热/观望信号，并给"此刻该怎么做"的可执行动作。产物是静态 HTML，部署在 ZacharyXue.github.io 博客。
 
-## 触发场景
+## 代码位置
 
-- 用户要「ETF看板 / 指数温度 / 红利看板 / 我的关注清单」
-- 每日 cron 开盘前自动推送温度看板指导当天交易
-- 参考思路：EarlMind《用AI手搓ETF个性化行情看板》——N日涨跌幅 + IOPV + BIAS + 目标价
+- **看板工程**：`/root/ZacharyXue.github.io/etf-dashboard/`
+  - `watchlist.json` — **标的池配置**（增删/替换品种改这里）
+  - `generate.py` — 数据层（拉数据 + 算指标 + 信号）
+  - `generate_html.py` — HTML 渲染
+  - `update.py` — **一键更新入口**
+- **产物**：`/root/ZacharyXue.github.io/public/exports/etf-dashboard.html`（博客可访问：`/exports/etf-dashboard.html`）
+- **项目卡片**：`/root/ZacharyXue.github.io/src/content/projects/etf-dashboard.md`（首页项目卡跳转）
 
-## 数据源（已验证，三路稳定源）
-
-| 数据 | 接口 | 稳定性 |
-|------|------|:---:|
-| 实时价/涨跌/成交额 | 腾讯 `qt.gtimg.cn/q=sh512890` | ✅ |
-| N日涨跌/BIAS/回撤/MA20/目标价 | 腾讯 `web.ifzq.gtimg.cn/appstock/app/fqkline/get`（前复权日K） | ✅ |
-| 估值分位/ROE (PE/PB 10y) | 天天基金 `ttskill invoke TTFUND_INDEX_INFO` | ✅ 需登录 |
-
-⚠️ **东财 `push2his` K线接口在当前 ECS 上高频断连（RemoteDisconnected），已弃用**——统一走腾讯 K线，一般 `retry=3` 一次成功。
-
-### 腾讯 K线字段
-`param=sh512890,day,,,<N>,qfq` → `data[symbol].qfqday`（无则 `day`），每行 `[日期, 开, 收, 高, 低, 量]`。
-索引：`r[0]=日期 r[1]=开 r[2]=收(close) r[3]=高(high) r[4]=低 r[5]=量(vol)`
-
-### 腾讯报价字段（`=~` 分割）
-`f[1]=名称 f[3]=现价 f[4]=昨收 f[32]=涨跌额 f[33]=涨跌%`
-
-## 指标算法
-
-| 指标 | 公式 | 用途 |
-|------|------|------|
-| 近N日涨跌 | `(现价/前第N日收盘 - 1)*100` | 动量 |
-| 20日BIAS | `(现价 - MA20)/MA20 * 100` | 乖离/超买超卖 |
-| 距一年高点回撤 | `(现价/年高 - 1)*100`（负） | 安全垫 |
-| 目标价10%/15% | `MA20 * 1.10 / 1.15` | 提前挂单（BIAS达10%/15%对应价） |
-| 5日均额 | `5日均量(手)*现价` 估算（亿） | 流动性 |
-
-⚠️ **N日涨跌幅口径坑**：N日涨跌要用「前 N+1 个交易日的收盘价」对比（文章踩坑），即 `closes[-1-N]`，不是 `closes[-N]`。
-
-## 信号（双视角交叉）
-
-```
-有估值分位:
-  回撤≥15% 且 PE分位<50%   → 加仓 🟢
-  回撤≥10% 且 PE分位<70%   → 分批 🟡绿
-  回撤≥-3% 或 PE分位>95%   → 过热/减 🔴
-  否则                       → 观望 ⚪
-无估值分位(港股): 看BIAS, BIAS>10过热 / <-10超跌
-```
-
-⚠️ **红利 PE 分位高 ≠ 该卖**：红利指数盈利被周期股压低，PE 反而虚高。看板里放 PB 分位 + 回撤 + BIAS 交叉验证，别单看 PE。
-
-## 运行
+## 更新流程（手动触发）
 
 ```bash
-cd /root/zach-skills/etf-dashboard && python3 scripts/etf_tech_dashboard.py
-# 输出 /tmp/etf_tech_dashboard.png，stdout 打印 JSON 数据 + 尺寸
+cd /root/ZacharyXue.github.io/etf-dashboard
+python3 update.py
+# 每日收盘后跑一次; 产物已更新 public/exports/etf-dashboard.html
+cd /root/ZacharyXue.github.io
+git add etf-dashboard public/exports/etf-dashboard.html src/content/projects/etf-dashboard.md
+git commit -m "update etf dashboard $(date +%F)"
+# push 后 GitHub Pages 自动部署 (按惯例只 commit + push 时机由用户定)
 ```
 
-标的自定义：改脚本 `WATCH` 列表，格式 `("名称", "sh/sz+代码", "指数ID或None")`。指数ID如 `H30269`(红利低波) `000922`(中证红利)；默认带 `None` 表示该 ETF 无估值分位（走 BIAS 信号）。
+更新 `watchlist.json`：
+```json
+{ "watchlist": [ { "name":"中证红利","csindex":"000922","ttfund_index":"000922","etf_symbol":"sh515180","etf_code":"515180" } ] }
+```
+字段：`csindex`=中证官网指数代码、`ttfund_index`=天天基金指数ID、`etf_symbol`=腾讯行情代码、`etf_code`=国内显示代码。
 
-脚本自带**亮色美化渲染**：深色改亮色（`#edf2f7` 底/白卡片），每指数卡片含信号徽章（大字色块）、技术两排指标、`[现在该怎么做]` 操作条（按 signal 给出可执行动作），底部有「三步看法 + 信号-动作速查表」。
+## 数据源（已验证稳定，2026-08）
 
-## 推飞书
+| 数据 | 源 | 说明 |
+|------|----|------|
+| **5年 PE 分位** | 中证官网 `csindex index-perf` 的 **`peg` 字段=历史PE(TTM)** | 用近5年PE序列算当前PE百分位，判断贵贱主锚 |
+| PE/PB 十年分位、ROE | 天天基金 `TTFUND_INDEX_INFO` | 只有10y分位，无5y → 5y用中证官网，PB保持10y |
+| ETF 实时价/涨跌 | 腾讯 `qt.gtimg.cn` | 实时 |
+| K线(算MA/BIAS/回撤) | 腾讯 `web.ifzq.gtimg.cn fqkline` | 前复权，`qfqday` |
 
-- 交互：回复 `MEDIA:/tmp/etf_tech_dashboard.png`（Hermes 自动上传内联显示）
-- cron：prompt 让 agent 跑脚本 + 读 JSON，把关键洞察 + MEDIA:图 放进最终回复，投递到「炒股理财」群
+**5年分位算法**（中证官网，无PB）：
+```python
+# peg=历史PE, 拉近5年日频, pe=[r['peg'] for r in data if r['peg'] is not None]
+pct = sum(1 for x in pe if x <= pe[-1]) / len(pe) * 100
+```
 
-## Pitfalls
+## 信号规则（5年PE分位 为主锚）
 
-- **`execute_code` 本机被禁**：用 `terminal` 跑 python3 脚本
-- **vision 模型可能不可用**：渲染正确性靠尺寸检查（`PIL Image.size`）+ 数据合理性核对，别依赖自动看图
-- **港股指数无估值分位**：天天基金拉不到 → `val` 为空，走 BIAS 信号，看板显示 `-`
-- **成交额估算**：腾讯报价 `f[36]` 是 `现价/量/额(元)`，但脚本用 5日均量×现价 更稳；仅作流动性参考
-- **不构成投资建议**：看板底部必须标注
-- **渲染布局**：`W=1720`，卡片 1640×300；高度自适应 `HEADER + n*cards + 底部`，加标的数正常
-- **5日均额口径**：`vol_amt*100*price/1e8` 手→股(×100)→元(×price)→亿(÷1e8)，是**5日均量**口径估算，非当日成交额，仅流动性参考
+```
+加仓:   回撤≥15% 且 5y分位<50%
+分批:   回撤≥10% 且 5y分位<70%
+过热/减: (回撤≥-5% 且 5y分位≥90%) 或 5y分位>95%
+观望:   其余
+(无5y分位时退回: BIAS>10%过热 / BIAS<-10%超跌 / 回撤≥15%加仓)
+```
+
+## 指标含义速查（看板底部已内嵌）
+
+- **MA20** = 20日均线，现价在其上=趋势偏多
+- **BIAS** = (现价−MA20)/MA20，衡量涨跌是否过度（>10%过热 / 负值超跌）
+- **PE5y分位** = 当前PE在近5年百分位（主锚）；PE/PB10y 为天天基金口径
+- **目标价** = MA20 抬到 BIAS 10%/15% 的挂单价
+
+## 坑位
+
+- **中证官网无 PB 历史**：5y分位只能用 PE（peg），PB 用天天基金 10y 口径（看板里 PE5y 为主、PE/PB10y 辅助）
+- **`peg` 偶发为 None**：过滤非空行再算分位；最新交易日 peg 可能未更新（用上一日）
+- **腾讯K线单位**：`fqkline` 的 vol 单位是**手**(100股)，算成交额要 ×100
+- **TTFUND_INDEX_INFO 用 `index_id`**（不是 query），传错报缺少参数
+- **信号双视角重要性**：红利指数"绝对 PE 便宜 + 分位高"是常见陷阱——买点判断必须以**分位**为准，别只看绝对 PE
+- 中证官网接口偶发 500，重试即可
+- **改 HTML 模板后**：编辑 `generate_html.py` 的 CSS/结构，重跑 update.py 生效。样式用亮色（用户偏好：不要暗色），做响应式（手机可看）
+
+## 扩展标的
+
+- 加 A 股 ETF：csindex 代码（H30269/000922 等）+ 腾讯 sh/sz 前缀 + ttfund index_id
+- 港股 ETF（520900 等）：同 csindex 931722，腾讯 sh520900
+- 新增后跑 update.py，确认 5y 分位能算出（若 csindex 查不到该指数，显示"—"并退回归/BIAS 信号）
+
+## PIL 渲染坑（旧版画 PNG 用，踩过记得；HTML 版无此问题）
+
+若回退到 PIL 画图（非 HTML）：
+1. **emoji/特殊符号崩**：wqy-zenhei 无 📌🔴🟡⚪、`×→≥≤` → `getmask` 错误。换 `[文字]`、`x`、`-`、`>=`。
+2. **`d.text` 必须命名参**：封装 `txt(x,y,s,sz,fill)` 内 `d.text((x,y),s,font=F(sz),fill=fill)`，别裸写第3位置参当 fill。
+3. 徽章对比度：亮徽章深字 / 深徽章白字。
+4. **布局溢出**：画布宽 > 卡片宽留边距（卡1640/画布1720），块宽累计对齐卡片右界，超长ETF名按名长缩字号，像素采样自检最右列。
+
+## 推飞书（发看板图/文字到"炒股理财"群，⚠️ 必须 lark-cli user 身份）
+
+Hermes 飞书 **bot adapter 发图/消息常失败**（`99992402`）。推进群用 lark-cli user 身份：
+```bash
+export PATH="$HOME/.npm-global/bin:$PATH"; cd /tmp
+lark-cli im +messages-send --chat-id <群oc_xxx> --image "./xxx.png" --format json   # 发图
+lark-cli im +messages-send --chat-id <群> --markdown "<文字>" --format json           # 发文字
+```
+- 群根发 `+messages-send`；附 topic 用 `+messages-reply --message-id`
+- 配 cron 推送：prompt 让 agent 跑脚本→lark-cli 发图文字→**最终回复只输出 `[SILENT]`** 抑制 bot 自动投递
+- 群 chat_id 从 `~/.hermes/channel_directory.json`（platforms.feishu）取
