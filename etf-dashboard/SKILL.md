@@ -1,13 +1,13 @@
 ---
 name: etf-dashboard
-description: ETF 红利 · 技术温度看板的维护与更新 — 综合 5 年估值分位(中证官网历史PE自算) + 技术面(MA20/BIAS/回撤/N日涨跌) + 实时行情，交叉生成加仓/分批/过热减仓信号，生成 HTML 落到博客 public/exports/。触发时机：用户说「更新ETF看板」「看看红利该不该买/加仓」「跑一下看板」「改动看板标的池」。
-version: 1.1.0
+description: ETF 技术温度看板（红利 + 行业/主题）的维护与更新 — 综合 5 年估值分位(中证官网历史PE自算) + 10年PB分位(天天基金) + 技术面(MA20/BIAS/回撤/N日涨跌) + 实时行情，交叉生成加仓/分批/过热减仓信号，生成 HTML 落到博客 public/exports/。触发时机：用户说「更新ETF看板」「跑一下看板」「改动看板标的池」「加/换ETF标的」。
+version: 1.2.0
 tags: [etf, 红利, 看板, valuation, technical]
 ---
 
-# ETF 红利 · 技术温度看板（维护与更新）
+# ETF 技术温度看板（红利/行业/主题 · 维护与更新）
 
-一套"能指导交易"的红利 ETF 看板系统：**5 年估值分位 + 技术面 + 实时行情**双视角交叉，输出加仓/分批/过热/观望信号，并给"此刻该怎么做"的可执行动作。产物是静态 HTML，部署在 ZacharyXue.github.io 博客。
+一套「技术温度 + 估值」双视角 ETF 看板系统：**5 年 PE 分位（主锚）+ 10 年 PB 分位 + 技术面（回撤/MA/BIAS）**交叉，输出加仓/分批/过热/观望信号，并给「此刻该怎么做」动作。覆盖红利、行业（如电池）、主题（如港股通红利低波）。产物静态 HTML，部署在 ZacharyXue.github.io 博客。
 
 ## 代码位置
 
@@ -78,11 +78,16 @@ pct = sum(1 for x in pe if x <= pe[-1]) / len(pe) * 100
 - **信号双视角重要性**：红利指数"绝对 PE 便宜 + 分位高"是常见陷阱——买点判断必须以**分位**为准，别只看绝对 PE
 - 中证官网接口偶发 500，重试即可
 - **改 HTML 模板后**：编辑 `generate_html.py` 的 CSS/结构，重跑 update.py 生效。样式用亮色（用户偏好：不要暗色），做响应式（手机可看）
+- **PB 只有 10y，无 5y**（2026-08 复核）：csindex index-perf 只返回 `peg`(=历史PE)，**无 PB 字段**；天天基金 valuation 只有 `pe_percentile_10y`/`pb_percentile_10y`。要 PB 分位只能 **10y 口径**（别叫 PB5y，无数据源）
+- **非中证官网指数**（国证/恒生系）：`csindex_pe_pct()` 返回 None → 看板 PE5y 显示"—"，信号**退化到 BIAS/回撤**，估值用天天基金 10y（pe10y/pb10y）。典型=港股通红利低波 **987016**（159545 恒生红利低波ETF易方达），maker=深圳证券信息（国证指数）
+- **查指数代码用名称搜**：`ttskill TTFUND_SEARCH --action query --body '{"query":"港股通红利低波","search_type":"index"}'` 得候选（987016 等）；`TTFUND_INDEX_INFO` 的 `index_id` 支持**传名称**让服务端解析（如"沪深300"），勿只传一个乱码 code
+- **看板已不限红利**：加行业/主题 ETF 用同一管线，只需 etf_symbol/csindex/ttfund_index 填对。e.g. 电池ETF汇添富(159796) = 中证电池主题 **931719**（csindex/ttfund 都能出 5y 分位 + ROE）
 
 ## 扩展标的
 
 - 加 A 股 ETF：csindex 代码（H30269/000922 等）+ 腾讯 sh/sz 前缀 + ttfund index_id
 - 港股 ETF（520900 等）：同 csindex 931722，腾讯 sh520900
+- 国证/恒生系指数（非中证官网，如 159545 港股通红利低波=987016）：csindex 填指数代码即可，`csindex_pe_pct` 会**安全返回 None** → PE5y="—"，估值用天天基金 10y（pe10y/pb10y），信号退化 BIAS/回撤。先用 `ttskill TTFUND_SEARCH search_type=index` 按名称搜到 code
 - 新增后跑 update.py，确认 5y 分位能算出（若 csindex 查不到该指数，显示"—"并退回归/BIAS 信号）
 
 ## PIL 渲染坑（旧版画 PNG 用，踩过记得；HTML 版无此问题）
