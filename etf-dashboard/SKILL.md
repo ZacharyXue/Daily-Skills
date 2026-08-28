@@ -82,6 +82,7 @@ pct = sum(1 for x in pe if x <= pe[-1]) / len(pe) * 100
 - **非中证官网指数**（国证/恒生系）：`csindex_pe_pct()` 返回 None → 看板 PE5y 显示"—"，信号**退化到 BIAS/回撤**，估值用天天基金 10y（pe10y/pb10y）。典型=港股通红利低波 **987016**（159545 恒生红利低波ETF易方达），maker=深圳证券信息（国证指数）
 - **查指数代码用名称搜**：`ttskill TTFUND_SEARCH --action query --body '{"query":"港股通红利低波","search_type":"index"}'` 得候选（987016 等）；`TTFUND_INDEX_INFO` 的 `index_id` 支持**传名称**让服务端解析（如"沪深300"），勿只传一个乱码 code
 - **看板已不限红利**：加行业/主题 ETF 用同一管线，只需 etf_symbol/csindex/ttfund_index 填对。e.g. 电池ETF汇添富(159796) = 中证电池主题 **931719**（csindex/ttfund 都能出 5y 分位 + ROE）
+- **用户决策(2026-08)：5y 源捞不到就用 10y，不接付费源**。PB 分位统一 10y 口径；中证系指数保留中证官网 PE5y，非中证系(国证/恒生)用天天基金 10y + 技术面退化。后续别再为凑 5y 折腾外部源（全网免费公开接口无日频 PB 历史，已系统性验证：中证官网仅 PE 无 PB、天天基金仅 10y 分位、东财指数估值字段为 0/个股报表、国证官网 SPA 无数据）
 
 ## 扩展标的
 
