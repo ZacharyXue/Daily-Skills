@@ -29,6 +29,7 @@ sources:
   stats_gov:    { enabled: true }   # 国家统计局 宏观
   akshare:      { enabled: true, note: "仅财报可用，行情接口ECS上断连" }
   nighttally:   { enabled: true }   # 天天基金 ttskill(ETF估值)
+  ccement:      { enabled: true, note: "中国水泥网行业指数(价格/成本/需求代理), 偶发丢包重试即可" }
 
 # ---------------- 速率限制 ----------------
 rate:

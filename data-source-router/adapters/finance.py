@@ -165,3 +165,62 @@ def sec_latest_revenue(cik):
                 best = {"metric": key, "end": end, "val": last.get("val"),
                         "unit": unit, "form": last.get("form")}
     return best or {"ok": False, "msg": "no revenue metric found"}
+
+
+# ============ 中国水泥网（行业价格/成本指数，免费公开源） ============
+def _cement_get(path):
+    """ccement 接口：短超时(14s)+重试3次(实测偶发单次丢包, 重试即恢复)。返回 Data dict。"""
+    url = "https://index.ccement.com/index/" + path
+    hdr = {"User-Agent": "Mozilla/5.0", "Referer": "https://index.ccement.com/"}
+    last = None
+    for i in range(3):
+        try:
+            r = SESSION.get(url, headers=hdr, timeout=14)
+            r.raise_for_status()
+            return r.json().get("Data", {})
+        except Exception as e:
+            last = e
+            time.sleep(0.8)
+    raise last
+
+def _series_stats(dates, vals):
+    import datetime as dt
+    pairs = sorted(zip(dates, vals), key=lambda t: t[0])
+    d = [p[0] for p in pairs]; v = [float(p[1]) for p in pairs]
+    if not d: return {"ok": False}
+    hi = max(v); lo = min(v); latest = v[-1]; ldate = d[-1]
+    tgt = str(dt.date.fromisoformat(d[-1]) - dt.timedelta(days=365))
+    idx = next((i for i, x in enumerate(d) if x >= tgt), 0)
+    yoy = (latest - v[idx]) / v[idx] * 100 if v[idx] else None
+    step = max(1, len(d) // 200)
+    return {"ok": True, "latest": round(latest, 2), "latest_date": ldate,
+            "yoy_1y": round(yoy, 1) if yoy is not None else None,
+            "hi": round(hi, 2), "hi_date": d[v.index(hi)], "lo": round(lo, 2), "lo_date": d[v.index(lo)],
+            "series": [{"d": d[i], "v": v[i]} for i in range(0, len(d), step)]}
+
+def cn_cement_index(index_type):
+    """中国水泥网价格/成本指数。index_type: po425/cempi/coal/clinker/concrete。
+    返回 {ok, latest, latest_date, yoy_1y, hi, lo, series:[{d,v}...]}。"""
+    if index_type == "cempi":
+        sub = _cement_get("priceindex/getPriceIndex").get("cement", {})
+        return _series_stats(sub.get("dynamicIndexDate", []), sub.get("dynamicIndexAll", []))
+    if index_type == "coal":
+        sub = _cement_get("priceindex/getPriceIndex").get("coal_price", {})
+        return _series_stats(sub.get("dynamicIndexDate", []), sub.get("dynamicIndexAll", []))
+    paths = {"po425": "priceindex/po425zsline", "clinker": "clinker/ClinkerPrice",
+             "concrete": "concrete/ConcretePrice"}
+    if index_type not in paths:
+        raise ValueError(f"未知 ccement index_type: {index_type}")
+    d = _cement_get(paths[index_type])
+    return _series_stats(d.get("dynamicIndexDate", []), d.get("dynamicIndex", []))
+
+def cn_cement_spread():
+    """水泥-熟料价差（近一周均值，供给/盈利弹性代理）。"""
+    po = cn_cement_index("po425"); cl = cn_cement_index("clinker")
+    if not (po.get("ok") and cl.get("ok")): return {"ok": False, "note": "po425/clinker 缺失"}
+    cod = {x["d"]: x["v"] for x in po["series"]}; cld = {x["d"]: x["v"] for x in cl["series"]}
+    common = [cod[k] - cld[k] for k in cod if k in cld]
+    if not common: return {"ok": False, "note": "无重叠日期"}
+    recent = common[-7:] if len(common) >= 7 else common
+    return {"ok": True, "latest": round(sum(recent) / len(recent), 1), "latest_date": "近一周均值",
+            "series_k": len(common)}

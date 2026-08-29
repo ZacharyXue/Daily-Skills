@@ -112,3 +112,10 @@ lark-cli im +messages-send --chat-id <群> --markdown "<文字>" --format json  
 - 群根发 `+messages-send`；附 topic 用 `+messages-reply --message-id`
 - 配 cron 推送：prompt 让 agent 跑脚本→lark-cli 发图文字→**最终回复只输出 `[SILENT]`** 抑制 bot 自动投递
 - 群 chat_id 从 `~/.hermes/channel_directory.json`（platforms.feishu）取
+
+## 关系 & 统一（2026-08 对齐）
+
+- **风格复用**：本看板产物（自包含 HTML）与 `dashboard-style/templates/dashboard_skeleton.html` 同源（亮色、可点击、响应式）。复用该骨架/样式，勿另起一套。
+- **数据层走 `data-source-router`**：腾讯行情/K线（`cn_stock_quote`/`cn_stock_kline`）已下沉到 data-source-router，本看板**只触发 get()**，不自建抓取。**中证官网 PE / 天天基金分位是 ETF 专属源**（无泛化接口），保留在本看板，后续视复用度考虑下沉。
+- **已注册**到 `dashboard-style/references/dashboards-index.md` 看板索引（含工程路径/更新命令/产物）。
+- **总纲**：`industry-monitor-dashboard`（行业+龙头/ETF 看板通用架构），本看板是它在「ETF 估值+技术」上的实现。

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<!--
+  dashboard 看板自包含骨架模板（复用：dashboard-style）
+  -------------------------------------------------------
+  用法：复制本文件 → 替换占位符 {TITLE} {FETCHED} {VERDICT} {COUNTS} {BADGES} {PEER} {CARDS} {FOOT_NOTE}
+  - 自包含单文件(内嵌CSS/JS)，可直接挂 Astro 博客 public/exports/
+  - 原生 <details>/<summary> 实现「指标可点击看 meaning/signal」
+  - 多线趋势图 = 内嵌 SVG + 图例（用 {points} 渲染，见 render_html.py trend_svg）
+  - 数据获取走 data-source-router.get()，本骨架只管展示
+  完整示例逻辑见 /root/cement-dashboard/scripts/render_html.py
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{TITLE}</title>
+<style>
+:root { --bg:#f6f7f9; --card:#fff; --line:#e6e8eb; --ink:#1f2329; --sub:#6b7280;
+  --ok:#16a34a; --warn:#d97706; --err:#dc2626; --gray:#9ca3af; --acc:#2563eb; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg); color:var(--ink); line-height:1.6; }
+.wrap { max-width:980px; margin:0 auto; padding:28px 18px 60px; }
+header h1 { font-size:22px; margin:0 0 6px; }
+header .meta { color:var(--sub); font-size:13px; }
+.summary { background:var(--card); border:1px solid var(--line); border-radius:12px;
+  padding:18px 20px; margin:18px 0 8px; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+.summary .verdict { font-size:15px; font-weight:600; margin-bottom:10px; }
+.verdict b { color:var(--acc); }
+.badges { display:flex; flex-wrap:wrap; gap:8px; }
+.vb { padding:4px 10px; border-radius:20px; font-size:13px; font-weight:600; background:#f1f2f4; }
+.vb.ok { background:#e9f8ef; color:var(--ok); }
+.vb.no { background:#fef2f2; color:var(--err); }
+.gtitle { font-size:16px; margin:26px 0 10px; padding-left:10px; border-left:4px solid var(--acc); }
+.card { background:var(--card); border:1px solid var(--line); border-radius:10px;
+  margin:8px 0; overflow:hidden; }
+.card summary { display:flex; align-items:center; gap:10px; padding:13px 16px;
+  cursor:pointer; list-style:none; position:relative; }
+.card summary::-webkit-details-marker { display:none; }
+.card summary::after { content:"▸"; margin-left:auto; color:var(--sub); transition:.15s; }
+.card[open] summary::after { content:"▾"; }
+.dot { width:9px; height:9px; border-radius:50%; flex:none; }
+.dot.ok { background:var(--ok); } .dot.warn { background:var(--warn); }
+.dot.err { background:var(--err); } .dot.gray { background:var(--gray); }
+.cname { font-weight:600; }
+.val { font-size:15px; font-weight:700; color:var(--ink); }
+.val.up { color:var(--ok); }
+.sub { font-size:12px; color:var(--sub); font-weight:400; }
+.badge { margin-left:auto; padding:2px 8px; border-radius:12px; font-size:12px; font-weight:600; }
+.badge.ok { background:#e9f8ef; color:var(--ok); } .badge.warn { background:#fef3c7; color:var(--warn); }
+.badge.err { background:#fef2f2; color:var(--err); } .badge.gray { background:#f1f2f4; color:var(--sub); }
+.cbody { padding:0 16px 14px 40px; font-size:14px; }
+.why,.signal { margin-bottom:7px; } .why b,.signal b { color:var(--acc); }
+.meta { margin-top:8px; font-size:12px; color:var(--sub); display:flex; gap:14px; flex-wrap:wrap; }
+.meta a { color:var(--acc); text-decoration:none; }
+.errline { color:var(--err); font-weight:600; }
+.tsvg { margin-top:8px; background:#fafbfc; border-radius:6px; }
+.chleg { display:flex; gap:12px; flex-wrap:wrap; font-size:11px; color:var(--sub); padding-top:4px; }
+.chleg .cl { display:inline-block; width:12px; height:3px; margin-right:4px; vertical-align:middle; }
+.ptwrap { overflow-x:auto; }
+.ptable { width:100%; border-collapse:collapse; font-size:13px; background:var(--card); border:1px solid var(--line); border-radius:10px; }
+.ptable th,.ptable td { padding:8px 9px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap; }
+.ptable th { background:#f1f2f4; color:var(--sub); font-weight:600; text-align:center; }
+.ptable td.pn { text-align:left; font-weight:600; }
+.ptable tr.phl { background:#eef4ff; }
+.ptable tr.phl td.pn { color:var(--acc); }
+.ptable td.neg { color:var(--err); }
+footer { margin-top:30px; color:var(--sub); font-size:12px; line-height:1.8; border-top:1px solid var(--line); padding-top:16px; }
+@media (max-width:640px) { .cbody { padding-left:30px; } .val { font-size:14px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>{TITLE}</h1>
+<div class="meta">更新：{FETCHED}</div></header>
+
+<div class="summary">
+  <div class="verdict"><b>{VERDICT}</b> · {COUNTS}</div>
+  <div class="badges">{BADGES}</div>
+</div>
+
+{PEER}   <!-- 同行/横向对比表格(可空) -->
+
+<!-- 指标组：每个 <details> 一张卡片，示例如下 -->
+<section class="group">
+  <h2 class="gtitle">{GROUP_NAME}</h2>
+  <details class="card">
+    <summary><span class="dot ok"></span>
+      <span class="cname">指标名</span>
+      <span class="val">当前值</span><span class="sub">同比</span>
+      <span class="badge ok">正常</span></summary>
+    <div class="cbody">
+      <div class="why"><b>为什么关注</b>：{MEANING}</div>
+      <div class="signal"><b>看什么信号</b>：{SIGNAL}</div>
+      <div class="meta">来源 | 更新时间 | TTL</div>
+      <svg class="tsvg">...多线趋势(用 {points} 生成，参考 trend_svg)...</svg>
+    </div>
+  </details>
+</section>
+
+{CARDS}
+
+<footer>
+  <b>数据源</b>：{FOOT_NOTE}<br>
+  <b>原则</b>：正确性 &gt; 及时性；每次拉取均为最新远程数据；若获取失败，指标标红「获取失败」并注明原因，<b>绝不使用旧值冒充当前值</b>。
+</footer>
+</div>
+</body>
+</html>

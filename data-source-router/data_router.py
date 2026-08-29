@@ -40,6 +40,9 @@ def _register():
         "cn_financial":     (lambda p: fin.cn_financial(p["code"]), "eastmoney", TTL["cn_financial"], "T1"),
         "us_financial_sec": (lambda p: fin.sec_companyfacts(p["cik"]), "sec_edgar", TTL["us_financial_sec"], "T1"),
         "us_revenue_sec":   (lambda p: fin.sec_latest_revenue(p["cik"]), "sec_edgar", TTL["us_financial_sec"], "T1"),
+        # ---- 行业指数(中国水泥网, 免费公开源) ----
+        "cn_cement_index":  (lambda p: fin.cn_cement_index(p["index_type"]), "ccement", TTL["industry_price"], "T1"),
+        "cn_cement_spread": (lambda p: fin.cn_cement_spread(), "ccement", TTL["industry_price"], "T1"),
         # ---- GitHub 读/搜 ----
         "github_repo":      (lambda p: gh.repo(p["owner"], p["repo"]), "github_api", TTL["github_repo"], "T1"),
         "github_issues":    (lambda p: gh.issues(p["owner"], p["repo"], p.get("state", "all"), p.get("limit", 100)), "github_api", TTL["github_issues"], "T1"),
@@ -84,7 +87,8 @@ def get(kind, cache_ns=None, **params):
 
 def _domain_for(source):
     return {"tencent": "qt.gtimg.cn", "eastmoney": "datacenter-web.eastmoney.com",
-            "sec_edgar": "data.sec.gov", "github_api": "api.github.com"}.get(source)
+            "sec_edgar": "data.sec.gov", "github_api": "api.github.com",
+            "ccement": "index.ccement.com"}.get(source)
 
 def sources_status():
     """返回可用数据源开关状态(读config)。"""
