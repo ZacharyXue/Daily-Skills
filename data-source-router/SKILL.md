@@ -13,7 +13,7 @@ related_skills: [industry-monitor-dashboard, whale-holdings, stock-analysis, git
 **一个数据源地图 + 缓存 + 路由的统一层，全 agent 的取数唯一入口。** 目的（用户 2026-08 定调）：
 > 规范当前数据来源，其他 skill 及未来 skill 调用本 skill 获取准确数据，而不是可能拿错误数据或消耗 token 再探索数据获取。
 
-- **不重复造轮子**：etf-dashboard / whale-holdings / stock-analysis 等已有 skill 的原始数据抓取，**统一上移到这里**，各自只保留领域逻辑（估值分位/信号/13F解析等）。
+- **不重复造轮子**：`industry-monitor-dashboard`（其下实例：水泥/ETF）/ whale-holdings / stock-analysis 等已有 skill 的原始数据抓取，**统一上移到这里**，各自只保留领域逻辑（估值分位/信号/13F解析等）。
 - **不拿错数据**：本层内置**正确性校验**（多源交叉比对 + 时间戳 + metric 变更应对），实测可用才收录，不可用源在文档里标注。
 - **不烧 token**：SQLite 缓存 + TTL + stale-while-revalidate，同一数据多次取不重复回源。
 
@@ -179,7 +179,7 @@ sys.path.insert(0, '/root/zach-skills/data-source-router')
 
 | skill | 它拥有什么 | 与本层关系 |
 |---|---|---|
-| `etf-dashboard` | ETF 估值分位/信号/HTML（领域逻辑） | 原始抓取（腾讯行情/K线、中证PE、天天基金）**本层不重复做**；若其内部逻辑可复用则调用本层。见其 SKILL → 本层 |
+| `industry-monitor-dashboard`(实例 etf) | ETF 估值分位/信号/HTML（领域逻辑） | 原始抓取（腾讯行情/K线、中证PE、天天基金）**本层不重复做**；若其内部逻辑可复用则调用本层。见其 SKILL → 本层 |
 | `whale-holdings` | SEC 13F XML 解析（领域专属） | SEC 原始 HTTP 访问**由本层提供**（`us_financial_sec`/`us_revenue_sec` 或直调 `adapters.finance`），其脚本引用 |
 | `stock-analysis` | 基本面深度分析（商业模式/三表） | 财报数字来自本层（`cn_financial`/`us_financial_sec`），分析逻辑自留 |
 | `github-*` 系列 | GitHub **写操作**（建repo/PR/release/管理） | 本层只做**读/搜**（`github_repo`/`_issues`/`_pulls`/`_release`/`_search`/`_file`），两者不重叠 |
