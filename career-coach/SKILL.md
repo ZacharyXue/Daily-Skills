@@ -179,6 +179,16 @@ tags: [career, growth, review, resume, architecture]
 
 原则：**先问后析**。用户没回答之前，不要输出任何分析和判断。
 
+## 数据保存
+
+> 全部私有数据，位于 `/root/zach-skills/career-data/`（独立 git 仓，gitignore 保护，无远端，不随公开仓 push）。
+- **知识画像** `/root/zach-skills/career-data/knowledge-ledger.md` — 掌握度/盲区/方向
+- **深挖池** `/root/zach-skills/career-data/deepdive-backlog.md` — 待深挖问题
+- **岗位需求库总览** `/root/zach-skills/career-data/job-demand.md` — 市场技能频次/对照/优先级
+- **岗位需求详情** `/root/zach-skills/career-data/job-demand/<日期>.md` — 按批次提供
+
+数据改动只 commit 到 career-data 本地仓；skill 层改动才 commit 到 zach-skills。
+
 ## 注意事项
 
 - 输出要**精炼**，这是每天一次的复盘，不要写成论文

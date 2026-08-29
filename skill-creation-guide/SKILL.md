@@ -79,6 +79,33 @@ cd /root/zach-skills && git add -A && git commit -m "feat(<skill-name>): <一句
 # 只 commit 不 push，推送由用户决定
 ```
 
+## 本地数据文件保存规范（凡是 skill 要保存/读写本地数据，必须遵守）
+
+zach-skills 推送到公开仓库 `Daily-Skills`，**私密数据绝不能随公开仓 push**。凡 skill 涉及保存本地数据文件，严格按此规范：
+
+### 1. 私有数据 vs 公开知识分离
+- **私有数据**（个人隐私：知识画像/深挖池/岗位需求库/投资持仓/读书笔记等）→ 放 `zach-skills/<skill-name>/data/`（或统一私有目录），并：
+  - 在 `zach-skills/.gitignore` 加一行保护（如 `career-data/`）→ **永不随公开仓 push**
+  - 需要版本控制就建独立 `.git`，**无远端**（纯本地）
+  - 也可复刻 `career-data/` 样板：数据在 skills 目录下、gitignored、独立私有仓
+- **公开知识**（可复用流程/代码/模板）→ 正常放 skill 目录，随仓库走
+
+### 2. 每个 skill 的 SKILL.md 必须写「数据保存说明」
+至少写清 3 点：**存哪些文件 / 存哪（绝对路径）/ 是否私有进公开仓**。
+
+样板（career-coach）：
+```markdown
+## 数据保存
+- 知识画像 /root/zach-skills/career-data/knowledge-ledger.md（私有，gitignore，独立仓无远端）
+- 深挖池   /root/zach-skills/career-data/deepdive-backlog.md（私有，同上）
+- 岗位需求 /root/zach-skills/career-data/job-demand.md（私有，同上）
+```
+
+### 3. 保存数据前的自检
+- 要版本控制？→ 确认私有位置 + .gitignore 保护 + 独立仓无远端
+- 会被公开仓 pull/push？→ 确认不会（gitignore 命中 / 无远端）
+- 路径是否写进本文档（`## 数据保存`）？→ 必须，否则后续会话找不到
+
 ## 修改已有自建 skill
 
 - **直接改仓库文件**（`/root/zach-skills/<name>/...`），**不要用 skill_manage 操作**——skill 是软链，skill_manage 写 symlink 会失败。
