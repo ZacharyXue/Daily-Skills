@@ -20,6 +20,12 @@ class _Attr:
     def __getitem__(self, k):  # 支持 config.cache.ttl["key"]
         v = self.__dict__[k]
         return _Attr(v) if isinstance(v, dict) else v
+    def items(self):  # 支持 config.sources.items()
+        return {k: (_Attr(v) if isinstance(v, dict) else v) for k, v in self.__dict__.items()}.items()
+    def keys(self):
+        return self.__dict__.keys()
+    def get(self, k, default=None):
+        return self.__dict__.get(k, default)
 
 config = _Attr(_RAW)
 
