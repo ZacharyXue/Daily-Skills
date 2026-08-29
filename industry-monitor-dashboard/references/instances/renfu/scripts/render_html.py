@@ -216,14 +216,21 @@ def build():
     # ---- 降本拆解⑤：可持续性判断 ----
     rd_sus = f"""<div class="costcard">
       <div class="chead">⑥ 可持续性判断——哪些是真降本、哪些是一次性</div>
+      <div class="sus-pills">
+        <span class="sus-pill ok">✅ 降本质量：中等偏上</span>
+        <span class="sus-pill bad">⛔ 硬伤：营收未扩张</span>
+      </div>
       <table class="sus-tab"><thead><tr><th>科目</th><th>强度</th><th>性质</th></tr></thead>
       <tbody>
-        <tr><td class="pn">营业成本</td><td><span class="sus-lv sus-ok">[强]</span></td><td>结构优化 + 精益供应链，<b>内生可延续</b>（高毛利工业占比↑）</td></tr>
-        <tr><td class="pn">管理费用</td><td><span class="sus-lv sus-mid">[中]</span></td><td>组织精简红利，<b>一次性居多</b>、有天花板</td></tr>
-        <tr><td class="pn">研发费用</td><td><span class="sus-lv sus-weak">[弱]</span></td><td>耗材/外包阶段性减少，<b>不可复制</b>，且是利润种子</td></tr>
-        <tr><td class="pn">销售/财务</td><td><span class="sus-lv sus-weak">[弱]</span></td><td>本期<b>上升拖累</b>（销售+1.41亿、财务+0.90亿），是利润的减项</td></tr>
+        <tr><td class="pn">营业成本</td><td><span class="sus-lv sus-ok">强</span></td><td>结构优化+精益供应链，<b>内生可延续</b>（高毛利工业占比↑）——最扎实的降本</td></tr>
+        <tr><td class="pn">管理费用</td><td><span class="sus-lv sus-mid">中</span></td><td>组织精简红利，<b>一次性居多</b>、有天花板</td></tr>
+        <tr><td class="pn">研发费用</td><td><span class="sus-lv sus-weak">弱</span></td><td>耗材/外包阶段性减少，<b>不可复制</b>，且是利润种子（资本化还降）</td></tr>
+        <tr><td class="pn">销售/财务</td><td><span class="sus-lv sus-weak">弱</span></td><td>本期<b>上升拖累</b>（销售+1.41亿、财务+0.90亿），是利润的减项</td></tr>
       </tbody></table>
-      <div class="concl"><b>结论：</b>最扎实的是<b>毛利（高毛利工业占比↑）</b>，可持续；管理费用是组织红利（有天花板）；研发降本要看穿——是节奏波动不是省钱，且资本化还降；销售/财务本期在增，是利润拖累。综合看，<b>降本质量中等偏上，但营收未扩张是硬伤</b>。</div>
+      <div class="sus-verdict ok">✅ <b>真正可持续</b>：毛利修复（高毛利工业占比↑）——内生、可延续</div>
+      <div class="sus-verdict warn">⚠️ <b>有天花板</b>：管理费用（组织精简红利，一次性居多）</div>
+      <div class="sus-verdict bad">⛔ <b>一次性 / 减项</b>：研发（节奏波动+资本化降）、销售/财务（上升拖累）</div>
+      <div class="sus-hard">🎯 <b>核心结论：</b>降本质量<b>中等偏上</b>，但 <span class="k">营收未扩张是硬伤</span>——这是「<span class="k">降本保利润</span>」，靠省出来的利润，不是收入驱动的健康增长。<br>务必警惕：财务费用红利已在 2021-2022 一次性兑现后企稳，<span class="k">下一程只能靠收入</span>。</div>
     </div>"""
 
     cards_html = "".join(trend_cards)
@@ -240,7 +247,7 @@ def build():
       <div class="costcard">
         <div class="chead">③ 财务费用(年度，亿元)</div>
         {fsvg}
-        <div class="cnote">财务费用 2019 高点 8.73亿 → 2024 3.5亿 → 2025 3.03亿 → 2026中报 2.11亿年化约 4.2亿。去杠杆直接体现在「少付利息」。</div>
+        <div class="cnote">近5年财务费用 <b>6.23亿(2021)→2.37亿(2022)→3.03亿(2025)</b>：去杠杆红利主要在 <b>2021-2022 一次性兑现</b>(6.23→2.37 腰斩)，2023-2025 已稳定在 3.0-3.5亿。⚠️ <b>未来利润增量不能再指望财务费用下降</b>——这是「一次性红利」，后续关键看收入。</div>
       </div>
       <div class="costcard">
         <div class="chead">④ 去杠杆红利双验证（近5年）：有息负债率 vs 财务费用</div>
@@ -313,6 +320,25 @@ header .meta {{ color:var(--sub); font-size:13px; }}
 .cbar-pct {{ width:52px; font-size:13px; font-weight:700; text-align:right; flex:none; }}
 .cbar-val.pos,.cbar-pct.pos {{ color:var(--ok); }}
 .cbar-val.neg,.cbar-pct.neg {{ color:var(--err); }}
+.sus-pills {{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }}
+.sus-pill {{ display:inline-block; padding:5px 14px; border-radius:20px; font-size:13px; font-weight:700; }}
+.sus-pill.ok {{ background:#e9f8ef; color:#16a34a; border:1px solid #bbf0cc; }}
+.sus-pill.warn {{ background:#fef6e5; color:#d97706; border:1px solid #fbe3b0; }}
+.sus-pill.bad {{ background:#fef2f2; color:#dc2626; border:1px solid #fbd0d0; }}
+.sus-tab {{ width:100%; border-collapse:collapse; font-size:13px; }}
+.sus-tab th,.sus-tab td {{ padding:9px 10px; border-bottom:1px solid var(--line); text-align:left; }}
+.sus-tab th {{ background:#f1f2f4; color:var(--sub); font-weight:600; font-size:11px; text-align:center; }}
+.sus-tab td.pn {{ font-weight:700; width:110px; }}
+.sus-lv {{ font-weight:700; padding:2px 9px; border-radius:10px; font-size:12px; white-space:nowrap; }}
+.sus-lv.sus-ok {{ background:#e9f8ef; color:#16a34a; }}
+.sus-lv.sus-mid {{ background:#fef6e5; color:#d97706; }}
+.sus-lv.sus-weak {{ background:#fef2f2; color:#dc2626; }}
+.sus-verdict {{ margin-top:12px; border-radius:8px; padding:12px 14px; font-size:13px; line-height:1.8; }}
+.sus-verdict.ok {{ background:#f0fdf4; border:1px solid #bbf0cc; }}
+.sus-verdict.warn {{ background:#fffbeb; border:1px solid #fbe3b0; }}
+.sus-verdict.bad {{ background:#fef2f2; border:1px solid #fbd0d0; }}
+.sus-hard {{ margin-top:14px; background:#1f2937; color:#f9fafb; border-radius:10px; padding:16px 18px; font-size:14px; line-height:1.9; }}
+.sus-hard .k {{ color:#fda4af; font-weight:700; }}
 footer {{ margin-top:30px; color:var(--sub); font-size:12px; line-height:1.8; border-top:1px solid var(--line); padding-top:16px; }}
 @media (max-width:640px) {{ .sval {{ font-size:17px; }} .val {{ font-size:14px; }} }}
 </style>

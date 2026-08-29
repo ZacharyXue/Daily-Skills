@@ -199,6 +199,8 @@ def em_stmt(secucode, report_arg, page=60):
 def get_trend_fin_exp():
     rows = em_stmt("600079.SH", "RPT_F10_FINANCE_GINCOME", page=80)
     annual = _series_of(rows, "FINANCE_EXPENSE", scale=1e8)
+    # 只保留近5年年报(2021-2025)，与双线验证一致，聚焦去杠杆红利
+    annual = annual[-5:]
     latest = annual[-1]["v"] if annual else None
     ldate = annual[-1]["d"] if annual else ""
     return {"latest": latest, "latest_date": ldate,
