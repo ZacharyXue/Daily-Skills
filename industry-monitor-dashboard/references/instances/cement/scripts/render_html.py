@@ -27,7 +27,17 @@ def fmt_val(ind):
         return f"收 {v['close']:.2f} · MA20 {v['ma20']} · MA60 {v['ma60']}", "", v.get("latest_date")
     # 特化：MACD/RSI
     if v.get("rsi14") is not None and v.get("macd") is not None:
-        return f"RSI {v['rsi14']} · MACD {v['macd']}", "", v.get("latest_date")
+        return f"RSI6 {v.get('rsi6')} · RSI14 {v['rsi14']} · MACD {v['macd']}", "", v.get("latest_date")
+    # 特化：KDJ
+    if v.get("K") is not None and v.get("J") is not None:
+        return f"K {v['K']} · D {v['D']} · J {v['J']}", "", v.get("latest_date")
+    # 特化：布林带
+    if v.get("mid") is not None and v.get("up") is not None:
+        return f"收 {v.get('price')} · 中轨 {v['mid']} · 上轨 {v['up']} · 下轨 {v['low']}", "", v.get("latest_date")
+    # 特化：净利类(有 np/np_yoy, 无 latest)——主值显示净利 + 同比
+    if v.get("np") is not None and v.get("latest") is None and v.get("close") is None:
+        extra = f" <span class='sub'>同比 {v.get('np_yoy',0):+.1f}%</span>" if v.get("np_yoy") is not None else ""
+        return f"{v['np']:,.1f} 亿", extra, v.get("report") or v.get("latest_date")
     # 通用单值
     val = v.get("latest") if v.get("latest") is not None else v.get("close")
     unit = ind.get("unit", "")

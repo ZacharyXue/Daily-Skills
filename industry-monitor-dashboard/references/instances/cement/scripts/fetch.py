@@ -174,6 +174,12 @@ def get_debt_ratio():
                    for x in rows if x.get("ZCFZL") is not None], key=lambda t:t["d"])
     return {"latest": round(r.get("ZCFZL", 0), 1), "latest_date": "2026中报",
             "charts": [{"name": "资产负债率%", "color": "#2563eb", "points": hist}], "stale": False}
+def get_gm_rate():
+    rows = em_fin("600585.SH"); r = em_find(rows, "2026中报")
+    hist = sorted([{"d": str(x.get("REPORT_DATE",""))[:10], "v": x.get("XSMLL")}
+                   for x in rows if x.get("XSMLL") is not None], key=lambda t:t["d"])
+    return {"latest": round(r.get("XSMLL", 0), 1) if r else None, "latest_date": "2026中报",
+            "charts": [{"name": "毛利率%", "color": "#2563eb", "points": hist}], "stale": False}
 
 # ---------- 同行对比（头部五家） ----------
 PEERS = [("海螺水泥","600585.SH"),("华新水泥","600801.SH"),("天山股份","000877.SZ"),
@@ -221,6 +227,18 @@ def get_fcf():
     op = g("NETCASH_OPERATE"); cap = g("CONSTRUCT_LONG_ASSET")
     return {"latest": round((op-cap)/1e8, 1), "latest_date": "2026中报",
             "note": f"经营现金{op/1e8:.1f}亿 - 资本开支{cap/1e8:.1f}亿", "stale": False}
+def get_payout_rate():
+    d = _report(); dps = d.get("dps")
+    bal = em_balance(); shares = (bal.get("SHARE_CAPITAL") or 0)
+    rows = em_fin("600585.SH"); r25 = em_find(rows, "2025年报")
+    np25 = r25.get("PARENTNETPROFIT") if r25 else None
+    if dps and np25 and shares:
+        sy = shares/1e8; total_div = dps*sy; ny = np25/1e8
+        return {"latest": round(total_div/ny*100, 1), "latest_date": "2025年报", "dps": dps,
+                "shares": round(sy, 2),
+                "note": f"每股{dps}元×{sy:.1f}亿股 / 归母净利{ny:.1f}亿 = {round(total_div/ny*100,1)}%",
+                "stale": False}
+    return {"latest": None, "note": "缺数据", "stale": False}
 
 def tencent_quote(code):
     import re
@@ -289,15 +307,54 @@ def get_macd_rsi():
     g=[max(c[i]-c[i-1],0) for i in range(1,n)]; l=[max(c[i-1]-c[i],0) for i in range(1,n)]
     ag=sum(g[:14])/14; al=sum(l[:14])/14
     for i in range(14,len(g)): ag=(ag*13+g[i])/14; al=(al*13+l[i])/14
-    rsi=100-100/(1+ag/al) if al else 100
+    rsi14=100-100/(1+ag/al) if al else 100
+    ag6=sum(g[:6])/6; al6=sum(l[:6])/6
+    for i in range(6,len(g)): ag6=(ag6*5+g[i])/6; al6=(al6*5+l[i])/6
+    rsi6=100-100/(1+ag6/al6) if al6 else 100
     dates=[r[0] for r in k]; step=max(1,len(dates)//150)
     pts=lambda s:[{"d":dates[i],"v":round(s[i],3)} for i in range(0,len(s),step)]
     return {"latest_date": k[-1][0], "dif": round(dif[-1],3), "dea": round(dea[-1],3),
-            "macd": round(macd[-1],3), "rsi14": round(rsi,1),
+            "macd": round(macd[-1],3), "rsi6": round(rsi6,1), "rsi14": round(rsi14,1),
             "charts":[{"name":"DIF","color":"#2563eb","points":pts(dif)},
                       {"name":"DEA","color":"#d97706","points":pts(dea)},
                       {"name":"MACD","color":"#7c3aed","points":pts(macd)}],
             "stale": False}
+def get_kdj(n=9):
+    k=get_kline(); dates=[r[0] for r in k]
+    K=50.0; D=50.0; Ks=[]; Ds=[]; Js=[]
+    for i in range(len(k)):
+        rsv=50.0
+        if i>=n-1:
+            w=k[i-n+1:i+1]; lo=min(r[4] for r in w); hi=max(r[3] for r in w)
+            rsv=(k[i][2]-lo)/(hi-lo)*100 if hi>lo else 50.0
+        K=K*2/3+rsv/3; D=D*2/3+K/3; J=3*K-2*D
+        Ks.append(K); Ds.append(D); Js.append(J)
+    step=max(1,len(Ks)//150); pts=lambda s:[{"d":dates[i],"v":round(s[i],1)} for i in range(0,len(s),step)]
+    return {"latest_date":dates[-1],"K":round(Ks[-1],1),"D":round(Ds[-1],1),"J":round(Js[-1],1),
+            "charts":[{"name":"K","color":"#2563eb","points":pts(Ks)},
+                      {"name":"D","color":"#d97706","points":pts(Ds)},
+                      {"name":"J","color":"#7c3aed","points":pts(Js)}],"stale":False}
+def get_boll():
+    import statistics
+    k=get_kline(); c=[r[2] for r in k]; dates=[r[0] for r in k]; n=len(c)
+    mids=[]; ups=[]; lows=[]
+    for i in range(n):
+        w=c[max(0,i-19):i+1]; m=sum(w)/len(w); s=statistics.pstdev(w)
+        mids.append(m); ups.append(m+2*s); lows.append(m-2*s)
+    step=max(1,n//150); pts=lambda s:[{"d":dates[i],"v":round(s[i],2)} for i in range(0,len(s),step)]
+    return {"latest_date":dates[-1],"mid":round(mids[-1],2),"up":round(ups[-1],2),"low":round(lows[-1],2),
+            "price":round(c[-1],2),
+            "charts":[{"name":"中轨","color":"#2563eb","points":pts(mids)},
+                      {"name":"上轨","color":"#d97706","points":pts(ups)},
+                      {"name":"下轨","color":"#16a34a","points":pts(lows)}],"stale":False}
+def get_vol():
+    k=get_kline(); v=[r[5] for r in k]; dates=[r[0] for r in k]
+    avg5=sum(v[-6:-1])/5 if len(v)>=6 else None
+    cur=v[-1] if v else None
+    ratio=round(cur/avg5,2) if (cur and avg5) else None
+    return {"latest":ratio,"latest_date":dates[-1],"vol":cur if cur else None,
+            "avg5":round(avg5,0) if avg5 else None,
+            "note":f"今量{cur:,.0f}手 / 5日均量{avg5:,.0f}手" if (cur and avg5) else None,"stale":False}
 
 def _report():
     try:
@@ -344,6 +401,8 @@ GETTER_MAP = {
     "rep_ton_gm": get_rep_ton_gm, "rep_ton_cost": get_rep_ton_cost, "rep_sales_yoy": get_rep_sales_yoy,
     "monetary": get_money, "idebt": get_idebt, "fcf": get_fcf,
     "rep_ton_price": get_rep_ton_price, "rep_ton_np": get_rep_ton_np,
+    "kdj_calc": get_kdj, "boll_calc": get_boll, "vol_calc": get_vol,
+    "gm_rate": get_gm_rate, "payout_rate": get_payout_rate,
 }
 
 def fetch_all():
