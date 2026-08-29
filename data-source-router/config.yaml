@@ -1,0 +1,46 @@
+# data-source-router 配置
+# 所有数据源开关、TTL、速率限制、环境变量集中在此
+
+# ---------------- 缓存 TTL（秒） ----------------
+cache:
+  ttl:
+    cn_stock_quote: 300        # A股实时快照 5分钟
+    cn_stock_kline: 86400      # 日线K线 T+1，24h
+    cn_financial: 7776000      # 财报 90天
+    us_financial_sec: 2592000  # SEC 财报 30天
+    us_stock_quote: 600        # 美股行情 10分钟(延迟源)
+    hk_stock_quote: 300
+    hk_stock_kline: 86400
+    github_repo: 604800        # 仓库元数据 7天
+    github_issues: 86400       # issues/pr 1天
+    github_release: 604800     # release 7天
+    github_search: 3600        # 搜索 1小时
+    macro: 2592000             # 宏观 30天
+    industry_price: 604800     # 行业现货 7天
+  stale_while_revalidate: true # 命中旧缓存先返回，后台刷新
+  db_path: "~/.hermes/data-cache.db"
+
+# ---------------- 数据源开关 ----------------
+sources:
+  tencent:      { enabled: true }   # A股/港股/美股 行情+K线
+  eastmoney:    { enabled: true }   # 财报datacenter
+  sec_edgar:    { enabled: true }   # 美股财报 需 UA
+  github_api:   { enabled: true }   # REST 读/搜
+  stats_gov:    { enabled: true }   # 国家统计局 宏观
+  akshare:      { enabled: true, note: "仅财报可用，行情接口ECS上断连" }
+  nighttally:   { enabled: true }   # 天天基金 ttskill(ETF估值)
+
+# ---------------- 速率限制 ----------------
+rate:
+  github_unauthenticated: 50   # 每秒上限(保守，实际60/hr)
+  github_unauthenticated_per_hour: 55  # 每小时内上限(留余量防407)
+  sec_max_per_sec: 8           # SEC 要求≤10/s
+  per_domain_qps: 1            # 浏览器兜底单域名
+  min_request_interval: 1      # GitHub 请求最小间隔(秒)
+
+# ---------------- 环境变量 ----------------
+# 全部用 env var，不写入代码/日志
+env:
+  SEC_USER_AGENT: "Zachary Zhou zacharyxue@example.com"  # SEC 要求带联系邮箱的UA
+  GITHUB_TOKEN: ""            # 可选，填了升到5000/hr
+  TSKILL_PATH: "/root/.local/bin/ttskill"

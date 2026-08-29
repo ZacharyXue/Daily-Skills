@@ -7,6 +7,8 @@ tags: [investment, 13f, sec, holdings, whale]
 
 # 大佬持仓跟踪（SEC 13F）
 
+> **数据源统一规范**：SEC EDGAR 的 HTTP 访问（需带 User-Agent、CIK 补零）统一由 `data-source-router` skill 提供（`adapters/finance.py` 的 `sec_companyfacts`/`sec_submissions`，入口 `data_router.get('us_financial_sec'/'us_revenue_sec')`）。本 skill 只保留 **13F XML 解析**（领域专属），原始 HTTP 不再重复实现。SEC 坑位（UA必填、CIK前导零、metric变更）见 data-source-router SKILL.md。
+
 拉取 SEC EDGAR 上的 13F 机构持仓披露（美股多头），看大佬买了什么、加仓了什么、清仓了什么。数据公开免费，通过 EDGAR 接口获取，无需 API key。
 
 ## 核心概念

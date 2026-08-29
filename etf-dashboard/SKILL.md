@@ -39,6 +39,8 @@ git commit -m "update etf dashboard $(date +%F)"
 
 ## 数据源（已验证稳定，2026-08）
 
+> **统一规范**：本看板的原始数据抓取底层走 `data-source-router` skill（腾讯行情/`ifzq` K线、中证官网PE、天天基金）。若需扩展标的或排查抓取，先看 `data-source-router` 的数据源地图，勿另起炉灶。
+
 | 数据 | 源 | 说明 |
 |------|----|------|
 | **5年 PE 分位** | 中证官网 `csindex index-perf` 的 **`peg` 字段=历史PE(TTM)** | 用近5年PE序列算当前PE百分位，判断贵贱主锚 |

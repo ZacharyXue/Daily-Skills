@@ -1,5 +1,7 @@
 # 股票数据接口速查（实战验证）
 
+> **数据源统一规范**：通用行情（A股/港股/美股实时、K线）、通用财报（东财 datacenter、SEC EDGAR）**一律走 `data-source-router` skill**（`/root/zach-skills/data-source-router/`），勿在本文件重复实现，避免口径不一致。本文件只保留 stock-analysis **领域专属**接口：分产品收入(MAINOP)、股东户数(HOLDERNUMLATEST)、机构研报(reportapi)、商品K线/期货(push2his/push2delay)。腾讯行情 `qt.gtimg.cn` / 东财 datacenter 的封装入口见 data-source-router `adapters/finance.py` + `data_router.py`。
+
 本文件汇总 `stock-analysis` 流水线用到的**全部数据接口**，均经真实调用验证。
 核心原则：
 - **东方财富 datacenter** = 财务数据主力（免费、无需 key、字段全）
