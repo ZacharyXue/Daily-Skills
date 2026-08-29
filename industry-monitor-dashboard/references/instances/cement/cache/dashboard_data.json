@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-08-30 01:28:20",
+ "fetched_at": "2026-08-30 01:42:12",
  "indicators": [
   {
    "id": "po425",
@@ -2016,9 +2016,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "cempi",
@@ -4035,9 +4035,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "clinker",
@@ -6054,9 +6054,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "cempi_clinker_spread",
@@ -8066,9 +8066,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "concrete",
@@ -10085,9 +10085,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "coal",
@@ -12096,9 +12096,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "ton_cost",
@@ -12125,9 +12125,9 @@
     "note": "吨营业成本 183.49 元/吨",
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "national_output",
@@ -12212,7 +12212,7 @@
    "last_good_at": "2026-07",
    "manual_at": "2026-07",
    "manual_note": "人工录入:国家统计局2026-07水泥产量同比-11.6%（用户提供，转自100njz.com披露统计局数据）",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "helluo_sales",
@@ -12239,9 +12239,9 @@
     "note": "自产品销量 1.21 亿吨，同比 -3.96%",
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "ton_gross_margin",
@@ -12268,9 +12268,9 @@
     "note": "自产品吨毛利 53.17 元/吨(收入-营业成本口径)",
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "helluo_np",
@@ -12559,9 +12559,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "cashflow_ratio",
@@ -12844,9 +12844,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "ton_price",
@@ -12873,9 +12873,9 @@
     "note": "自产品吨售价 236.65 元/吨",
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "ton_np",
@@ -12902,9 +12902,9 @@
     "note": "归母净利25.3亿 ÷ 销量1.21亿吨 = 20.9 元/吨（含骨料/混凝土口径近似）",
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "debt_ratio",
@@ -13183,9 +13183,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "dividend_yield",
@@ -13212,9 +13212,9 @@
     "note": "全年每股派息 0.85 元，现价 18.24 元（10年国债对比待补）",
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "monetary",
@@ -13237,9 +13237,9 @@
     "latest_date": "2026中报",
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "idebt",
@@ -13264,9 +13264,9 @@
     "note": "短借50.6+长借57.3+债券95.0亿 / 总资产2525亿",
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "fcf",
@@ -13291,9 +13291,9 @@
     "note": "经营现金45.2亿 - 资本开支33.3亿",
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "pb",
@@ -14628,9 +14628,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "ma",
@@ -18563,9 +18563,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "macd_rsi",
@@ -22500,9 +22500,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "kdj",
@@ -26433,9 +26433,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "boll",
@@ -30368,9 +30368,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "vol",
@@ -30399,9 +30399,9 @@
     "note": "今量326,473手 / 5日均量246,903手",
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "gm",
@@ -30680,9 +30680,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
   },
   {
    "id": "payout",
@@ -30711,9 +30711,309 @@
     "note": "每股0.85元×53.0亿股 / 归母净利81.1亿 = 55.5%",
     "stale": false
    },
-   "last_good_at": "2026-08-30 01:28:20",
+   "last_good_at": "2026-08-30 01:42:12",
    "status": "ok",
-   "fetched_at": "2026-08-30 01:28:20"
+   "fetched_at": "2026-08-30 01:42:12"
+  },
+  {
+   "id": "po425_east",
+   "group": "价格组",
+   "name": "华东P.O42.5均价",
+   "unit": "元/吨",
+   "ttl": "week",
+   "source": "人工采集(数字水泥网)",
+   "source_url": "https://data.ccement.com",
+   "getter": "manual",
+   "meaning": "华东主战场区域价，验证价格修复是否区域性。",
+   "signal": "华东≥300且连涨=区域止跌；贴近成本线(≈255)=磨底",
+   "status": "manual",
+   "note": "待接入(财报/公告/换通道)",
+   "value": {
+    "latest": 255,
+    "latest_date": "2026-08-28",
+    "note": "华东五省简单均值≈255元/吨(上海252/安徽251/浙江265/江苏239/福建268)；贴近成本线240-265",
+    "stale": false
+   },
+   "last_good": {
+    "latest": 255,
+    "latest_date": "2026-08-28",
+    "note": "华东五省简单均值≈255元/吨(上海252/安徽251/浙江265/江苏239/福建268)；贴近成本线240-265",
+    "stale": false
+   },
+   "last_good_at": "2026-08-28",
+   "manual_at": "2026-08-28",
+   "manual_note": "人工录入:数字水泥网 data.ccement.com 分省价格表(8-28)；华东主流成交价贴近成本线(约240-265)",
+   "fetched_at": "2026-08-30 01:42:12"
+  },
+  {
+   "id": "po425_south",
+   "group": "价格组",
+   "name": "华南P.O42.5均价",
+   "unit": "元/吨",
+   "ttl": "week",
+   "source": "人工采集(数字水泥网)",
+   "source_url": "https://data.ccement.com",
+   "getter": "manual",
+   "meaning": "华南海螺市占率高，验证南方价格。",
+   "signal": "华南≥300=修复；粤桂≈260/含琼316",
+   "status": "manual",
+   "note": "待接入(财报/公告/换通道)",
+   "value": {
+    "latest": 260,
+    "latest_date": "2026-08-28",
+    "note": "粤桂≈260元/吨(广东245/广西274)；含琼316(海南429异常高，剔除后260)",
+    "stale": false
+   },
+   "last_good": {
+    "latest": 260,
+    "latest_date": "2026-08-28",
+    "note": "粤桂≈260元/吨(广东245/广西274)；含琼316(海南429异常高，剔除后260)",
+    "stale": false
+   },
+   "last_good_at": "2026-08-28",
+   "manual_at": "2026-08-28",
+   "manual_note": "人工录入:数字水泥网分省价格表；海南429为异常高值已注明，粤桂主口径260",
+   "fetched_at": "2026-08-30 01:42:12"
+  },
+  {
+   "id": "electricity",
+   "group": "成本组",
+   "name": "安徽工业电价",
+   "unit": "元/千瓦时",
+   "ttl": "month",
+   "source": "人工采集(安徽省发改委)",
+   "source_url": "https://www.ah.gov.cn",
+   "getter": "manual",
+   "meaning": "成本组：电价稳则煤价主导成本弹性。",
+   "signal": "电价不上调=成本端无额外压力(≈0.64)",
+   "status": "manual",
+   "note": "待接入(财报/公告/换通道)",
+   "value": {
+    "latest": 0.64,
+    "latest_date": "2026-01",
+    "note": "安徽省电网代理购电 1-10kV 单一制非分时 0.6402元/kWh；峰谷分时尖峰1.216/高峰1.035/平时0.622/低谷0.318",
+    "stale": false
+   },
+   "last_good": {
+    "latest": 0.64,
+    "latest_date": "2026-01",
+    "note": "安徽省电网代理购电 1-10kV 单一制非分时 0.6402元/kWh；峰谷分时尖峰1.216/高峰1.035/平时0.622/低谷0.318",
+    "stale": false
+   },
+   "last_good_at": "2026-01",
+   "manual_at": "2026-01",
+   "manual_note": "人工录入:安徽省发改委/国网安徽代理购电电价表；较2025基本持平未上调(皖发改价格〔2025〕302号延续)",
+   "fetched_at": "2026-08-30 01:42:12"
+  },
+  {
+   "id": "capacity_util",
+   "group": "量组",
+   "name": "全国水泥产能利用率",
+   "unit": "%",
+   "ttl": "quarter",
+   "source": "人工采集(中国水泥大数据)",
+   "source_url": "https://www.ccement.com",
+   "getter": "manual",
+   "meaning": "供给端：产能利用率升=需求回暖或供给收缩。",
+   "signal": "从≈48%升到55-60%+=止跌回稳",
+   "status": "manual",
+   "note": "待接入(财报/公告/换通道)",
+   "value": {
+    "latest": 48,
+    "latest_date": "2026-06",
+    "note": "2026H1全国熟料真实产能利用率≈48%(不足一半)；单月7-8月无公开值",
+    "stale": false
+   },
+   "last_good": {
+    "latest": 48,
+    "latest_date": "2026-06",
+    "note": "2026H1全国熟料真实产能利用率≈48%(不足一半)；单月7-8月无公开值",
+    "stale": false
+   },
+   "last_good_at": "2026-06",
+   "manual_at": "2026-06",
+   "manual_note": "人工录入:中国水泥网水泥大数据研究院(腾讯证券7-31转引)；近一月单月利用率无公开披露",
+   "fetched_at": "2026-08-30 01:42:12"
+  },
+  {
+   "id": "housestart",
+   "group": "量组",
+   "name": "地产新开工同比",
+   "unit": "%",
+   "ttl": "month",
+   "source": "人工采集(国家统计局)",
+   "source_url": "https://www.stats.gov.cn",
+   "getter": "manual",
+   "meaning": "水泥需求先行：新开工降幅收窄=需求止跌。",
+   "signal": "新开工同比收窄(如-23%→-10%)=需求企稳",
+   "status": "manual",
+   "note": "待接入(财报/公告/换通道)",
+   "value": {
+    "latest": -23.4,
+    "latest_date": "2026-06",
+    "note": "2026年1-6月房屋新开工面积23239万㎡，同比-23.4%；住宅新开工16900万㎡(-24.1%)",
+    "stale": false
+   },
+   "last_good": {
+    "latest": -23.4,
+    "latest_date": "2026-06",
+    "note": "2026年1-6月房屋新开工面积23239万㎡，同比-23.4%；住宅新开工16900万㎡(-24.1%)",
+    "stale": false
+   },
+   "last_good_at": "2026-06",
+   "manual_at": "2026-06",
+   "manual_note": "人工录入:国家统计局《2026年1—6月份全国房地产市场基本情况》(7-15发布)；单7月单月同比无官方直值",
+   "fetched_at": "2026-08-30 01:42:12"
+  },
+  {
+   "id": "housestart2",
+   "group": "量组",
+   "name": "地产施工面积同比",
+   "unit": "%",
+   "ttl": "month",
+   "source": "人工采集(国家统计局)",
+   "source_url": "https://www.stats.gov.cn",
+   "getter": "manual",
+   "meaning": "施工面积决定存量需求。",
+   "signal": "施工降幅收窄=存量需求止跌(当前-12.5%)",
+   "status": "manual",
+   "note": "待接入(财报/公告/换通道)",
+   "value": {
+    "latest": -12.5,
+    "latest_date": "2026-06",
+    "note": "2026年1-6月房屋施工面积554049万㎡，同比-12.5%；住宅施工384453万㎡(-12.9%)",
+    "stale": false
+   },
+   "last_good": {
+    "latest": -12.5,
+    "latest_date": "2026-06",
+    "note": "2026年1-6月房屋施工面积554049万㎡，同比-12.5%；住宅施工384453万㎡(-12.9%)",
+    "stale": false
+   },
+   "last_good_at": "2026-06",
+   "manual_at": "2026-06",
+   "manual_note": "人工录入:国家统计局(1-6月累计口径)",
+   "fetched_at": "2026-08-30 01:42:12"
+  },
+  {
+   "id": "infra_invest",
+   "group": "量组",
+   "name": "基建投资同比",
+   "unit": "%",
+   "ttl": "month",
+   "source": "人工采集(国家统计局)",
+   "source_url": "https://www.stats.gov.cn",
+   "getter": "manual",
+   "meaning": "基建对冲地产下滑。",
+   "signal": "基建提速=水泥需求支撑(1-5月+0.6%,Q1+8.9%)",
+   "status": "manual",
+   "note": "待接入(财报/公告/换通道)",
+   "value": {
+    "latest": 0.6,
+    "latest_date": "2026-05",
+    "note": "2026年1-5月基建投资(不含电力)同比+0.6%(回落3.7pct)；Q1+8.9%；1-2月+11.4%；1-7月约+1.9%为推算",
+    "stale": false
+   },
+   "last_good": {
+    "latest": 0.6,
+    "latest_date": "2026-05",
+    "note": "2026年1-5月基建投资(不含电力)同比+0.6%(回落3.7pct)；Q1+8.9%；1-2月+11.4%；1-7月约+1.9%为推算",
+    "stale": false
+   },
+   "last_good_at": "2026-05",
+   "manual_at": "2026-05",
+   "manual_note": "人工录入:国家统计局月度投资数据(每日经济新闻8月转引)；1-7月精确值待8月中下旬官方发布",
+   "fetched_at": "2026-08-30 01:42:12"
+  },
+  {
+   "id": "special_bond",
+   "group": "量组",
+   "name": "专项债发行进度",
+   "unit": "%",
+   "ttl": "month",
+   "source": "人工采集(财政部)",
+   "source_url": "https://www.mof.gov.cn",
+   "getter": "manual",
+   "meaning": "专项债提速=基建资金到位。",
+   "signal": "进度>50%=资金支撑(H1 47%,2.07万亿)",
+   "status": "manual",
+   "note": "待接入(财报/公告/换通道)",
+   "value": {
+    "latest": 47,
+    "latest_date": "2026-06",
+    "note": "2026H1新增专项债20667亿元，发行进度47%(全年限额4.4万亿)；截至7月底累计约2.4万亿/超1.8万个项目",
+    "stale": false
+   },
+   "last_good": {
+    "latest": 47,
+    "latest_date": "2026-06",
+    "note": "2026H1新增专项债20667亿元，发行进度47%(全年限额4.4万亿)；截至7月底累计约2.4万亿/超1.8万个项目",
+    "stale": false
+   },
+   "last_good_at": "2026-06",
+   "manual_at": "2026-06",
+   "manual_note": "人工录入:财政部国新办发布会(7-21/7-22)；精确至8-28累计值无公开数据",
+   "fetched_at": "2026-08-30 01:42:12"
+  },
+  {
+   "id": "cr10",
+   "group": "供给/出清组",
+   "name": "水泥CR10集中度",
+   "unit": "%",
+   "ttl": "year",
+   "source": "人工采集(大公国际)",
+   "source_url": "https://www.dagong.com",
+   "getter": "manual",
+   "meaning": "软出清核心：CR10上行=小厂退出、龙头整合。",
+   "signal": "CR10上行(>65%且升)=出清推进",
+   "status": "manual",
+   "note": "待接入(财报/公告/换通道)",
+   "value": {
+    "latest": 65,
+    "latest_date": "2025-12",
+    "note": "水泥熟料CR10>65%（2025年末升至65%以上，2021-2025持续上升）",
+    "stale": false
+   },
+   "last_good": {
+    "latest": 65,
+    "latest_date": "2025-12",
+    "note": "水泥熟料CR10>65%（2025年末升至65%以上，2021-2025持续上升）",
+    "stale": false
+   },
+   "last_good_at": "2025-12",
+   "manual_at": "2025-12",
+   "manual_note": "人工录入:大公国际/水泥行业年报综述",
+   "fetched_at": "2026-08-30 01:42:12"
+  },
+  {
+   "id": "helluo_share",
+   "group": "供给/出清组",
+   "name": "海螺市占率",
+   "unit": "%",
+   "ttl": "year",
+   "source": "人工采集(券商研报)",
+   "source_url": "https://data.eastmoney.com",
+   "getter": "manual",
+   "meaning": "龙头份额提升=软出清中的赢家。",
+   "signal": "18%→20%+=海螺份额提升；实际14-15.6%",
+   "status": "manual",
+   "note": "待接入(财报/公告/换通道)",
+   "value": {
+    "latest": 15.6,
+    "latest_date": "2025-12",
+    "note": "海螺市场占有率约14-15.6%（2025H1\"14%左右\"；21-25年由12.79%升至15.65%）；2026H1未单独披露",
+    "stale": false
+   },
+   "last_good": {
+    "latest": 15.6,
+    "latest_date": "2025-12",
+    "note": "海螺市场占有率约14-15.6%（2025H1\"14%左右\"；21-25年由12.79%升至15.65%）；2026H1未单独披露",
+    "stale": false
+   },
+   "last_good_at": "2025-12",
+   "manual_at": "2025-12",
+   "manual_note": "人工录入:券商研报/行业媒体",
+   "fetched_at": "2026-08-30 01:42:12"
   }
  ],
  "peers": [

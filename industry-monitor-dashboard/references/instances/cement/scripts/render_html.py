@@ -137,6 +137,10 @@ def build():
     con = find("concrete_price"); cony = con.get("value", {}).get("yoy_1y") if con else None
     vol_ok = bool(cony is not None and cony >= -10)
     verdicts.append(("量", "企稳" if vol_ok else "偏弱", vol_ok))
+    # 供给/出清：CR10 上行(>65%) 或 水泥-熟料价差走扩 = 软出清推进
+    cr = find("cr10"); crv = cr.get("value", {}).get("latest") if cr else None
+    sup_ok = bool(crv is not None and crv >= 65)
+    verdicts.append(("供给/出清", "推进" if sup_ok else "缓慢", sup_ok))
 
     ok_n = sum(1 for _, _, ok in verdicts if ok)
     if ok_n >= 5: verdict_txt = "≥5类达标：接近加仓讨论区"
