@@ -21,7 +21,7 @@ tags: [career, growth, review, resume, architecture]
 
 **第一步：载入知识画像。**
 
-先读 `/root/.hermes/knowledge-ledger.md`（或 `~/.hermes/knowledge-ledger.md`）。这是持久化的知识档案，记录用户每项技能的 Bloom 层级、盲区、待挖方向。载入后你就拥有跨会话的「他知道什么、到哪一层」的上下文。
+先读 `/root/.hermes/career-data/knowledge-ledger.md`（或 `~/.hermes/career-data/knowledge-ledger.md`）。这是持久化的知识档案，记录用户每项技能的 Bloom 层级、盲区、待挖方向。载入后你就拥有跨会话的「他知道什么、到哪一层」的上下文。
 
 **第二步：记录 + 更新画像。**
 
@@ -38,29 +38,29 @@ tags: [career, growth, review, resume, architecture]
 
 **第四步：沉淀闭环。**
 
-对话结束后更新知识画像（`/root/.hermes/knowledge-ledger.md`）：升级的层标到 ⑤/⑥，新发现的盲区写进盲区清单。足够深、能独立讲清原理的点，才建议写博客或上简历。
+对话结束后更新知识画像（`/root/.hermes/career-data/knowledge-ledger.md`）：升级的层标到 ⑤/⑥，新发现的盲区写进盲区清单。足够深、能独立讲清原理的点，才建议写博客或上简历。
 
 **每次对话只深挖 1-2 个点**，不要一次问一堆，用户消化不了。用「还想往深里聊哪个点」收尾。
 
 ## 深挖池工作流（平时零散记录 → 集中爆发深挖）
 
 用户平时没时间逐轮迭代，用「零散囤 + 集中挖」的节奏。两个文件分工：
-- `~/.hermes/deepdive-backlog.md` — 待深挖问题池（平时囤，集中挖）
-- `~/.hermes/knowledge-ledger.md` — 知识画像（掌握度/盲区/方向）
+- `~/.hermes/career-data/deepdive-backlog.md` — 待深挖问题池（平时囤，集中挖）
+- `~/.hermes/career-data/knowledge-ledger.md` — 知识画像（掌握度/盲区/方向）
 
 **平时记录（用户丢一句话即可，不用写格式）：**
 - 用户发「记个问题：XXX」「待挖：XXX」「深挖：XXX」→ 追加到 deepdive-backlog.md，按主攻线归类
 - 用户发「记录一下：今天干了XXX」→ 记录 + 判断价值 + 可能追加问题入池
 
 **集中深挖（用户主动发起）：**
-- 用户发「开始深挖」「深挖吧」→ **先载入 `~/.hermes/job-demand.md` 总览**，确定当前市场侧重的技能（高频/高薪 = 优先深挖），深挖方向对齐市场
+- 用户发「开始深挖」「深挖吧」→ **先载入 `~/.hermes/career-data/job-demand.md` 总览**，确定当前市场侧重的技能（高频/高薪 = 优先深挖），深挖方向对齐市场
 - 从 deepdive-backlog.md 取一个最值得挖的问题（优先「市场刚需 + 一面最易被追问」），按「一句话本质→流程图→原理链→决策链→盲区」挖透
 - 挖完打【✅已深挖】并附成果摘要，更新 knowledge-ledger.md（技能升层/盲区补齐）
 - 每次集中只挖透 1 个点，用「还想挖哪个」收尾
 
 **岗位需求库（市场参照，深挖时读）：**
-- `~/.hermes/job-demand.md` — 总览：市场技能频次、你现状对照、深挖优先级
-- `~/.hermes/job-demand/<日期>.md` — 按日期分的 JD 详情（用户按批提供）
+- `~/.hermes/career-data/job-demand.md` — 总览：市场技能频次、你现状对照、深挖优先级
+- `~/.hermes/career-data/job-demand/<日期>.md` — 按日期分的 JD 详情（用户按批提供）
 - 目的：深挖哪些点、优先补哪些，由市场真实需求（薪资+高频）决定，而非用户臆想或 AI 猜测。用户定期更新，标注提供日期。
 
 ## 方向基准（判断价值的参照系，2026-08-26 更新）
