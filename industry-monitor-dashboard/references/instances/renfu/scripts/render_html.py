@@ -23,47 +23,46 @@ def badge(st):
     return ("err", "异常")
 
 def trend_svg(charts, w=640, h=130):
-    """将 charts=[{name,color,points:[{d,v}]}] 画成多线迷你趋势图 + 图例。无则回空。"""
+    """将 charts=[{name,color,points:[{d,v}]}] 画成多线趋势图 + 图例。共享 x 轴(唯一年份刻度,去重排序)。"""
     if not charts:
         return ""
-    allpts = [(p["d"], float(p["v"])) for ch in charts for p in ch.get("points", []) if p.get("v") is not None]
-    if len(allpts) < 2:
+    pts = [(p["d"], float(p["v"])) for ch in charts for p in ch.get("points", []) if p.get("v") is not None]
+    if len(pts) < 2:
         return ""
-    xs = [i for i in range(len(allpts))]
-    vals = [x[1] for x in allpts]
-    mn = min(vals); mx = max(vals); yspan = (mx - mn) or 1
-    pad = 6
-    X = lambda i: pad + i / max(1, len(allpts) - 1) * (w - 2 * pad)
+    xd = sorted(set(str(d) for d, _ in pts))   # 唯一 x 刻度(年份)去重排序 → 两序列共享, 同年对齐
+    mn = min(v for _, v in pts); mx = max(v for _, v in pts); yspan = (mx - mn) or 1
+    pad = 6; n = max(1, len(xd) - 1)
+    X = lambda i: pad + i / n * (w - 2 * pad)
     Y = lambda v: h - 12 - (v - mn) / yspan * (h - 26)
     svg = f'<svg viewBox="0 0 {w} {h}" width="100%" height="{h}" preserveAspectRatio="none" class="tsvg">'
     # 网格
-    svg += f'<line x1="{pad}" y1="{Y(mn)}" x2="{w-pad}" y2="{Y(mn)}" stroke="#eef1f4" stroke-width="1"/>'
-    svg += f'<line x1="{pad}" y1="{Y(mx)}" x2="{w-pad}" y2="{Y(mx)}" stroke="#eef1f4" stroke-width="1"/>'
+    svg += f'<line x1="{pad}" y1="{Y(mn):.1f}" x2="{w-pad}" y2="{Y(mn):.1f}" stroke="#eef1f4" stroke-width="1"/>'
+    svg += f'<line x1="{pad}" y1="{Y(mx):.1f}" x2="{w-pad}" y2="{Y(mx):.1f}" stroke="#eef1f4" stroke-width="1"/>'
     for ch in charts:
-        pts = ch.get("points", [])
-        # 映射到全序列的 x 索引
         coords = []
-        for p in pts:
-            if p.get("v") is None: continue
-            # 找到该点在 allpts 中的位置（按 d,v 匹配最近的索引次序）
-            idx = 0
-            for k, ap in enumerate(allpts):
-                if ap[0] == str(p["d"]) and abs(ap[1] - float(p["v"])) < 1e-6:
-                    idx = k; break
+        for p in ch.get("points", []):
+            if p.get("v") is None:
+                continue
+            d = str(p["d"])
+            if d not in xd:
+                continue
+            idx = xd.index(d)   # 共享年份刻度 → 两序列同年对齐(修复"横坐标不重叠")
             coords.append(f"{X(idx):.1f},{Y(float(p['v'])):.1f}")
-        svg += f'<polyline points="{" ".join(coords)}" fill="none" stroke="{ch.get("color","#2563eb")}" stroke-width="2"/>'
-        # 末点圆点
         if coords:
+            svg += f'<polyline points="{" ".join(coords)}" fill="none" stroke="{ch.get("color","#2563eb")}" stroke-width="2"/>'
             lx, ly = coords[-1].split(",")
             svg += f'<circle cx="{lx}" cy="{ly}" r="3" fill="{ch.get("color","#2563eb")}"/>'
-    # x 轴标签（首末点）
-    if len(allpts) >= 2:
-        svg += f'<text x="{pad}" y="{h-2}" font-size="9" fill="#9ca3af">{esc(allpts[0][0])}</text>'
-        svg += f'<text x="{w-pad}" y="{h-2}" font-size="9" fill="#9ca3af" text-anchor="end">{esc(allpts[-1][0])}</text>'
+    # x 轴标签: 首末年份 + (若刻度适中)中段
+    if len(xd) >= 2:
+        svg += f'<text x="{pad}" y="{h-2}" font-size="9" fill="#9ca3af">{esc(xd[0])}</text>'
+        svg += f'<text x="{w-pad}" y="{h-2}" font-size="9" fill="#9ca3af" text-anchor="end">{esc(xd[-1])}</text>'
+        if 5 < len(xd) <= 11:
+            mid = xd[len(xd) // 2]
+            svg += f'<text x="{X(xd.index(mid)):.1f}" y="{h-2}" font-size="9" fill="#9ca3af" text-anchor="middle">{esc(mid)}</text>'
     svg += '</svg>'
     if len(charts) > 1:
         leg = '<div class="chleg">' + "".join(
-            f'<span><span class="cl" style="background:{ch.get("color","#2563eb")}"></span>{ch.get("name")}</span>'
+            f'<span><span class="cl" style="background:{ch.get("color","#2563eb")}"></span>{esc(ch.get("name"))}</span>'
             for ch in charts) + '</div>'
         return svg + leg
     return svg
