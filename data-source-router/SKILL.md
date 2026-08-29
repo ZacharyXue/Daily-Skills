@@ -37,6 +37,8 @@ related_skills: [etf-dashboard, whale-holdings, stock-analysis, github-repo-mana
 | GitHub Release | `github_release` | GitHub REST v3 | ✅ 200 | 实时 |
 | GitHub 文件 | `github_file` | GitHub REST v3 | ✅ 200 | 实时 |
 | GitHub 搜索 | `github_search` | GitHub REST v3 | ✅ 200 | 实时 |
+| GitHub 贡献者(健康度) | `github_contributors` | GitHub REST v3 `/contributors`+Link头 | ✅ 200 | 实时 |
+| GitHub 低门槛label计数 | `github_label_counts` | GitHub Search API | ✅ 200 | 实时 |
 
 ### ❌ 实测不可用（不要用，写进这里避免重蹈）
 
@@ -97,6 +99,8 @@ data, source, meta, tier = get('github_release', owner='volcano-sh', repo='volca
 data, source, meta, tier = get('github_issues', owner='prometheus', repo='prometheus', state='all', limit=100)
 data, source, meta, tier = get('github_pulls', owner='volcano-sh', repo='volcano', state='all', limit=100)
 data, source, meta, tier = get('github_search', q='kubernetes language:go', limit=20)
+data, source, meta, tier = get('github_contributors', owner='volcano-sh', repo='volcano', top_n=10)
+data, source, meta, tier = get('github_label_counts', owner='volcano-sh', repo='volcano')
 ```
 
 **返回元组说明**：`(data, source, meta, tier)`
@@ -175,6 +179,8 @@ sys.path.insert(0, '/root/zach-skills/data-source-router')
 | `whale-holdings` | SEC 13F XML 解析（领域专属） | SEC 原始 HTTP 访问**由本层提供**（`us_financial_sec`/`us_revenue_sec` 或直调 `adapters.finance`），其脚本引用 |
 | `stock-analysis` | 基本面深度分析（商业模式/三表） | 财报数字来自本层（`cn_financial`/`us_financial_sec`），分析逻辑自留 |
 | `github-*` 系列 | GitHub **写操作**（建repo/PR/release/管理） | 本层只做**读/搜**（`github_repo`/`_issues`/`_pulls`/`_release`/`_search`/`_file`），两者不重叠 |
+| `github-oss-evaluation` | 5维度健康度**判读方法论**（pushed_at风险/厂商集中度/bot剔除/label缺失） | `repo`/`contributors`/`release`/`label计数` 抓取**本层提供**（`github_contributors`/`github_label_counts`），其只保留解读 |
+| `open-source-contribution` | 介入流程/候选项目路径/AI贡献政策 | 甄别真社区数据**本层提供**（同上 `github_contributors` 等），只保留判读阈值 |
 
 ## 快速自检
 

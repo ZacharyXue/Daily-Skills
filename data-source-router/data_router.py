@@ -47,6 +47,11 @@ def _register():
         "github_release":   (lambda p: gh.releases(p["owner"], p["repo"], p.get("limit", 20)), "github_api", TTL["github_release"], "T1"),
         "github_file":      (lambda p: gh.file_content(p["owner"], p["repo"], p["path"]), "github_api", TTL["github_repo"], "T1"),
         "github_search":    (lambda p: gh.search_repos(p["q"], p.get("sort", "stars"), p.get("limit", 20)), "github_api", TTL["github_search"], "T1"),
+        # GitHub 健康度评估(甄别真社区 vs 官方自嗨) — 见 github-oss-evaluation skill
+        "github_contributors": (lambda p: gh.contributors(p["owner"], p["repo"], p.get("top_n", 10)), "github_api", TTL["github_issues"], "T1"),
+        "github_label_counts": (lambda p: {"good_first_issue": gh.search_issues_by_label(p["owner"], p["repo"], "good first issue"),
+                                           "help_wanted": gh.search_issues_by_label(p["owner"], p["repo"], "help wanted")},
+                                "github_api", TTL["github_issues"], "T1"),
     }
 
 ROUTES = _register()

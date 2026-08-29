@@ -127,6 +127,49 @@ def search_issues(q, limit=20):
     r = _get("search/issues", {"q": q, "per_page": min(limit, 100)})
     return r.json().get("items", [])
 
+SEARCH_INTERVAL = 7.0  # Search API 未认证约 10/min，间隔 7s 留余量
+
+def search_issues_by_label(owner, repo_name, label, state="open"):
+    """查某 repo 带指定 label 的 open issue 数量（低门槛入口，good-first-issue/help-wanted）。
+    ⚠️ Search API 独立限流(未认证~10/min)，不进 core 的 60/hr 额度，用独立 SEARCH_INTERVAL。"""
+    q = f'repo:{owner}/{repo_name} label:"{label}" state:{state}'
+    with _state["lock"]:
+        wait = _state["last_request_ts"] + SEARCH_INTERVAL - time.time()
+        if wait > 0:
+            time.sleep(wait)
+        _state["last_request_ts"] = time.time()
+    r = SESSION.get(f"{API}/search/issues", params={"q": q}, timeout=15)
+    r.raise_for_status()
+    return r.json().get("total_count", 0)
+
+def contributors(owner, repo_name, top_n=10):
+    """贡献者健康度：总数 + 头部集中度 + top-N 名单。
+    一次调用拿满(per_page=100)，用 Link 头的 rel=last 页号估总贡献者，不循环翻页(限流灾难)。
+    返回 dict: {total, top, concentration, list:[{login,contributions,type}...]}"""
+    import re
+    _throttle()
+    url = f"{API}/repos/{owner}/{repo_name}/contributors"
+    # 手动发请求以同时拿 body + Link 头（复用限速后不破坏 _get 的 json 封装）
+    r = SESSION.get(url, params={"per_page": 100, "anon": "false"}, timeout=20)
+    r.raise_for_status()
+    items = r.json()
+    # 总贡献者 = Link rel=last 页号 × 100（带重定向防 repo 改名 301）
+    link = r.headers.get("Link", "")
+    m = re.search(r'page=(\d+)>; rel="last"', link)
+    total = int(m.group(1)) * 100 if m else len(items)
+    # 头部集中度 top_n/top100
+    contribs = [x.get("contributions", 0) for x in items[:100]]
+    top_sum = sum(contribs[:top_n]) if contribs else 0
+    all100 = sum(contribs) if contribs else 0
+    concentration = round(top_sum / all100 * 100, 1) if all100 else 0.0
+    return {
+        "total": total,
+        "top": top_n,
+        "concentration_pct": concentration,
+        "list": [{"login": x.get("login"), "contributions": x.get("contributions"), "type": x.get("type")}
+                 for x in items[:top_n]],
+    }
+
 def rate_limit_status():
     _throttle()
     return _get("rate_limit").json()
