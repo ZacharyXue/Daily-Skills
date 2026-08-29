@@ -3,3 +3,6 @@ career-data/
 # 看板过程数据：可重新 fetch 生成，不随公开仓同步；cache 含投资/财务数据
 industry-monitor-dashboard/references/instances/*/cache/
 industry-monitor-dashboard/references/instances/*/output/
+# Python 缓存：不进版本控制
+__pycache__/
+*.pyc

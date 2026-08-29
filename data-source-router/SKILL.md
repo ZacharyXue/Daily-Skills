@@ -28,6 +28,7 @@ related_skills: [industry-monitor-dashboard, whale-holdings, stock-analysis, git
 | 港股行情/K线 | `hk_stock_quote`/`hk_stock_kline` | 腾讯 | ✅ 200 | 实时 |
 | 美股行情 | `us_stock_quote` | 腾讯 `usAAPL` | ✅ 200 | 实时 |
 | A股财报 | `cn_financial` | 东财 `datacenter-web` | ✅ 200 | 季报后1-3天 |
+| A股财报完整序列 | `cn_financial_series` | 东财 `datacenter-web`(多报告期) | ✅ 200 | 季报后1-3天 |
 | 美股财报(facts) | `us_financial_sec` | SEC EDGAR `companyfacts` | ✅ 200(带UA) | 即时 |
 | 美股营收提取 | `us_revenue_sec` | SEC EDGAR | ✅ 200 | 即时 |
 | 宏观 | (预留) | 国家统计局 `data.stats.gov.cn` | ✅ 200 | 月度 |
@@ -94,6 +95,7 @@ data, source, meta, tier = get('us_stock_quote', symbol='usAAPL')
 
 # 财报
 data, source, meta, tier = get('cn_financial', code='600519')
+data, source, meta, tier = get('cn_financial_series', secucode='600079.SH', report_name='RPT_F10_FINANCE_MAINFINADATA', page=40)  # 多报告期完整序列; report_name 常用 MAINFINADATA(含INTEREST_DEBT_RATIO有息负债率)/GINCOME(利润表费用拆解)
 data, source, meta, tier = get('us_financial_sec', cik='0000320193')
 data, source, meta, tier = get('us_revenue_sec', cik='0000320193')  # 自动选最新metric
 

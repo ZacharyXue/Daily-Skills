@@ -120,6 +120,31 @@ def cn_financial(code):
         return {"code": code, "ok": False, "msg": "no data"}
     return {"code": code, "ok": True, "data": data[0]}
 
+
+def cn_financial_series(secucode, report_name="RPT_F10_FINANCE_MAINFINADATA", page=40):
+    """东财完整财务序列(多报告期)，供看板做年度趋势/降本拆解。
+
+    secucode: 带后缀 e.g. '600079.SH'。report_name 常用:
+      - RPT_F10_FINANCE_MAINFINADATA  主财务(含 INTEREST_DEBT_RATIO 有息负债率)
+      - RPT_F10_FINANCE_GINCOME       利润表(费用拆解: 营业成本/销售/管理/研发/财务费用)
+    返回该接口原始 rows 列表(按 REPORT_DATE 倒序, 含 REPORT_DATE_NAME 报告期名)。领域逻辑(滤年报/归因)留各看板。
+    """
+    filt = urllib.parse.quote(f'(SECUCODE="{secucode}")')
+    url = ("https://datacenter.eastmoney.com/securities/api/data/v1/get"
+           f"?reportName={report_name}&columns=ALL&filter={filt}"
+           f"&pageNumber=1&pageSize={page}&sortTypes=-1&sortColumns=REPORT_DATE")
+    last = None
+    for i in range(3):
+        try:
+            r = _req(url, timeout=35)
+            j = r.json()
+            rows = j.get("result", {}).get("data", [])
+            return rows
+        except Exception as e:
+            last = e
+            time.sleep(1.2)
+    raise last
+
 # ============ SEC EDGAR 美股财报 ============
 def _pad_cik(cik):
     """SEC URL 需要 10 位带前导零，如 0000320193。"""

@@ -18,6 +18,15 @@ def _zach_root():
         d = os.path.dirname(d)
     return os.environ.get("ZACH_SKILLS", "/root/zach-skills")
 
+# 统一走 data-source-router 取数（数据源/缓存/重试/Tier 全在 router，勿自建重复抓取）
+sys.path.insert(0, os.path.join(_zach_root(), "data-source-router"))
+try:
+    import data_router as DSR
+    _HAS_DSR = True
+except Exception as e:
+    _HAS_DSR = False
+    print(f"[warn] data-source-router 未就绪({e})，走直连东财兜底")
+
 CACHE = os.path.join(BASE, "cache"); os.makedirs(CACHE, exist_ok=True)
 DATA_PATH = os.path.join(CACHE, "dashboard_data.json")
 
@@ -35,12 +44,24 @@ def _get(url, headers=UA, timeout=35, retry=2):
 
 # ---------- 东财主财务数据（含有息负债率） ----------
 def em_fin(secucode, page=40):
+    """主财务序列(含 INTEREST_DEBT_RATIO 有息负债率)。优先走 router；DSR 不可用才直连。"""
+    if _HAS_DSR:
+        d, _s, _m, _t = DSR.get("cn_financial_series", secucode=secucode,
+                                 report_name="RPT_F10_FINANCE_MAINFINADATA", page=page)
+        if isinstance(d, list):
+            return d
     url = ("https://datacenter.eastmoney.com/securities/api/data/v1/get?reportName=RPT_F10_FINANCE_MAINFINADATA&columns=ALL"
            f"&filter=(SECUCODE%3D%22{secucode}%22)&pageNumber=1&pageSize={page}&sortTypes=-1&sortColumns=REPORT_DATE")
     return _get(url)["result"]["data"]
 
 # ---------- 东财利润表（费用拆解） ----------
 def em_stmt(secucode, report_arg, page=40):
+    """利润表(费用拆解)。优先走 router；DSR 不可用才直连。"""
+    if _HAS_DSR:
+        d, _s, _m, _t = DSR.get("cn_financial_series", secucode=secucode,
+                                 report_name=report_arg, page=page)
+        if isinstance(d, list):
+            return d
     url = ("https://datacenter.eastmoney.com/securities/api/data/v1/get?reportName=" + report_arg + "&columns=ALL"
            f"&filter=(SECUCODE%3D%22{secucode}%22)&pageNumber=1&pageSize={page}&sortTypes=-1&sortColumns=REPORT_DATE")
     return _get(url)["result"]["data"]

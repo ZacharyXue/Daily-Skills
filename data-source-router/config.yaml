@@ -7,6 +7,7 @@ cache:
     cn_stock_quote: 300        # A股实时快照 5分钟
     cn_stock_kline: 86400      # 日线K线 T+1，24h
     cn_financial: 7776000      # 财报 90天
+    cn_financial_series: 7776000  # 财报完整序列(多报告期) 90天
     us_financial_sec: 2592000  # SEC 财报 30天
     us_stock_quote: 600        # 美股行情 10分钟(延迟源)
     hk_stock_quote: 300
