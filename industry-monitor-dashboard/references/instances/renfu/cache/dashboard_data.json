@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-08-30 02:34:16",
+ "fetched_at": "2026-08-30 02:47:01",
  "indicators": [
   {
    "id": "snap_rev",
@@ -34,9 +34,9 @@
     "idebt": 22.1,
     "stale": false
    },
-   "last_good_at": "2026-08-30 02:34:16",
+   "last_good_at": "2026-08-30 02:47:01",
    "status": "ok",
-   "fetched_at": "2026-08-30 02:34:16"
+   "fetched_at": "2026-08-30 02:47:01"
   },
   {
    "id": "snap_np",
@@ -71,9 +71,9 @@
     "idebt": 22.1,
     "stale": false
    },
-   "last_good_at": "2026-08-30 02:34:16",
+   "last_good_at": "2026-08-30 02:47:01",
    "status": "ok",
-   "fetched_at": "2026-08-30 02:34:16"
+   "fetched_at": "2026-08-30 02:47:01"
   },
   {
    "id": "snap_roe",
@@ -108,9 +108,9 @@
     "idebt": 22.1,
     "stale": false
    },
-   "last_good_at": "2026-08-30 02:34:16",
+   "last_good_at": "2026-08-30 02:47:01",
    "status": "ok",
-   "fetched_at": "2026-08-30 02:34:16"
+   "fetched_at": "2026-08-30 02:47:01"
   },
   {
    "id": "snap_debt",
@@ -145,9 +145,9 @@
     "idebt": 22.1,
     "stale": false
    },
-   "last_good_at": "2026-08-30 02:34:16",
+   "last_good_at": "2026-08-30 02:47:01",
    "status": "ok",
-   "fetched_at": "2026-08-30 02:34:16"
+   "fetched_at": "2026-08-30 02:47:01"
   },
   {
    "id": "snap_idebt",
@@ -182,9 +182,9 @@
     "idebt": 22.1,
     "stale": false
    },
-   "last_good_at": "2026-08-30 02:34:16",
+   "last_good_at": "2026-08-30 02:47:01",
    "status": "ok",
-   "fetched_at": "2026-08-30 02:34:16"
+   "fetched_at": "2026-08-30 02:47:01"
   },
   {
    "id": "trend_rev",
@@ -305,9 +305,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 02:34:16",
+   "last_good_at": "2026-08-30 02:47:01",
    "status": "ok",
-   "fetched_at": "2026-08-30 02:34:16"
+   "fetched_at": "2026-08-30 02:47:01"
   },
   {
    "id": "trend_roe",
@@ -426,9 +426,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 02:34:16",
+   "last_good_at": "2026-08-30 02:47:01",
    "status": "ok",
-   "fetched_at": "2026-08-30 02:34:16"
+   "fetched_at": "2026-08-30 02:47:01"
   },
   {
    "id": "trend_debt",
@@ -547,9 +547,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 02:34:16",
+   "last_good_at": "2026-08-30 02:47:01",
    "status": "ok",
-   "fetched_at": "2026-08-30 02:34:16"
+   "fetched_at": "2026-08-30 02:47:01"
   },
   {
    "id": "trend_idebt",
@@ -668,9 +668,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 02:34:16",
+   "last_good_at": "2026-08-30 02:47:01",
    "status": "ok",
-   "fetched_at": "2026-08-30 02:34:16"
+   "fetched_at": "2026-08-30 02:47:01"
   },
   {
    "id": "cost_struct_latest",
@@ -711,9 +711,9 @@
     "prev_finance": 1.3,
     "stale": false
    },
-   "last_good_at": "2026-08-30 02:34:16",
+   "last_good_at": "2026-08-30 02:47:01",
    "status": "ok",
-   "fetched_at": "2026-08-30 02:34:16"
+   "fetched_at": "2026-08-30 02:47:01"
   },
   {
    "id": "fin_expense",
@@ -832,9 +832,9 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 02:34:16",
+   "last_good_at": "2026-08-30 02:47:01",
    "status": "ok",
-   "fetched_at": "2026-08-30 02:34:16"
+   "fetched_at": "2026-08-30 02:47:01"
   },
   {
    "id": "idebt_vs_fin",
@@ -1045,9 +1045,110 @@
     ],
     "stale": false
    },
-   "last_good_at": "2026-08-30 02:34:16",
+   "last_good_at": "2026-08-30 02:47:01",
    "status": "ok",
-   "fetched_at": "2026-08-30 02:34:16"
+   "fetched_at": "2026-08-30 02:47:01"
+  },
+  {
+   "id": "contrib_breakdown",
+   "group": "降本拆解",
+   "name": "降本贡献度拆解",
+   "unit": "% / 亿元",
+   "ttl": "quarter",
+   "source": "东方财富 datacenter",
+   "source_url": "https://datacenter.eastmoney.com",
+   "meaning": "每 +1 元利润增量从哪来？营业成本/研发/管理下降贡献、销售/财务上升拖累，逐项归因。",
+   "signal": "降本贡献 +4.06亿(220%) vs 费用拖累 -2.31亿(124%) → 净 +1.74亿；关键看营业成本(137%)是否可持续",
+   "getter": "contrib_breakdown",
+   "value": {
+    "report": "2026中报",
+    "prev_report": "2025中报",
+    "np_c": 13.3,
+    "np_p": 11.55,
+    "np_delta": 1.75,
+    "np_pct": 15.15,
+    "items": [
+     {
+      "label": "营业成本",
+      "delta": -2.39,
+      "pc": 2.39,
+      "pct": 137.0
+     },
+     {
+      "label": "销售费用",
+      "delta": 1.41,
+      "pc": -1.41,
+      "pct": -81.0
+     },
+     {
+      "label": "管理费用",
+      "delta": -0.63,
+      "pc": 0.63,
+      "pct": 36.0
+     },
+     {
+      "label": "研发费用",
+      "delta": -1.03,
+      "pc": 1.03,
+      "pct": 59.0
+     },
+     {
+      "label": "财务费用",
+      "delta": 0.9,
+      "pc": -0.9,
+      "pct": -52.0
+     }
+    ],
+    "cost_total": 4.05,
+    "exp_total": 2.31,
+    "stale": false
+   },
+   "last_good": {
+    "report": "2026中报",
+    "prev_report": "2025中报",
+    "np_c": 13.3,
+    "np_p": 11.55,
+    "np_delta": 1.75,
+    "np_pct": 15.15,
+    "items": [
+     {
+      "label": "营业成本",
+      "delta": -2.39,
+      "pc": 2.39,
+      "pct": 137.0
+     },
+     {
+      "label": "销售费用",
+      "delta": 1.41,
+      "pc": -1.41,
+      "pct": -81.0
+     },
+     {
+      "label": "管理费用",
+      "delta": -0.63,
+      "pc": 0.63,
+      "pct": 36.0
+     },
+     {
+      "label": "研发费用",
+      "delta": -1.03,
+      "pc": 1.03,
+      "pct": 59.0
+     },
+     {
+      "label": "财务费用",
+      "delta": 0.9,
+      "pc": -0.9,
+      "pct": -52.0
+     }
+    ],
+    "cost_total": 4.05,
+    "exp_total": 2.31,
+    "stale": false
+   },
+   "last_good_at": "2026-08-30 02:47:01",
+   "status": "ok",
+   "fetched_at": "2026-08-30 02:47:01"
   }
  ]
 }

@@ -80,4 +80,9 @@ INDICATORS = [
          meaning="去杠杆红利双验证：有息负债率降 → 财务费用降。",
          signal="两条线同向下行 = 降本真实且可持续",
          getter="trend_idebt_fin"),
+    dict(id="contrib_breakdown", group="降本拆解", name="降本贡献度拆解", unit="% / 亿元", ttl="quarter",
+         source="东方财富 datacenter", source_url="https://datacenter.eastmoney.com",
+         meaning="每 +1 元利润增量从哪来？营业成本/研发/管理下降贡献、销售/财务上升拖累，逐项归因。",
+         signal="降本贡献 +4.06亿(220%) vs 费用拖累 -2.31亿(124%) → 净 +1.74亿；关键看营业成本(137%)是否可持续",
+         getter="contrib_breakdown"),
 ]

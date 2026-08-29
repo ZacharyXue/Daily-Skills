@@ -38,7 +38,16 @@ cp output/renfu_dashboard.html /root/ZacharyXue.github.io/public/exports/renfu-d
 ## 指标设计（indicators.py 注释驱动）
 - **快照组**：snap_rev/np/roe/debt/idebt —— 最新一期(中报)当前值，GETTER 全调 `get_snap()`（返回同一完整 dict）。
 - **走势组**：trend_rev/roe/debt/idebt —— 年度SVG趋势；各 GETTER 独立。
-- **降本拆解组**：cost_struct_latest（费用占比表 + 2025年报对比）、fin_expense（财务费用年度）、idebt_vs_fin（有息负债率 vs 财务费用双线）。
+- **降本拆解组**：contrib_breakdown（**降本贡献度拆解**：每+1元利润增量从哪来，逐项归因）、fin_expense（财务费用年度）、idebt_vs_fin（有息负债率 vs 财务费用双线）、cost_struct_latest（费用占比）。
+
+## 降本拆解（详细版，2026-08 重做）
+用户强调「降本拆解是重中之重」，按之前那张图(`/tmp/gen_renfu_cost_breakdown.py`)的深度重做进 HTML，四区块：
+1. **①贡献度占比条形图**：营业成本-2.39亿(+137%)/研发-1.03亿(+59%)/管理-0.63亿(+36%)/销售+1.41亿(-81%)/财务+0.90亿(-52%)，降本贡献+4.05亿 vs 费用拖累-2.31亿，净+1.74亿。
+2. **②营业成本降在哪**：60.12 vs 62.51亿(-3.82%)，真实驱动=高毛利工业占比↑/精益生产/供应链优化。
+3. **③研发费用降本真相**：职工薪酬+1.3%(人没裁)/耗用材料-53.6%/临床费-2.4%/其他直接-32.2%；资本化0.83<0.88亿→**不是费用转资本化美化**，真降的是耗材/外包=项目节奏变化。
+4. **④可持续性判断**：营业成本[强]/管理[中]/研发[弱]/销售财务[弱]，结论=毛利可持续、管理有天花板、研发不可复制、营收未扩张是硬伤。
+
+> 条形图红条(拖累)显示**负号**(如-1.41亿/-81%)，绿条(贡献)显示+号；数值用**利润贡献pc**的符号，不是费用变化的符号（避免把"财务费用上升"误读成贡献）。
 
 ## Pitfalls（本会话踩过）
 - **`urllib.request` 未导入**：fetch.py 用 `_get()` 需 `import urllib.request`，漏了会报 `name 'urllib' is not defined`（脚本顶部补上）。
@@ -48,6 +57,8 @@ cp output/renfu_dashboard.html /root/ZacharyXue.github.io/public/exports/renfu-d
 - **render 里取 value 用实际 indicator id**：id 是 `snap_rev` 不是 `snap`，`cost_struct_latest` 不是 `cost_struct`；取错 key 会得到空 dict（卡片数值全 MISS）。
 - **`fnum` 默认1位小数**：ROE/负债率/有息负债率/财务费用这类精度敏感值要用 `fnum(x, 2)`，否则 6.82 被截成 6.8。
 - **趋势图空点**：`trend_ref` 先 `_series` 再过滤「年报」，若某字段当年无值会少点，渲染时需容错（len<2 不画）。
+- **走势卡一行一个**：`.tgrid` 用 `grid-template-columns:1fr`（单列），用户要求"前面几个看板一行一个"。
+- **贡献度条形图符号**：红条(拖累)数值要带负号，用利润贡献pc符号而非费用变化符号（见上）。
 
 ## 验证工具
 - 无头浏览器截图：`/root/hermes-venv/chrome/linux-152.0.7977.42/chrome-linux64/chrome --no-sandbox --headless --disable-gpu --screenshot=/tmp/x.png --window-size=980,2400 file://.../output/renfu_dashboard.html`

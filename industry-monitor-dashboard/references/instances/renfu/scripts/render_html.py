@@ -140,49 +140,99 @@ def build():
             f'<div class="meta">来源：{esc(ind.get("source",""))} · 报告期：{esc(val.get("latest_date",""))}</div>'
             f'</div>')
 
-    # ---- 降本拆解区 ----
-    # 费用结构占比比较（最新一期 vs 2025年报）
-    cost_rows = ""
-    cost_labels = [("sale","销售费用"),("manage","管理费用"),("research","研发费用"),("finance","财务费用")]
-    for key, label in cost_labels:
-        cur = cost.get(key)
-        prev = cost.get("prev_" + key)
-        delta = (cur - prev) if (cur is not None and prev is not None) else None
-        dcls = "neg" if (delta is not None and delta < 0) else ""
-        cost_rows += (f'<tr><td class="pn">{label}</td>'
-                      f'<td>{fnum(cur)}%</td><td>{fnum(prev)}%</td>'
-                      f'<td class="{dcls}">{fnum(delta)}pct</td></tr>')
-    oper_cost = cost.get("oper_cost")
-    cost_rows += (f'<tr><td class="pn">营业成本</td><td>{fnum(oper_cost)}%</td><td>—</td><td>—</td></tr>')
+    # ---- 降本拆解区（详细版：贡献度拆解） ----
+    cb = v("contrib_breakdown")
+    prod_report = cb.get("report", "2026中报"); prev_report = cb.get("prev_report", "2025中报")
+    np_delta = cb.get("np_delta"); np_pct = cb.get("np_pct")
 
-    # 财务费用趋势（去杠杆红利）
+    # ① 贡献度条形图（每 +1 元利润增量从哪来）
+    def cbar_row(item, max_pct):
+        pct = item.get("pct", 0); pc = item.get("pc", 0)
+        col = "#16a34a" if pc > 0 else "#dc2626"   # 绿=贡献，红=拖累
+        w = max(4, min(100, abs(pct) / max_pct * 100))
+        sign = "+" if pc > 0 else "-"
+        pctcls = "pos" if pc > 0 else "neg"
+        return (f'<div class="cbar-row"><span class="cbar-label">{esc(item.get("label"))}</span>'
+                f'<span class="cbar-val {pctcls}">{sign}{fnum(abs(item.get("pc")), 2)}亿</span>'
+                f'<div class="cbar-track"><span class="cbar-fill" style="width:{w:.0f}%;background:{col}"></span></div>'
+                f'<span class="cbar-pct {pctcls}">{sign}{abs(pct):.0f}%</span></div>')
+    c_items = cb.get("items", [])
+    max_pct = max([abs(i.get("pct", 0)) for i in c_items] or [1])
+    cbar_html = "".join(cbar_row(i, max_pct) for i in c_items)
+    cost_total = cb.get("cost_total"); exp_total = cb.get("exp_total")
+
+    # ② 营业成本降在哪（主营业务成本拆分）
+    # 数据从利润表 GINCOME 拆：主营业务 vs 其他业务成本由 OPERATE_COST 及 MAINOP 合成，这里用披露口径固定+注释
+    oper_cost_card = f"""<div class="costcard">
+      <div class="chead">② 营业成本（-2.39亿，-3.82%）降在哪</div>
+      <table class="costtab"><thead><tr><th>科目</th><th>2026中报</th><th>2025中报</th><th>变化</th></tr></thead>
+      <tbody>
+        <tr><td class="pn">营业成本</td><td class="pos">60.12 亿</td><td>62.51 亿</td><td class="pos">-2.39 亿 ✅</td></tr>
+        <tr><td class="pn">营业成本率</td><td class="pos">49.8%</td><td>51.8%</td><td class="pos">-2.0 pct</td></tr>
+      </tbody></table>
+      <div class="cnote"><b>真实驱动（官方归因）</b>——不是买便宜原料，是结构性提效：<br>
+        1. <b>高毛利医药工业占比↑</b>、低毛利医药商业受控（归核聚焦）→ 加权毛利提升<br>
+        2. <b>精益生产 + 产能利用率提升</b>（智能制造）→ 单位产出效率↑<br>
+        3. <b>供应链/采购优化</b> → 药价集采背景下的成本管控</div>
+    </div>"""
+
+    # ③ 研发费用降本真相（最需警惕）
+    rd_card = f"""<div class="costcard">
+      <div class="chead">③ 研发费用（-1.03亿，-13.9%）——最需警惕的一块</div>
+      <table class="costtab"><thead><tr><th>明细</th><th>2026中报</th><th>2025中报</th><th>解读</th></tr></thead>
+      <tbody>
+        <tr><td class="pn">职工薪酬</td><td>3.09 亿</td><td>3.05 亿</td><td>+1.3% 人没裁</td></tr>
+        <tr><td class="pn">耗用材料</td><td>0.62 亿</td><td>1.33 亿</td><td class="neg">-53.6% 重灾区</td></tr>
+        <tr><td class="pn">临床试验费</td><td>2.38 亿</td><td>2.44 亿</td><td>-2.4%</td></tr>
+        <tr><td class="pn">其他直接费</td><td>0.60 亿</td><td>0.88 亿</td><td class="neg">-32.2% 重灾</td></tr>
+      </tbody></table>
+      <div class="concl warn"><b>是否美化？</b>资本化研发支出 0.83亿 &lt; 上期 0.88亿 → <b>不是费用转资本化的美化</b>。职工薪酬没动、资本化还降：真降的是<b>耗材/外包</b> → 是研发<b>项目节奏变化</b>，非砍团队。但注意：<b>研发是利润的种子</b>，阶段性减少不可复制，后续最需追踪。</div>
+    </div>"""
+
+    # ④ 可持续性判断
+    sus_card = f"""<div class="costcard">
+      <div class="chead">④ 可持续性判断——哪些是真降本、哪些是一次性</div>
+      <table class="sus-tab"><thead><tr><th>科目</th><th>强度</th><th>性质</th></tr></thead>
+      <tbody>
+        <tr><td class="pn">营业成本</td><td><span class="sus-lv sus-ok">[强]</span></td><td>结构优化 + 精益供应链，<b>内生可延续</b>（毛利占比↑）</td></tr>
+        <tr><td class="pn">管理费用</td><td><span class="sus-lv sus-mid">[中]</span></td><td>组织精简红利，<b>一次性居多</b>、有天花板</td></tr>
+        <tr><td class="pn">研发费用</td><td><span class="sus-lv sus-weak">[弱]</span></td><td>耗材/外包阶段性减少，<b>不可复制</b>，且是利润种子</td></tr>
+        <tr><td class="pn">销售/财务</td><td><span class="sus-lv sus-weak">[弱]</span></td><td>本期<b>上升拖累</b>（销售+1.41亿、财务+0.90亿），是利润的减项</td></tr>
+      </tbody></table>
+      <div class="concl"><b>结论：</b>最扎实的是<b>毛利（工业占比↑）</b>，可持续；管理费用是组织红利（有天花板）；研发降本要看穿——是节奏波动不是省钱，且资本化还降；销售/财务本期在增，是利润拖累。综合看，<b>降本质量中等偏上，但营收未扩张是硬伤</b>。</div>
+    </div>"""
+
+    # 财务费用趋势（去杠杆）+ 有息负债率双线
     fin_charts = finexp.get("charts") or []
     fin_svg = trend_svg(fin_charts)
-
-    # 有息负债率 vs 财务费用（双线验证）
     ifv = v("idebt_vs_fin")
     ifv_svg = trend_svg(ifv.get("charts"))
 
     cost_html = f"""<section class="grp">
-    <h2 class="gtitle">降本拆解</h2>
-    <div class="costgrid">
+    <h2 class="gtitle">降本拆解（{esc(prod_report)} vs {esc(prev_report)} · 归母净利 {np_delta:+.2f}亿 / {np_pct:+.2f}%）</h2>
       <div class="costcard">
-        <div class="chead">费用结构占比（销售/管理/研发/财务，占营收%）</div>
-        <table class="costtab"><thead><tr><th>项目</th><th>最新期<br>({esc(cost.get("report",""))})</th><th>2025年报</th><th>变化</th></tr></thead>
-        <tbody>{cost_rows}</tbody></table>
-        <div class="cnote">费用率整体下行=降本见效。研发费占比高且稳，说明把研发当战略投入；财务费最低=去杠杆后利息负担最轻。</div>
+        <div class="chead">① 贡献度占比 —— 每 +1 元利润增量从哪来</div>
+        <div class="csub">降本（营业成本+研发+管理）合计贡献 <b class="pos">+{fnum(cost_total)} 亿({round(sum(i.get('pct',0) for i in c_items if i.get('pc',0)>0)):+.0f}%)</b>，被销售+财务拖累 <b class="neg">-{fnum(exp_total)} 亿</b>，净 <b>+{fnum(np_delta)} 亿</b>。</div>
+        {cbar_html}
+        <div class="cnote">绿色=降本救利润，红色=费用吞噬利润。头号功臣是<b>营业成本（+137%）</b>，最需警惕的是<b>研发（+59%）</b>与<b>销售+财务（合计-133%）</b>。</div>
       </div>
+      <div class="costgrid">
+      {oper_cost_card}
+      {rd_card}
+      </div>
+      <div class="costgrid">
       <div class="costcard">
         <div class="chead">财务费用（年度，亿元）</div>
         {fin_svg}
         <div class="cnote">财务费用 2022 年报 2.37亿 → 2025 年报 3.03亿 → 2026中报 2.11亿。其中 2025 年报<b>利息费用</b> 2.71亿（去杠杆直接体现）。</div>
       </div>
-      <div class="costcard wide">
+      <div class="costcard">
         <div class="chead">去杠杆红利双验证：有息负债率 vs 财务费用（年度）</div>
         {ifv_svg}
         <div class="cnote">两条线同向下行=去杠杆真实且可持续。这解释了净利为何在营收收缩时仍增长——靠降费用+去杠杆，而非收入扩张。</div>
       </div>
-    </div>
+      </div>
+      {sus_card}
     </section>"""
 
     # ---- 所有走势卡片汇总 ----
@@ -215,8 +265,8 @@ header .meta {{ color:var(--sub); font-size:13px; }}
 .sname {{ font-size:12px; color:var(--sub); margin-top:2px; }}
 .ssub {{ font-size:11px; color:var(--acc); margin-top:2px; }}
 .gtitle {{ font-size:16px; margin:26px 0 10px; padding-left:10px; border-left:4px solid var(--acc); }}
-.tgrid {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:12px; }}
-.tcard {{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; }}
+.tgrid {{ display:grid; grid-template-columns:1fr; gap:12px; width:100%; }}
+.tcard {{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; width:100%; }}
 .thead {{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }}
 .cname {{ font-weight:600; }}
 .tval {{ font-size:16px; font-weight:700; color:var(--acc); margin-left:auto; }}
@@ -229,16 +279,36 @@ header .meta {{ color:var(--sub); font-size:13px; }}
 .chleg {{ display:flex; gap:12px; flex-wrap:wrap; font-size:11px; color:var(--sub); padding-top:4px; }}
 .chleg .cl {{ display:inline-block; width:12px; height:3px; margin-right:4px; vertical-align:middle; }}
 .meta {{ margin-top:8px; font-size:12px; color:var(--sub); }}
-.costgrid {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:12px; }}
-.costcard {{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; }}
-.costcard.wide {{ grid-column:1 / -1; }}
-.chead {{ font-weight:600; margin-bottom:8px; }}
+/* 降本拆解详细版 */
+.costgrid {{ display:grid; grid-template-columns:1fr; gap:14px; }}
+.costcard {{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 18px; }}
+.chead {{ font-weight:700; margin-bottom:10px; font-size:14px; }}
+.csub {{ font-size:12px; color:var(--sub); margin-bottom:12px; }}
 .costtab {{ width:100%; border-collapse:collapse; font-size:13px; }}
-.costtab th,.costtab td {{ padding:7px 9px; text-align:right; border-bottom:1px solid var(--line); }}
+.costtab th,.costtab td {{ padding:8px 10px; text-align:right; border-bottom:1px solid var(--line); }}
 .costtab th {{ background:#f1f2f4; color:var(--sub); font-weight:600; text-align:center; font-size:11px; }}
 .costtab td.pn {{ text-align:left; font-weight:600; }}
 .costtab td.neg {{ color:var(--err); }}
-.cnote {{ margin-top:8px; font-size:12px; color:var(--sub); line-height:1.7; }}
+.costtab td.pos {{ color:var(--ok); }}
+.cnote {{ margin-top:10px; font-size:12px; color:var(--sub); line-height:1.8; }}
+.cnote b {{ color:var(--ink); }}
+/* 贡献度条形 */
+.cbar-row {{ display:flex; align-items:center; gap:10px; margin:8px 0; }}
+.cbar-label {{ width:88px; font-size:13px; font-weight:600; flex:none; }}
+.cbar-val {{ width:64px; font-size:13px; text-align:right; flex:none; }}
+.cbar-track {{ flex:1; background:#f1f2f4; border-radius:6px; height:24px; position:relative; overflow:hidden; }}
+.cbar-fill {{ position:absolute; top:0; bottom:0; border-radius:6px; }}
+.cbar-pct {{ width:52px; font-size:13px; font-weight:700; text-align:right; flex:none; }}
+/* 结论框 */
+.concl {{ background:#f0fdf4; border:1px solid #dcfce7; border-radius:8px; padding:10px 14px; margin-top:10px; font-size:13px; line-height:1.8; color:#166534; }}
+.concl.warn {{ background:#fffbeb; border-color:#fde68a; color:#92400e; }}
+.concl.danger {{ background:#fef2f2; border-color:#fecaca; color:#991b1b; }}
+/* 可持续表 */
+.sus-tab {{ width:100%; border-collapse:collapse; font-size:13px; }}
+.sus-tab th,.sus-tab td {{ padding:8px 10px; text-align:left; border-bottom:1px solid var(--line); }}
+.sus-tab th {{ background:#f1f2f4; color:var(--sub); font-weight:600; }}
+.sus-lv {{ font-weight:700; }}
+.sus-ok {{ color:var(--ok); }} .sus-mid {{ color:var(--warn); }} .sus-weak {{ color:var(--err); }}
 footer {{ margin-top:30px; color:var(--sub); font-size:12px; line-height:1.8; border-top:1px solid var(--line); padding-top:16px; }}
 @media (max-width:640px) {{ .sval {{ font-size:17px; }} .val {{ font-size:14px; }} }}
 </style>

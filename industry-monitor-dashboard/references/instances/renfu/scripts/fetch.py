@@ -140,6 +140,41 @@ def get_cost_struct():
             "prev_finance": ratio(prev, "FINANCE_EXPENSE", (prev.get("TOTAL_OPERATE_INCOME") or 1)) if prev else None,
             "stale": False}
 
+# ========== 降本贡献度拆解（2026中报 vs 2025中报） ==========
+def get_contrib_breakdown():
+    rows = em_stmt("600079.SH", "RPT_F10_FINANCE_GINCOME")
+    rm = {r.get("REPORT_DATE_NAME"): r for r in rows}
+    cur = rm.get("2026中报") or {}; prev = rm.get("2025中报") or {}
+    def b(k):
+        c, p = cur.get(k), prev.get(k)
+        if c is None or p is None: return None
+        return float(c)/1e8, float(p)/1e8
+    def v(k):
+        x = b(k)
+        return x if x else (0, 0)
+    np_c, np_p = v("PARENT_NETPROFIT")
+    np_delta = np_c - np_p
+    items = []
+    def add(label, key, kind):
+        x = b(key)
+        if x is None: return
+        c, p = x; delta = c - p
+        pc = -delta if kind in ("cost", "expense") else delta  # 成本/费用降=+贡献
+        pct = pc / np_delta * 100 if np_delta else 0
+        items.append({"label": label, "delta": round(delta, 2), "pc": round(pc, 2), "pct": round(pct, 0)})
+    add("营业成本", "OPERATE_COST", "cost")
+    add("销售费用", "SALE_EXPENSE", "expense")
+    add("管理费用", "MANAGE_EXPENSE", "expense")
+    add("研发费用", "RESEARCH_EXPENSE", "expense")
+    add("财务费用", "FINANCE_EXPENSE", "expense")
+    cost_total = sum(i["pc"] for i in items if i["pc"] > 0)
+    exp_total = sum(abs(i["pc"]) for i in items if i["pc"] < 0)
+    return {"report": cur.get("REPORT_DATE_NAME", ""), "prev_report": prev.get("REPORT_DATE_NAME", ""),
+            "np_c": round(np_c, 2), "np_p": round(np_p, 2), "np_delta": round(np_delta, 2),
+            "np_pct": round(np_delta / np_p * 100, 2) if np_p else 0,
+            "items": items, "cost_total": round(cost_total, 2), "exp_total": round(exp_total, 2),
+            "stale": False}
+
 # ========== 财务费用年度趋势（去杠杆红利验证） ==========
 def get_trend_fin_exp():
     rows = em_stmt("600079.SH", "RPT_F10_FINANCE_GINCOME")
@@ -170,6 +205,7 @@ GETTER_MAP = {
     "trend_debt": get_trend_debt, "trend_idebt": get_trend_idebt,
     "cost_struct": get_cost_struct, "trend_fin_exp": get_trend_fin_exp,
     "trend_idebt_fin": get_trend_idebt_fin,
+    "contrib_breakdown": get_contrib_breakdown,
 }
 
 def fetch_all():

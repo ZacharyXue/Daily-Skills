@@ -25,8 +25,8 @@ header .meta { color:var(--sub); font-size:13px; }
 .sname { font-size:12px; color:var(--sub); margin-top:2px; }
 .ssub { font-size:11px; color:var(--acc); margin-top:2px; }
 .gtitle { font-size:16px; margin:26px 0 10px; padding-left:10px; border-left:4px solid var(--acc); }
-.tgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:12px; }
-.tcard { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; }
+.tgrid { display:grid; grid-template-columns:1fr; gap:12px; width:100%; }
+.tcard { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; width:100%; }
 .thead { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
 .cname { font-weight:600; }
 .tval { font-size:16px; font-weight:700; color:var(--acc); margin-left:auto; }
@@ -39,16 +39,36 @@ header .meta { color:var(--sub); font-size:13px; }
 .chleg { display:flex; gap:12px; flex-wrap:wrap; font-size:11px; color:var(--sub); padding-top:4px; }
 .chleg .cl { display:inline-block; width:12px; height:3px; margin-right:4px; vertical-align:middle; }
 .meta { margin-top:8px; font-size:12px; color:var(--sub); }
-.costgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:12px; }
-.costcard { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; }
-.costcard.wide { grid-column:1 / -1; }
-.chead { font-weight:600; margin-bottom:8px; }
+/* 降本拆解详细版 */
+.costgrid { display:grid; grid-template-columns:1fr; gap:14px; }
+.costcard { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 18px; }
+.chead { font-weight:700; margin-bottom:10px; font-size:14px; }
+.csub { font-size:12px; color:var(--sub); margin-bottom:12px; }
 .costtab { width:100%; border-collapse:collapse; font-size:13px; }
-.costtab th,.costtab td { padding:7px 9px; text-align:right; border-bottom:1px solid var(--line); }
+.costtab th,.costtab td { padding:8px 10px; text-align:right; border-bottom:1px solid var(--line); }
 .costtab th { background:#f1f2f4; color:var(--sub); font-weight:600; text-align:center; font-size:11px; }
 .costtab td.pn { text-align:left; font-weight:600; }
 .costtab td.neg { color:var(--err); }
-.cnote { margin-top:8px; font-size:12px; color:var(--sub); line-height:1.7; }
+.costtab td.pos { color:var(--ok); }
+.cnote { margin-top:10px; font-size:12px; color:var(--sub); line-height:1.8; }
+.cnote b { color:var(--ink); }
+/* 贡献度条形 */
+.cbar-row { display:flex; align-items:center; gap:10px; margin:8px 0; }
+.cbar-label { width:88px; font-size:13px; font-weight:600; flex:none; }
+.cbar-val { width:64px; font-size:13px; text-align:right; flex:none; }
+.cbar-track { flex:1; background:#f1f2f4; border-radius:6px; height:24px; position:relative; overflow:hidden; }
+.cbar-fill { position:absolute; top:0; bottom:0; border-radius:6px; }
+.cbar-pct { width:52px; font-size:13px; font-weight:700; text-align:right; flex:none; }
+/* 结论框 */
+.concl { background:#f0fdf4; border:1px solid #dcfce7; border-radius:8px; padding:10px 14px; margin-top:10px; font-size:13px; line-height:1.8; color:#166534; }
+.concl.warn { background:#fffbeb; border-color:#fde68a; color:#92400e; }
+.concl.danger { background:#fef2f2; border-color:#fecaca; color:#991b1b; }
+/* 可持续表 */
+.sus-tab { width:100%; border-collapse:collapse; font-size:13px; }
+.sus-tab th,.sus-tab td { padding:8px 10px; text-align:left; border-bottom:1px solid var(--line); }
+.sus-tab th { background:#f1f2f4; color:var(--sub); font-weight:600; }
+.sus-lv { font-weight:700; }
+.sus-ok { color:var(--ok); } .sus-mid { color:var(--warn); } .sus-weak { color:var(--err); }
 footer { margin-top:30px; color:var(--sub); font-size:12px; line-height:1.8; border-top:1px solid var(--line); padding-top:16px; }
 @media (max-width:640px) { .sval { font-size:17px; } .val { font-size:14px; } }
 </style>
@@ -56,7 +76,7 @@ footer { margin-top:30px; color:var(--sub); font-size:12px; line-height:1.8; bor
 <body>
 <div class="wrap">
 <header><h1>人福药业 (ST人福) · 财务走势 + 降本拆解看板</h1>
-<div class="meta">更新：2026-08-30 02:34:16 · 600079 · 正确性优先 · 免费公开源</div></header>
+<div class="meta">更新：2026-08-30 02:47:01 · 600079 · 正确性优先 · 免费公开源</div></header>
 
 <div class="stbar">⚠️ <b>ST风险提示</b>：该股现为 <b>ST人福</b>（600079）。2026-03-31 出现「非经营性资金占用」专项审计 + 近五年监管处罚/整改公告，属于资金占用/违规导致的帽子，<b>非经营亏损</b>；定增(向特定对象发行A股)正推进(2026-08 上交所受理)。本看板跟踪的是<b>财务健康度与降本</b>，不代表摘帽进度。投资请自行判断。</div>
 
@@ -70,24 +90,60 @@ footer { margin-top:30px; color:var(--sub); font-size:12px; line-height:1.8; bor
 </div></section>
 
 <section class="grp">
-    <h2 class="gtitle">降本拆解</h2>
-    <div class="costgrid">
+    <h2 class="gtitle">降本拆解（2026中报 vs 2025中报 · 归母净利 +1.75亿 / +15.15%）</h2>
       <div class="costcard">
-        <div class="chead">费用结构占比（销售/管理/研发/财务，占营收%）</div>
-        <table class="costtab"><thead><tr><th>项目</th><th>最新期<br>(2026中报)</th><th>2025年报</th><th>变化</th></tr></thead>
-        <tbody><tr><td class="pn">销售费用</td><td>19.5%</td><td>18.6%</td><td class="">0.9pct</td></tr><tr><td class="pn">管理费用</td><td>6.5%</td><td>7.2%</td><td class="neg">-0.7pct</td></tr><tr><td class="pn">研发费用</td><td>5.3%</td><td>6.3%</td><td class="neg">-1.0pct</td></tr><tr><td class="pn">财务费用</td><td>1.8%</td><td>1.3%</td><td class="">0.5pct</td></tr><tr><td class="pn">营业成本</td><td>49.8%</td><td>—</td><td>—</td></tr></tbody></table>
-        <div class="cnote">费用率整体下行=降本见效。研发费占比高且稳，说明把研发当战略投入；财务费最低=去杠杆后利息负担最轻。</div>
+        <div class="chead">① 贡献度占比 —— 每 +1 元利润增量从哪来</div>
+        <div class="csub">降本（营业成本+研发+管理）合计贡献 <b class="pos">+4.0 亿(+232%)</b>，被销售+财务拖累 <b class="neg">-2.3 亿</b>，净 <b>+1.8 亿</b>。</div>
+        <div class="cbar-row"><span class="cbar-label">营业成本</span><span class="cbar-val pos">+2.39亿</span><div class="cbar-track"><span class="cbar-fill" style="width:100%;background:#16a34a"></span></div><span class="cbar-pct pos">+137%</span></div><div class="cbar-row"><span class="cbar-label">销售费用</span><span class="cbar-val neg">-1.41亿</span><div class="cbar-track"><span class="cbar-fill" style="width:59%;background:#dc2626"></span></div><span class="cbar-pct neg">-81%</span></div><div class="cbar-row"><span class="cbar-label">管理费用</span><span class="cbar-val pos">+0.63亿</span><div class="cbar-track"><span class="cbar-fill" style="width:26%;background:#16a34a"></span></div><span class="cbar-pct pos">+36%</span></div><div class="cbar-row"><span class="cbar-label">研发费用</span><span class="cbar-val pos">+1.03亿</span><div class="cbar-track"><span class="cbar-fill" style="width:43%;background:#16a34a"></span></div><span class="cbar-pct pos">+59%</span></div><div class="cbar-row"><span class="cbar-label">财务费用</span><span class="cbar-val neg">-0.90亿</span><div class="cbar-track"><span class="cbar-fill" style="width:38%;background:#dc2626"></span></div><span class="cbar-pct neg">-52%</span></div>
+        <div class="cnote">绿色=降本救利润，红色=费用吞噬利润。头号功臣是<b>营业成本（+137%）</b>，最需警惕的是<b>研发（+59%）</b>与<b>销售+财务（合计-133%）</b>。</div>
       </div>
+      <div class="costgrid">
+      <div class="costcard">
+      <div class="chead">② 营业成本（-2.39亿，-3.82%）降在哪</div>
+      <table class="costtab"><thead><tr><th>科目</th><th>2026中报</th><th>2025中报</th><th>变化</th></tr></thead>
+      <tbody>
+        <tr><td class="pn">营业成本</td><td class="pos">60.12 亿</td><td>62.51 亿</td><td class="pos">-2.39 亿 ✅</td></tr>
+        <tr><td class="pn">营业成本率</td><td class="pos">49.8%</td><td>51.8%</td><td class="pos">-2.0 pct</td></tr>
+      </tbody></table>
+      <div class="cnote"><b>真实驱动（官方归因）</b>——不是买便宜原料，是结构性提效：<br>
+        1. <b>高毛利医药工业占比↑</b>、低毛利医药商业受控（归核聚焦）→ 加权毛利提升<br>
+        2. <b>精益生产 + 产能利用率提升</b>（智能制造）→ 单位产出效率↑<br>
+        3. <b>供应链/采购优化</b> → 药价集采背景下的成本管控</div>
+    </div>
+      <div class="costcard">
+      <div class="chead">③ 研发费用（-1.03亿，-13.9%）——最需警惕的一块</div>
+      <table class="costtab"><thead><tr><th>明细</th><th>2026中报</th><th>2025中报</th><th>解读</th></tr></thead>
+      <tbody>
+        <tr><td class="pn">职工薪酬</td><td>3.09 亿</td><td>3.05 亿</td><td>+1.3% 人没裁</td></tr>
+        <tr><td class="pn">耗用材料</td><td>0.62 亿</td><td>1.33 亿</td><td class="neg">-53.6% 重灾区</td></tr>
+        <tr><td class="pn">临床试验费</td><td>2.38 亿</td><td>2.44 亿</td><td>-2.4%</td></tr>
+        <tr><td class="pn">其他直接费</td><td>0.60 亿</td><td>0.88 亿</td><td class="neg">-32.2% 重灾</td></tr>
+      </tbody></table>
+      <div class="concl warn"><b>是否美化？</b>资本化研发支出 0.83亿 &lt; 上期 0.88亿 → <b>不是费用转资本化的美化</b>。职工薪酬没动、资本化还降：真降的是<b>耗材/外包</b> → 是研发<b>项目节奏变化</b>，非砍团队。但注意：<b>研发是利润的种子</b>，阶段性减少不可复制，后续最需追踪。</div>
+    </div>
+      </div>
+      <div class="costgrid">
       <div class="costcard">
         <div class="chead">财务费用（年度，亿元）</div>
         <svg viewBox="0 0 640 130" width="100%" height="130" preserveAspectRatio="none" class="tsvg"><line x1="6" y1="118.0" x2="634" y2="118.0" stroke="#eef1f4" stroke-width="1"/><line x1="6" y1="14.0" x2="634" y2="14.0" stroke="#eef1f4" stroke-width="1"/><polyline points="6.0,103.8 75.8,67.3 145.6,50.8 215.3,20.6 285.1,14.0 354.9,58.9 424.7,118.0 494.4,107.6 564.2,100.5 634.0,107.9" fill="none" stroke="#7c3aed" stroke-width="2"/><circle cx="634.0" cy="107.9" r="3" fill="#7c3aed"/><text x="6" y="128" font-size="9" fill="#9ca3af">2016年报</text><text x="634" y="128" font-size="9" fill="#9ca3af" text-anchor="end">2025年报</text></svg>
         <div class="cnote">财务费用 2022 年报 2.37亿 → 2025 年报 3.03亿 → 2026中报 2.11亿。其中 2025 年报<b>利息费用</b> 2.71亿（去杠杆直接体现）。</div>
       </div>
-      <div class="costcard wide">
+      <div class="costcard">
         <div class="chead">去杠杆红利双验证：有息负债率 vs 财务费用（年度）</div>
         <svg viewBox="0 0 640 130" width="100%" height="130" preserveAspectRatio="none" class="tsvg"><line x1="6" y1="118.0" x2="634" y2="118.0" stroke="#eef1f4" stroke-width="1"/><line x1="6" y1="14.0" x2="634" y2="14.0" stroke="#eef1f4" stroke-width="1"/><polyline points="6.0,26.8 39.1,30.3 72.1,24.1 105.2,37.5 138.2,14.0 171.3,31.2 204.3,51.9 237.4,58.8 270.4,59.7 303.5,63.8" fill="none" stroke="#dc2626" stroke-width="2"/><circle cx="303.5" cy="63.8" r="3" fill="#dc2626"/><polyline points="336.5,115.6 369.6,109.6 402.6,106.9 435.7,101.9 468.7,100.8 501.8,108.2 534.8,118.0 567.9,116.3 600.9,115.1 634.0,116.3" fill="none" stroke="#7c3aed" stroke-width="2"/><circle cx="634.0" cy="116.3" r="3" fill="#7c3aed"/><text x="6" y="128" font-size="9" fill="#9ca3af">2016年报</text><text x="634" y="128" font-size="9" fill="#9ca3af" text-anchor="end">2025年报</text></svg><div class="chleg"><span><span class="cl" style="background:#dc2626"></span>有息负债率%</span><span><span class="cl" style="background:#7c3aed"></span>财务费用(亿)</span></div>
         <div class="cnote">两条线同向下行=去杠杆真实且可持续。这解释了净利为何在营收收缩时仍增长——靠降费用+去杠杆，而非收入扩张。</div>
       </div>
+      </div>
+      <div class="costcard">
+      <div class="chead">④ 可持续性判断——哪些是真降本、哪些是一次性</div>
+      <table class="sus-tab"><thead><tr><th>科目</th><th>强度</th><th>性质</th></tr></thead>
+      <tbody>
+        <tr><td class="pn">营业成本</td><td><span class="sus-lv sus-ok">[强]</span></td><td>结构优化 + 精益供应链，<b>内生可延续</b>（毛利占比↑）</td></tr>
+        <tr><td class="pn">管理费用</td><td><span class="sus-lv sus-mid">[中]</span></td><td>组织精简红利，<b>一次性居多</b>、有天花板</td></tr>
+        <tr><td class="pn">研发费用</td><td><span class="sus-lv sus-weak">[弱]</span></td><td>耗材/外包阶段性减少，<b>不可复制</b>，且是利润种子</td></tr>
+        <tr><td class="pn">销售/财务</td><td><span class="sus-lv sus-weak">[弱]</span></td><td>本期<b>上升拖累</b>（销售+1.41亿、财务+0.90亿），是利润的减项</td></tr>
+      </tbody></table>
+      <div class="concl"><b>结论：</b>最扎实的是<b>毛利（工业占比↑）</b>，可持续；管理费用是组织红利（有天花板）；研发降本要看穿——是节奏波动不是省钱，且资本化还降；销售/财务本期在增，是利润拖累。综合看，<b>降本质量中等偏上，但营收未扩张是硬伤</b>。</div>
     </div>
     </section>
 
