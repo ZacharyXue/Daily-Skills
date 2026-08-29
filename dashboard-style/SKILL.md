@@ -36,7 +36,7 @@ d, source, meta, tier = DSR.get("<kind>", **params)   # 返回 (data, source, me
 ## 三、样式索引（HTML 模板在哪）
 
 - **主模板**：`templates/dashboard_skeleton.html`（自包含骨架：CSS + details 折叠卡片 + 多线 SVG 趋势图 + 批量表格 + 摘要达标徽章 + 来源/时间/TTL 元数据行）。复制它改数据即可。
-- **完整参考实现**：`/root/cement-dashboard/scripts/render_html.py`（水泥看板渲染，含样式细节与 signal/meaning 的展开逻辑）；ETF 参考 `/root/ZacharyXue.github.io/etf-dashboard/generate_html.py`。
+- **完整参考实现**：`industry-monitor-dashboard/references/instances/cement/scripts/render_html.py`（水泥看板渲染，含样式细节与 signal/meaning 的展开逻辑）；ETF 参考 `instances/etf/generate_html.py`。
 - **样式要点**（亮色、响应式、卡片式）：
   - 顶部摘要区：一句话结论（达标计数）+ 七维 ✓/✗ 徽章（价格/成本/量/供给/盈利/财务/估值）
   - 每个指标 = 一张 `<details>` 卡片：主行 = 指标名 + 当前值 + 状态徽章(正常/获取失败/人工/接入中)；点开 = 「为什么关注 / 看什么信号 / 来源(链接) / 更新时间 / TTL / 数据日期」+ 趋势 SVG

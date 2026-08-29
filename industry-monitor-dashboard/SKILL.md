@@ -1,13 +1,13 @@
 ---
 name: industry-monitor-dashboard
-description: 为「行业/商品 + 龙头公司」搭建并维护**定期刷新的监测看板**（价格趋势/盈利底/成本/量/估值/技术面多维度盯一个标的）。核心组件：注释驱动的指标元数据层 + 免费数据源取数(远程优先+失败诚实+人工补录) + 自包含HTML渲染(多线SVG趋势图+可点击折叠说明) + A股财报PDF经营数据提取。参考实现 /root/cement-dashboard。触发：用户要"监控某行业/公司是否止跌/盈利见底"、"做个定期看板"、"把XX指标接进看板"、"看下当前XX行业现状"。
+description: 为「行业/商品 + 龙头公司」搭建并维护**定期刷新的监测看板**（价格趋势/盈利底/成本/量/估值/技术面多维度盯一个标的）。核心组件：注释驱动的指标元数据层 + 免费数据源取数(远程优先+失败诚实+人工补录) + 自包含HTML渲染(多线SVG趋势图+可点击折叠说明) + A股财报PDF经营数据提取。参考实现 references/instances/cement/（代码并入 skill，自包含可迁移）。触发：用户要"监控某行业/公司是否止跌/盈利见底"、"做个定期看板"、"把XX指标接进看板"、"看下当前XX行业现状"。
 version: 1.0.0
 tags: [dashboard, monitoring, data-source, html-render, a-share-report, commodity]
 ---
 
 # 行业/公司 监测看板（定期刷新的数据面板）
 
-怎么把一个「行业 + 龙头公司」做成可持续、可刷新的看板，以及这 class 任务的高频坑。参考实现 `/root/cement-dashboard`（git 管理，每独立改动一 commit）。
+怎么把一个「行业 + 龙头公司」做成可持续、可刷新的看板，以及这 class 任务的高频坑。参考实现 `references/instances/cement/`（代码并入 skill 自包含；`/root/cement-dashboard` 仅作 git 源）。
 
 ## 触发场景
 - 「监控某行业/某龙头是否止跌、盈利见底」
@@ -44,14 +44,13 @@ tags: [dashboard, monitoring, data-source, html-render, a-share-report, commodit
 - **源间歇丢包**：取数脚本跑后台（前台超时会被杀）；每端点独立 try + 短超时重试，避免单点拖垮整批。
 
 ## 参考实现状态
-✓ `/root/cement-dashboard`：指标元数据 + fetch + render + extract_report + 人工补录全链路。当前指标几乎全自动（价格/成本/盈利/财务/估值/技术/量），唯一待人工 = 全国水泥产量同比（统计局拦 IP，用 prompt 采集）。
+✓ `references/instances/cement/`：37 指标（26 自动 + 11 人工）。自动 = 价格/成本/量/盈利/财务/估值/技术全链；人工 = 8 类采集（分区域价/提价函/产能利用率/地产/基建/专项债/出清组/电价），走 prompts/collect_prompts.md 闭环；达标计数 = 7 维（含供给/出清）。
 
 ## 关系 & 统一结构（2026-08 用户定调）
 
-**用户偏好的看板组织**：一个共享「HTML 风格模板」（`dashboard-style`）+ 每个看板各自一份 md（`cement-dashboard`/`etf-dashboard`）+ **数据统一在 data-source-router**，看板类 skill 全部落 `zach-skills`。不要把所有看板揉进一个大 skill。
+**看板组织（2026-08 用户定稿）**：1 个综合母纲（`industry-monitor-dashboard`）+ 1 个共享风格模板（`dashboard-style`）+ 1 个数据层（`data-source-router`）。水泥/ETF **不单独成 skill**，作为母纲下 `references/instances/<name>/` 的实例（README + 完整工程代码，自包含可迁移）。看板类 skill 全部落 `zach-skills`；新增看板只需加一个 `instances/<name>.md` + 注册索引，**不新建 skill**。
 - `dashboard-style`（zach-skills）：样式/骨架模板 + 数据规范 + 看板索引（`references/dashboards-index.md`），复用 `templates/dashboard_skeleton.html`。
-- `cement-dashboard`（zach-skills）：水泥&海螺各自 md（引用 /root/cement-dashboard 工程）。
-- `etf-dashboard`（zach-skills）：ETF 看板，挂 dashboard-style 风格 + data-source-router 数据层。
+- 实例：`references/instances/cement/`（水泥&海螺：README+脚本+数据自包含）、`references/instances/etf/`（ETF 脚本集）；均走 data-source-router 取数 + dashboard-style 模板，触发更新见各自 README。
 - **数据获取一律 `data-source-router.get(kind)`**：看板只触发，具体源/脚本/缓存/重试在 router，**不自建 curl 重复造轮子**。行业专属源（中国水泥网 → `cn_cement_index`/`cn_cement_spread`）已下沉 router。
 
 ## 消费 data-source-router 的坑

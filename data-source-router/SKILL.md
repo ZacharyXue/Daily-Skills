@@ -3,7 +3,7 @@ name: data-source-router
 description: 统一数据源层（金融 + IT）— 数据源地图 + SQLite缓存 + Tier路由 + 合规红线。其他 skill 及未来 skill 一律通过本层取数，杜绝重复探索、拿错数据、烧 token。覆盖：A股/港股/美股行情与K线(腾讯)、A股财报(东财datacenter)、美股财报(SEC EDGAR)、宏观(统计局)、GitHub仓库/Issues/PR/Release/搜索(REST)。触发时机：任何需要拉金融或 IT 数据的任务（行情、财报、宏观、仓库元数据、issue/pr/release、仓库搜索）。
 version: 1.0.0
 tags: [data, finance, github, cache, api, 数据源, 行情, 财报]
-related_skills: [etf-dashboard, whale-holdings, stock-analysis, github-repo-management, github-issues, github-oss-evaluation]
+related_skills: [industry-monitor-dashboard, whale-holdings, stock-analysis, github-repo-management, github-issues, github-oss-evaluation]
 ---
 
 # data-source-router — 统一数据源层
