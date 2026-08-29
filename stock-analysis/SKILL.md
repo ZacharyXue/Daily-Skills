@@ -1,13 +1,13 @@
 ---
 name: stock-analysis
-description: 股票基本面深度分析 — PDF 财报提取、商业模式拆解、财务三表挖数、利润构成还原、风险排查、同行对比、估值与敏感性测算、芒格逆向评估。触发时机：用户发来年报/中报 PDF 或说"分析下 XX 公司/这只股票"、"看看商业模式/财务风险/同行对比"。
+description: 股票基本面深度分析 — PDF 财报提取、商业模式拆解、财务三表挖数、利润构成还原、风险排查、同行对比、估值与敏感性测算。触发时机：用户发来年报/中报 PDF 或说"分析下 XX 公司/这只股票"、"看看商业模式/财务风险/同行对比/估值"。
 version: 1.0.0
-tags: [stock, analysis, fundamental, financial-report, munger, valuation]
+tags: [stock, analysis, fundamental, financial-report, valuation]
 ---
 
 # 股票基本面深度分析
 
-一套完整的个股分析流水线：从财报 PDF 到投资结论。**通用框架**适用任何股票；**周期股**（商品价格驱动的资源/能源股）有专门的敏感性分析模板；**芒格逆向评估**作为最终投资哲学校验。
+一套完整的个股分析流水线：从财报 PDF 到投资结论。**通用框架**适用任何股票；**周期股**（商品价格驱动的资源/能源股）有专门的敏感性分析模板。**「从大佬角度看」这类多维度思维评估不在此 skill，改由 `investment-mindset` 提供**（见 Phase 8）。
 
 ## 触发场景
 
@@ -21,10 +21,10 @@ tags: [stock, analysis, fundamental, financial-report, munger, valuation]
 ```
 Phase 0 文件就位 → Phase 1 PDF提取 → Phase 2 商业模式 → Phase 3 财务三表
 → Phase 4 利润构成 → Phase 5 风险排查 → Phase 5.5 企业道德与治理风险
-→ Phase 6 同行对比 → Phase 7 估值 → Phase 8 芒格逆向评估 → 输出结构化报告
+→ Phase 6 同行对比 → Phase 7 估值 → Phase 8 调用investment-mindset多视角评估 → 输出结构化报告
 ```
 
-各 Phase 通用，周期股在 Phase 7 走 `references/cycle-stock.md` 模板，芒格评估见 `references/munger-evaluation.md`。**所有数据接口（东财 datacenter/腾讯行情/研报/K线）见 `references/data-apis.md`**。
+各 Phase 通用，周期股在 Phase 7 走 `references/cycle-stock.md` 模板。**所有数据接口（东财 datacenter/腾讯行情/研报/K线）见 `references/data-apis.md`**。**具体大师的思维框架（芒格/巴菲特/李录/段永平/聂夫/马克斯/孙宇晨）统一在 `investment-mindset` skill，本 skill 不内置。**
 
 A股聚合技巧与 grep 锚点表见 `references/eastmoney-peer-compare.md`（含固定输出维度七步模板）、电解铝成本框架见 `references/aluminum-coal-cost-framework.md`、股息敏感性+行情降级链见 `references/dividend-valuation-and-market-apis.md`、完整实例见 `references/worked-example-shenhuo.md`。
 
@@ -130,9 +130,14 @@ python3 scripts/peers_compare.py 000933.SZ 601600.SH 000807.SZ
 - **周期股**：走 `references/cycle-stock.md`（商品价格敏感性模型 + 情景A/B + 3%股息率反推股价）
 - 消费/成长股：偏重 DCF 逻辑、增速与估值匹配
 
-## Phase 8: 芒格逆向评估
+## Phase 8: 调用 investment-mindset 做多视角评估（可选收尾）
 
-见 `references/munger-evaluation.md`：完整 11 节，覆盖逆向死法清单、能力圈自测、护城河可维持性、**管理层质量评估**、**误判心理扫描(6条)**、**机会成本思维**、**Lollapalooza 多因素共振**、生意质量×价格安全边际（含**低估值陷阱识别**）、**复利持有框架**、结论模板与行动启示。产出"生意质量 × 价格安全边际 × 机会成本"定位结论。
+> **分工**：本 skill（`stock-analysis`）只做**基本面**（商业模式/财务/风险/估值）。用户若问「从 XX 角度怎么看」「多位大师怎么评估」这类**思维模型分析**，**改由 `investment-mindset` skill 提供**（芒格/巴菲特/李录/段永平/聂夫/马克斯/孙宇晨共 7 维，含芒格完整逆向评估模板 `references/munger-evaluation.md`——那是 investment-mindset 里的文件，非本 skill 所有）。
+
+- 触发：用户对标的提出「从大佬/大师角度评估」
+- 动作：读完基本面（前面 Phase 2-7）后，转 `skill_view(name='investment-mindset')`，按它的「通用使用流程」逐维分析，产出多视角结论。
+- 价值：把「基本面事实」与「思维框架视角」分离——基本功在本 skill 算清楚，视角由 mindset 叠加，不混在一起。
+- 产出：多维度结论 + 每个视角的适用边界。
 
 ---
 
@@ -146,7 +151,7 @@ python3 scripts/peers_compare.py 000933.SZ 601600.SH 000807.SZ
 
 ## 输出格式
 
-一份结构化报告：商业模式 → 财务 → 风险 → 同行 → 估值/敏感性 → 芒格评估。用户偏好：表格 + 数据支撑 + 一句话结论，先讲透再落博客。
+一份结构化报告：商业模式 → 财务 → 风险 → 同行 → 估值/敏感性 →（可选）investment-mindset 多视角评估。用户偏好：表格 + 数据支撑 + 一句话结论，先讲透再落博客。
 
 ## Pitfalls
 
