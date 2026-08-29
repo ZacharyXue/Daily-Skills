@@ -7,7 +7,7 @@
 |---|---|---|---|---|---|---|
 | **水泥 & 海螺** | 行业+龙头(盈利底) | `industry-monitor-dashboard/references/instances/cement/` (自包含可迁移) | `/root/cement-dashboard` | `cn_cement_index`/`cn_cement_spread`/`cn_financial`/`cn_stock_*` | `cd /root/zach-skills/industry-monitor-dashboard/references/instances/cement && python3 scripts/extract_report.py && python3 scripts/fetch.py && python3 scripts/render_html.py` | `instances/cement/output/cement_dashboard.html` |
 | **ETF 技术温度** | ETF(红利+行业/主题) | `industry-monitor-dashboard/references/instances/etf/` (脚本；运行需 ttskill/产物ETF_OUT) | `/root/ZacharyXue.github.io/etf-dashboard` | `cn_stock_quote`/`cn_stock_kline`/`cn_csindex_pe`/`cn_ttfund_index` | `cd /root/ZacharyXue.github.io/etf-dashboard && python3 update.py` | `public/exports/etf-dashboard.html` |
-| **人福药业**（财务走势+降本拆解） | 个股(财务+降本) | `industry-monitor-dashboard/references/instances/renfu/` (自包含可迁移) | 同左 | 东财 `RPT_F10_FINANCE_MAINFINADATA` + `RPT_F10_FINANCE_GINCOME`（在 fetch.py 内实现，含 `INTEREST_DEBT_RATIO` 有息负债率字段） | `cd /root/zach-skills/industry-monitor-dashboard/references/instances/renfu && python3 scripts/fetch.py && python3 scripts/render_html.py` | `public/exports/renfu-dashboard.html` |
+| **人福药业**（财务走势+降本拆解） | 个股(财务+降本) | `industry-monitor-dashboard/references/instances/renfu/` (自包含可迁移) | 同左 | `cn_financial_series`(`report_name=RPT_F10_FINANCE_MAINFINADATA` / `RPT_F10_FINANCE_GINCOME`) — 已下沉 router，**含 `INTEREST_DEBT_RATIO` 有息负债率字段** | `cd /root/zach-skills/industry-monitor-dashboard/references/instances/renfu && python3 scripts/fetch.py && python3 scripts/render_html.py` | `public/exports/renfu-dashboard.html` |
 
 ## 各看板要盯什么（简述）
 

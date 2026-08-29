@@ -37,6 +37,12 @@ tags: [dashboard, monitoring, data-source, html-render, a-share-report, commodit
 
 ## Pitfalls（本会话踩过）
 - **A股财报公告标题匹配**：`"年度报告" in title` 会误配「半年度报告」（子串）→ 必须显式 `"半年度" not in title`。
+- **个股财务看板的标准取数**：用 `cn_financial_series`(已下沉 router，支持任意 `report_name`)拿完整历史序列；`cn_financial`(router 原接口)只返回单条摘要、无历史、也无 `INTEREST_DEBT_RATIO`——做走势必须用 `cn_financial_series`。
+- **营收/净利同比必须重算**：东财 `TOTALOPERATEREVETZ`/`PARENTNETPROFITTZ` 有 bug(实测人福 2025年报=-579%)。按「同报告期累计值 vs 去年同月段」重算，别信字段。
+- **`INTEREST_DEBT_RATIO`(有息负债率)直接取东财字段**，别自己从资产负债表拆(短借+长借+债券)，口径易错。
+- **序列必须按年份升序**：东财接口按 REPORT_DATE 倒序返回，`_series_of` 不 sort 时取 `[-1]` 拿到最早年份(实测 latest_date=2006年报)。sort 后 `[-1]`=最新。
+- **indicator id / getter / render 的 value key 三方必须对齐**：indicators 定义 id(如 `cost_struct_latest`)，fetch GETTER_MAP 用 getter 名(如 `cost_struct`)，render 取 value 用 indicator 的 **id**。取错 → 空 dict → 显示"费用数据缺失"。
+- **hardcode 明细仅限「公司定期报告披露」字段**：降本拆解里的研发职工薪酬/耗用材料拆分、资本化金额等，若东财接口取不到但**来自公司中报/年报附注披露**（真实、可溯源），可写进 HTML，但必须在卡片明确标注「来源：公司中报披露（非自动接口）」——避免当作自动取数误解。**绝不能**凭空编造或把外部猜测写成数据。数据正确性铁律的底线是「不编造」，中报披露的明细是真实数据，不违反；只有捏造和凭空冒充实测数据才违规。
 - **PDF 文本列对齐+换行破坏正则**：用 `re.S` + `\s*` 适配；亿 vs 亿吨差 1e8（亿=1e8 元，亿吨=1e8 吨）。
 - **腾讯 ifzq 不复权K线需末尾逗号**：`param=code,day,beg,end,count,`（返回 `data.code.day`）；写 `count` 无逗号 → `bad params` 空。详见 references/data-sources.md。
 - **同源端点前缀不同**（中国水泥网 `/index/priceindex/` vs `/index/<name>/`），用错 → 404。
@@ -61,6 +67,7 @@ tags: [dashboard, monitoring, data-source, html-render, a-share-report, commodit
 |---|---|---|
 | 水泥 & 海螺 | `references/instances/cement/README.md` (+ `cement/` 含全部工程代码，自包含可迁移) | 行业 + 龙头(盈利底) |
 | ETF 技术温度 | `references/instances/etf/README.md` (+ `etf/` 含脚本；运行需 ttskill/产物可配 ETF_OUT) | ETF(估值 + 技术) |
+| 人福药业(财务+降本) | `references/instances/renfu/README.md` (+ `renfu/` 含脚本/数据，自包含可迁移；ST风险提示) | 个股(财务健康度 + 降本拆解) |
 
 - **风格模板** → 复用 `dashboard-style/templates/dashboard_skeleton.html`（自包含 HTML 骨架：details 折叠/多线 SVG/表格/徽章）
 - **数据获取** → 一律走 `data-source-router.get()`（行情/K线/财报/中国水泥网/中证PE/天天基金分位/GitHub 已统一下沉）

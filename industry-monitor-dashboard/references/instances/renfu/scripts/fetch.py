@@ -210,6 +210,9 @@ def get_trend_idebt_fin():
     rows = em_fin("600079.SH")
     idebt_annual = _series_of(rows, "INTEREST_DEBT_RATIO")
     fin_annual = _series_of(fin, "FINANCE_EXPENSE", scale=1e8)
+    # 近五年：只保留最后 5 个年报点（2021-2025），让去杠杆红利在最近5期看更聚焦
+    idebt_annual = idebt_annual[-5:]
+    fin_annual = fin_annual[-5:]
     return {"latest": idebt_annual[-1]["v"] if idebt_annual else None,
             "latest_date": idebt_annual[-1]["d"] if idebt_annual else "",
             "charts": [

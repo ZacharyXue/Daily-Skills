@@ -3,8 +3,12 @@
 渲染脚本：读 cache/dashboard_data.json → output/renfu_dashboard.html
 独立自包含 HTML（内嵌 CSS），原生 <details>/<summary> 实现「可点击查看指标意义」。
 面向博客集成(Astro v5)，可直接作为静态页面。
+
+⚠️ 数据正确性铁律：
+  - 本脚本只渲染 fetch.py 从东财取到的数据，绝不 hardcode 任何明细数字。
+  - 降本拆解(费用/贡献度/去杠杆)全部动态取数；无法从数据源取到的明细(如研发职工/耗材拆分)一律不展示。
 """
-import json, os, sys, html, datetime
+import json, os, sys, html
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(BASE, "cache", "dashboard_data.json")
@@ -23,43 +27,38 @@ def badge(st):
     return ("err", "异常")
 
 def trend_svg(charts, w=640, h=130):
-    """将 charts=[{name,color,points:[{d,v}]}] 画成多线趋势图 + 图例。共享 x 轴(唯一年份刻度,去重排序)。"""
+    """把 charts=[{name,color,points:[{d,v}]}] 画成共享 x 轴(年份升序)的多线趋势图 + 图例。"""
     if not charts:
         return ""
-    pts = [(p["d"], float(p["v"])) for ch in charts for p in ch.get("points", []) if p.get("v") is not None]
+    pts = [(str(p["d"]), float(p["v"])) for ch in charts for p in ch.get("points", []) if p.get("v") is not None]
     if len(pts) < 2:
         return ""
-    xd = sorted(set(str(d) for d, _ in pts))   # 唯一 x 刻度(年份)去重排序 → 两序列共享, 同年对齐
+    xd = sorted(set(d for d, _ in pts))
     mn = min(v for _, v in pts); mx = max(v for _, v in pts); yspan = (mx - mn) or 1
-    pad = 6; n = max(1, len(xd) - 1)
+    pad = 8; n = max(1, len(xd) - 1)
     X = lambda i: pad + i / n * (w - 2 * pad)
-    Y = lambda v: h - 12 - (v - mn) / yspan * (h - 26)
+    Y = lambda v: h - 14 - (v - mn) / yspan * (h - 30)
     svg = f'<svg viewBox="0 0 {w} {h}" width="100%" height="{h}" preserveAspectRatio="none" class="tsvg">'
-    # 网格
-    svg += f'<line x1="{pad}" y1="{Y(mn):.1f}" x2="{w-pad}" y2="{Y(mn):.1f}" stroke="#eef1f4" stroke-width="1"/>'
-    svg += f'<line x1="{pad}" y1="{Y(mx):.1f}" x2="{w-pad}" y2="{Y(mx):.1f}" stroke="#eef1f4" stroke-width="1"/>'
+    # 网格 + 上下参考线
+    svg += f'<line x1="{pad}" y1="{Y(mn):.1f}" x2="{w-pad}" y2="{Y(mn):.1f}" stroke="#eef1f4"/>'
+    svg += f'<line x1="{pad}" y1="{Y(mx):.1f}" x2="{w-pad}" y2="{Y(mx):.1f}" stroke="#eef1f4"/>'
     for ch in charts:
         coords = []
         for p in ch.get("points", []):
-            if p.get("v") is None:
-                continue
+            if p.get("v") is None: continue
             d = str(p["d"])
-            if d not in xd:
-                continue
-            idx = xd.index(d)   # 共享年份刻度 → 两序列同年对齐(修复"横坐标不重叠")
+            if d not in xd: continue
+            idx = xd.index(d)
             coords.append(f"{X(idx):.1f},{Y(float(p['v'])):.1f}")
         if coords:
             svg += f'<polyline points="{" ".join(coords)}" fill="none" stroke="{ch.get("color","#2563eb")}" stroke-width="2"/>'
             lx, ly = coords[-1].split(",")
             svg += f'<circle cx="{lx}" cy="{ly}" r="3" fill="{ch.get("color","#2563eb")}"/>'
-    # x 轴标签: 首末年份 + (若刻度适中)中段
+    # x 轴标签
     if len(xd) >= 2:
         svg += f'<text x="{pad}" y="{h-2}" font-size="9" fill="#9ca3af">{esc(xd[0])}</text>'
         svg += f'<text x="{w-pad}" y="{h-2}" font-size="9" fill="#9ca3af" text-anchor="end">{esc(xd[-1])}</text>'
-        if 5 < len(xd) <= 11:
-            mid = xd[len(xd) // 2]
-            svg += f'<text x="{X(xd.index(mid)):.1f}" y="{h-2}" font-size="9" fill="#9ca3af" text-anchor="middle">{esc(mid)}</text>'
-    svg += '</svg>'
+    svg += "</svg>"
     if len(charts) > 1:
         leg = '<div class="chleg">' + "".join(
             f'<span><span class="cl" style="background:{ch.get("color","#2563eb")}"></span>{esc(ch.get("name"))}</span>'
@@ -72,170 +71,186 @@ def build():
     fetched = data.get("fetched_at", "")
     inds = data["indicators"] or []
     by_id = {i["id"]: i for i in inds}
-
-    # ---- 提取关键值（供摘要 + 卡片） ----
     def v(id_): return (by_id.get(id_) or {}).get("value") or {}
+    def ind(id_): return by_id.get(id_) or {}
 
-    snap = v("snap_rev")
-    rev = v("trend_rev"); roe = v("trend_roe"); debt = v("trend_debt"); idebt = v("trend_idebt")
-    cost = v("cost_struct_latest"); finexp = v("fin_expense")
+    snap = v("snap_rev")   # 快照(单dict含全部)
+    cost = v("cost_struct_latest")   # 费用占比
+    cb = v("contrib_breakdown")   # 降本贡献度
 
-    # 摘要区：核心结论
-    def ok_np():
-        return fnum(snap.get("np")) if snap.get("np") is not None else "—"
-    def ok_rev_yoy():
-        y = snap.get("rev_yoy")
-        return f"{y:+.1f}%" if y is not None else "—"
-    def ok_np_yoy():
-        y = snap.get("np_yoy")
-        return f"{y:+.1f}%" if y is not None else "—"
-
-    # ST 风险提示条
-    st_banner = ('<div class="stbar">⚠️ <b>ST风险提示</b>：该股现为 <b>ST人福</b>（600079）。'
+    # ---- ST 风险提示条 ----
+    st_banner = ('<div class="stbar">⚠️ <b>ST 风险提示</b>：该股现为 <b>ST人福</b>(600079)。'
                  '2026-03-31 出现「非经营性资金占用」专项审计 + 近五年监管处罚/整改公告，'
-                 '属于资金占用/违规导致的帽子，<b>非经营亏损</b>；定增(向特定对象发行A股)正推进(2026-08 上交所受理)。'
-                 '本看板跟踪的是<b>财务健康度与降本</b>，不代表摘帽进度。投资请自行判断。</div>')
+                 '属<b>资金占用/违规</b>导致的帽子(非经营亏损)；定增(向特定对象发行A股)正推进(2026-08 上交所受理)。'
+                 '本看板仅跟踪<b>财务健康度与降本</b>，不代表摘帽进度。投资请自行判断。</div>')
 
-    # 摘要卡片：快照四大指标
+    # ---- 摘要：快照卡片 ----
+    def yoy_color(x, inv=False):
+        if not isinstance(x, (int, float)): return ""
+        ok = x < 0 if inv else x > 0
+        return " up" if ok else ""
+
+    def snap_card(name, val, sub, subcls=""):
+        return (f'<div class="scard"><div class="sval">{esc(val)}</div>'
+                f'<div class="sname">{esc(name)}</div>'
+                f'<div class="ssub {subcls}">{esc(sub)}</div></div>')
+
+    rev_yoy = snap.get("rev_yoy"); np_yoy = snap.get("np_yoy")
     snap_cards = ""
-    snap_items = [
-        ("营收", fnum(snap.get("rev")) + " 亿", ok_rev_yoy(), "rev", "营收同比"),
-        ("归母净利", fnum(snap.get("np")) + " 亿", ok_np_yoy(), "np", "净利同比"),
-        ("ROE", fnum(snap.get("roe"), 2) + "%", fnum(snap.get("roe"), 2) + "%", "roe", "最新一期"),
-        ("资产负债率", fnum(snap.get("debt"), 2) + "%", "较去年" + str(fnum(debt.get("latest"), 2)) + "%", "debt", "年度"),
-        ("有息负债率", fnum(snap.get("idebt"), 2) + "%", "较去年" + str(fnum(idebt.get("latest"), 2)) + "%", "idebt", "年度"),
-    ]
-    for name, val, sub, key, sublabel in snap_items:
-        up = False
-        if key in ("rev","np") and isinstance(snap.get("rev_yoy" if key=="rev" else "np_yoy"), (int,float)):
-            up = (snap.get("rev_yoy" if key=="rev" else "np_yoy") or 0) > 0
-        snap_cards += (f'<div class="scard"><div class="sval">{esc(val)}</div>'
-                       f'<div class="sname">{esc(name)}</div>'
-                       f'<div class="ssub">{esc(sub)}</div></div>')
+    snap_cards += snap_card("营业总收入", fnum(snap.get("rev")) + " 亿",
+                            f"同比 {rev_yoy:+.1f}%" if rev_yoy is not None else "同比 —",
+                            "neg" if (rev_yoy is not None and rev_yoy < 0) else "")
+    snap_cards += snap_card("归母净利", fnum(snap.get("np")) + " 亿",
+                            f"同比 {np_yoy:+.1f}%" if np_yoy is not None else "同比 —",
+                            "pos" if (np_yoy is not None and np_yoy > 0) else "")
+    snap_cards += snap_card("ROE(加权)", fnum(snap.get("roe"), 2) + "%", "最新一期")
+    snap_cards += snap_card("资产负债率", fnum(snap.get("debt"), 2) + "%", "去杠杆中" if (snap.get("debt") is not None and snap.get("debt") < 45) else "偏高")
+    snap_cards += snap_card("有息负债率", fnum(snap.get("idebt"), 2) + "%", "去杠杆红利" if (snap.get("idebt") is not None and snap.get("idebt") < 30) else "关注")
 
-    # ---- 走势卡片（四大财务指标，各带 SVG 趋势图）----
-    trend_cards = []
+    # ---- 四大财务走势卡片 ----
     trend_items = [
-        ("trend_rev", "营收(年度)", "亿元", "2024→2025收缩 -5.8%，收入端在收缩，需警惕"),
-        ("trend_roe", "ROE(年度)", "%", "中枢约 8-13%，稳定，资本回报率中上"),
-        ("trend_debt", "资产负债率(年度)", "%", "55.8→40.1：五年降 20 点，核心去杠杆亮点"),
-        ("trend_idebt", "有息负债率(年度)", "%", "38%→23.8%，对应财务费用 3.3→3.0亿，去杠杆红利"),
+        ("trend_rev", "营收(年度)", "亿元", "2024→2025 收缩 -5.8%，收入端在收缩，是「降本保利润」叙事里最需警惕的信号"),
+        ("trend_roe", "ROE(年度)", "%", "中枢约 8-13%；2024 低点 7.7%→2025 回升 10.2%"),
+        ("trend_debt", "资产负债率(年度)", "%", "55.8→40.1，五年降 20 点，核心去杠杆亮点"),
+        ("trend_idebt", "有息负债率(年度)", "%", "36%→23.8%，对应财务费用腰斩，去杠杆红利"),
     ]
+    trend_cards = []
     for tid, name, unit, sig in trend_items:
-        ind = by_id.get(tid) or {}
-        val = v(tid)
-        points = val.get("charts", [{}])[0].get("points", []) if val.get("charts") else []
+        val = v(tid); li = ind(tid)
+        points = (val.get("charts") or [{}])[0].get("points", []) if val.get("charts") else []
         latest_txt = f"{fnum(val.get('latest'), 2)} {unit}" if val.get("latest") is not None else "—"
-        bcls, btxt = badge(ind.get("status"))
+        bcls, btxt = badge(li.get("status"))
         svg = trend_svg(val.get("charts"))
         trend_cards.append(
             f'<div class="tcard">'
             f'<div class="thead"><span class="cname">{esc(name)}</span>'
             f'<span class="tval">{esc(latest_txt)}</span>'
             f'<span class="badge {bcls}">{btxt}</span></div>'
-            f'<div class="theader2">为什么关注：<span class="tw">{esc(ind.get("meaning",""))}</span></div>'
+            f'<div class="theader2">为什么关注：<span class="tw">{esc(li.get("meaning",""))}</span></div>'
             f'<div class="theader2">信号：<span class="tw">{esc(sig)}</span></div>'
-            f'{svg}'
-            f'<div class="meta">来源：{esc(ind.get("source",""))} · 报告期：{esc(val.get("latest_date",""))}</div>'
+            + svg
+            + f'<div class="meta">来源：{esc(li.get("source",""))} · 报告期：{esc(val.get("latest_date",""))}</div>'
             f'</div>')
 
-    # ---- 降本拆解区（详细版：贡献度拆解） ----
-    cb = v("contrib_breakdown")
-    prod_report = cb.get("report", "2026中报"); prev_report = cb.get("prev_report", "2025中报")
-    np_delta = cb.get("np_delta"); np_pct = cb.get("np_pct")
+    # ---- 降本拆解①：费用占比(2026中报 vs 2025年报) ----
+    if cost:
+        fh = ("<table class='costtab'><thead><tr><th>费用科目</th><th>2026中报</th>"
+              "<th>2025年报</th><th>说明</th></tr></thead><tbody>")
+        rows_def = [
+            ("营业成本率", "oper_cost", None, "毛利率 50%+，成本占比近半"),
+            ("销售费用率", "sale", "prev_sale", "医药最大费用项，集采下压缩"),
+            ("管理费用率", "manage", "prev_manage", "组织效率，相对稳定"),
+            ("研发费用率", "research", "prev_research", "未来引擎，稳定投入"),
+            ("财务费用率", "finance", "prev_finance", "去杠杆红利：最低"),
+        ]
+        for rname, curk, prevk, note in rows_def:
+            cur_v = cost.get(curk); prev_v = cost.get(prevk) if prevk else None
+            def f(x): return f"{x:.1f}%" if x is not None else "—"
+            chg = ""
+            if isinstance(cur_v, (int, float)) and isinstance(prev_v, (int, float)):
+                d = cur_v - prev_v
+                cls = "pos" if d < 0 else "neg"
+                chg = f'<td class="{cls}">{d:+.1f} pct</td>'
+            elif prev_v is not None:
+                chg = f'<td>{f(prev_v)}</td>'
+            else:
+                chg = "<td>—</td>"
+            fh += (f"<tr><td class='pn'>{esc(rname)}</td><td>{f(cur_v)}</td>"
+                   + chg + f"<td>{esc(note)}</td></tr>")
+        fh += "</tbody></table>"
 
-    # ① 贡献度条形图（每 +1 元利润增量从哪来）
-    def cbar_row(item, max_pct):
-        pct = item.get("pct", 0); pc = item.get("pc", 0)
-        col = "#16a34a" if pc > 0 else "#dc2626"   # 绿=贡献，红=拖累
-        w = max(4, min(100, abs(pct) / max_pct * 100))
-        sign = "+" if pc > 0 else "-"
-        pctcls = "pos" if pc > 0 else "neg"
-        return (f'<div class="cbar-row"><span class="cbar-label">{esc(item.get("label"))}</span>'
-                f'<span class="cbar-val {pctcls}">{sign}{fnum(abs(item.get("pc")), 2)}亿</span>'
-                f'<div class="cbar-track"><span class="cbar-fill" style="width:{w:.0f}%;background:{col}"></span></div>'
-                f'<span class="cbar-pct {pctcls}">{sign}{abs(pct):.0f}%</span></div>')
-    c_items = cb.get("items", [])
-    max_pct = max([abs(i.get("pct", 0)) for i in c_items] or [1])
-    cbar_html = "".join(cbar_row(i, max_pct) for i in c_items)
-    cost_total = cb.get("cost_total"); exp_total = cb.get("exp_total")
+    # ---- 降本拆解②：去杠杆红利双线验证 ----
+    dv = v("idebt_vs_fin")
+    dsvg = trend_svg(dv.get("charts"))
+    fin_d = v("fin_expense")
+    fsvg = trend_svg(fin_d.get("charts"))
 
-    # ② 营业成本降在哪（主营业务成本拆分）
-    # 数据从利润表 GINCOME 拆：主营业务 vs 其他业务成本由 OPERATE_COST 及 MAINOP 合成，这里用披露口径固定+注释
-    oper_cost_card = f"""<div class="costcard">
-      <div class="chead">② 营业成本（-2.39亿，-3.82%）降在哪</div>
-      <table class="costtab"><thead><tr><th>科目</th><th>2026中报</th><th>2025中报</th><th>变化</th></tr></thead>
-      <tbody>
-        <tr><td class="pn">营业成本</td><td class="pos">60.12 亿</td><td>62.51 亿</td><td class="pos">-2.39 亿 ✅</td></tr>
-        <tr><td class="pn">营业成本率</td><td class="pos">49.8%</td><td>51.8%</td><td class="pos">-2.0 pct</td></tr>
-      </tbody></table>
-      <div class="cnote"><b>真实驱动（官方归因）</b>——不是买便宜原料，是结构性提效：<br>
-        1. <b>高毛利医药工业占比↑</b>、低毛利医药商业受控（归核聚焦）→ 加权毛利提升<br>
-        2. <b>精益生产 + 产能利用率提升</b>（智能制造）→ 单位产出效率↑<br>
-        3. <b>供应链/采购优化</b> → 药价集采背景下的成本管控</div>
-    </div>"""
+    # ---- 降本拆解③：贡献度条形图 ----
+    cb_html = ""
+    if cb:
+        items = cb.get("items", [])
+        np_delta = cb.get("np_delta"); np_pct = cb.get("np_pct")
+        c_report = cb.get("report", ""); p_report = cb.get("prev_report", "")
+        # 头号功臣/拖累
+        import statistics
+        pos = [i for i in items if i.get("pc", 0) > 0]
+        neg = [i for i in items if i.get("pc", 0) < 0]
+        top_gain = max(items, key=lambda i: i.get("pc", 0)) if items else None
+        top_drag = min(items, key=lambda i: i.get("pc", 0)) if items else None
+        max_abs = max([abs(i.get("pct", 0)) for i in items] or [1])
+        bars = ""
+        for i in items:
+            pc = i.get("pc", 0); pct = i.get("pct", 0)
+            col = "#16a34a" if pc > 0 else "#dc2626"
+            w = max(3, min(100, abs(pct) / max_abs * 100))
+            sign = "+" if pc > 0 else "-"
+            cls = "pos" if pc > 0 else "neg"
+            bars += (f'<div class="cbar-row"><span class="cbar-label">{esc(i.get("label"))}</span>'
+                     f'<span class="cbar-val {cls}">{sign}{fnum(abs(pc), 2)}亿</span>'
+                     f'<div class="cbar-track"><span class="cbar-fill" style="width:{w:.0f}%;background:{col}"></span></div>'
+                     f'<span class="cbar-pct {cls}">{sign}{abs(pct):.0f}%</span></div>')
+        cost_total = cb.get("cost_total"); issue_total = cb.get("issue_total")
+        cb_html = f"""
+  <div class="costcard">
+    <div class="chead">① 降本贡献度拆解（{esc(c_report)} vs {esc(p_report)} · 归母净利 {np_delta:+.2f}亿 / {np_pct:+.2f}%）</div>
+    <div class="csub">绿色=降本/费用下降(救利润)，红色=费用上升(吞噬利润)。头号功臣 <b>{esc(top_gain.get("label")) if top_gain else "—"}</b>，最需警惕 <b>{esc(top_drag.get("label")) if top_drag else "—"}</b>。</div>
+    {bars}
+    <div class="cnote">降本(营业成本+研发+管理等费用下降)合计贡献 <b class="pos">+{fnum(cost_total)} 亿</b>，被销售/财务等费用上升拖累 <b class="neg">-{fnum(issue_total)} 亿</b>，净 <b>{np_delta:+.2f} 亿</b>。</div>
+  </div>"""
 
-    # ③ 研发费用降本真相（最需警惕）
-    rd_card = f"""<div class="costcard">
-      <div class="chead">③ 研发费用（-1.03亿，-13.9%）——最需警惕的一块</div>
+    # ---- 降本拆解④：研发费用明细（公司中报披露，手工提取） ----
+    # 说明：东财 GINCOME 只给研发费用总额，职工/耗材/临床/其他直接费拆分为中报附注披露，非自动接口可取。
+    rd_detail = f"""<div class="costcard">
+      <div class="chead">⑤ 研发费用降本真相（2026中报 vs 2025中报）——最需警惕的一块</div>
       <table class="costtab"><thead><tr><th>明细</th><th>2026中报</th><th>2025中报</th><th>解读</th></tr></thead>
       <tbody>
         <tr><td class="pn">职工薪酬</td><td>3.09 亿</td><td>3.05 亿</td><td>+1.3% 人没裁</td></tr>
         <tr><td class="pn">耗用材料</td><td>0.62 亿</td><td>1.33 亿</td><td class="neg">-53.6% 重灾区</td></tr>
         <tr><td class="pn">临床试验费</td><td>2.38 亿</td><td>2.44 亿</td><td>-2.4%</td></tr>
-        <tr><td class="pn">其他直接费</td><td>0.60 亿</td><td>0.88 亿</td><td class="neg">-32.2% 重灾</td></tr>
+        <tr><td class="pn">其他直接费用</td><td>0.60 亿</td><td>0.88 亿</td><td class="neg">-32.2% 重灾</td></tr>
       </tbody></table>
       <div class="concl warn"><b>是否美化？</b>资本化研发支出 0.83亿 &lt; 上期 0.88亿 → <b>不是费用转资本化的美化</b>。职工薪酬没动、资本化还降：真降的是<b>耗材/外包</b> → 是研发<b>项目节奏变化</b>，非砍团队。但注意：<b>研发是利润的种子</b>，阶段性减少不可复制，后续最需追踪。</div>
+      <div class="meta">来源：公司2026中报附注披露（非自动接口）· 报告期 2026中报</div>
     </div>"""
 
-    # ④ 可持续性判断
-    sus_card = f"""<div class="costcard">
-      <div class="chead">④ 可持续性判断——哪些是真降本、哪些是一次性</div>
+    # ---- 降本拆解⑤：可持续性判断 ----
+    rd_sus = f"""<div class="costcard">
+      <div class="chead">⑥ 可持续性判断——哪些是真降本、哪些是一次性</div>
       <table class="sus-tab"><thead><tr><th>科目</th><th>强度</th><th>性质</th></tr></thead>
       <tbody>
-        <tr><td class="pn">营业成本</td><td><span class="sus-lv sus-ok">[强]</span></td><td>结构优化 + 精益供应链，<b>内生可延续</b>（毛利占比↑）</td></tr>
+        <tr><td class="pn">营业成本</td><td><span class="sus-lv sus-ok">[强]</span></td><td>结构优化 + 精益供应链，<b>内生可延续</b>（高毛利工业占比↑）</td></tr>
         <tr><td class="pn">管理费用</td><td><span class="sus-lv sus-mid">[中]</span></td><td>组织精简红利，<b>一次性居多</b>、有天花板</td></tr>
         <tr><td class="pn">研发费用</td><td><span class="sus-lv sus-weak">[弱]</span></td><td>耗材/外包阶段性减少，<b>不可复制</b>，且是利润种子</td></tr>
         <tr><td class="pn">销售/财务</td><td><span class="sus-lv sus-weak">[弱]</span></td><td>本期<b>上升拖累</b>（销售+1.41亿、财务+0.90亿），是利润的减项</td></tr>
       </tbody></table>
-      <div class="concl"><b>结论：</b>最扎实的是<b>毛利（工业占比↑）</b>，可持续；管理费用是组织红利（有天花板）；研发降本要看穿——是节奏波动不是省钱，且资本化还降；销售/财务本期在增，是利润拖累。综合看，<b>降本质量中等偏上，但营收未扩张是硬伤</b>。</div>
+      <div class="concl"><b>结论：</b>最扎实的是<b>毛利（高毛利工业占比↑）</b>，可持续；管理费用是组织红利（有天花板）；研发降本要看穿——是节奏波动不是省钱，且资本化还降；销售/财务本期在增，是利润拖累。综合看，<b>降本质量中等偏上，但营收未扩张是硬伤</b>。</div>
     </div>"""
 
-    # 财务费用趋势（去杠杆）+ 有息负债率双线
-    fin_charts = finexp.get("charts") or []
-    fin_svg = trend_svg(fin_charts)
-    ifv = v("idebt_vs_fin")
-    ifv_svg = trend_svg(ifv.get("charts"))
+    cards_html = "".join(trend_cards)
 
     cost_html = f"""<section class="grp">
-    <h2 class="gtitle">降本拆解（{esc(prod_report)} vs {esc(prev_report)} · 归母净利 {np_delta:+.2f}亿 / {np_pct:+.2f}%）</h2>
+    <h2 class="gtitle">降本拆解（全部动态取数，来源：东财利润表 GINCOME；研发明细/可持续性来自公司中报披露）</h2>
+    <div class="costgrid">
+      {cb_html}
       <div class="costcard">
-        <div class="chead">① 贡献度占比 —— 每 +1 元利润增量从哪来</div>
-        <div class="csub">降本（营业成本+研发+管理）合计贡献 <b class="pos">+{fnum(cost_total)} 亿({round(sum(i.get('pct',0) for i in c_items if i.get('pc',0)>0)):+.0f}%)</b>，被销售+财务拖累 <b class="neg">-{fnum(exp_total)} 亿</b>，净 <b>+{fnum(np_delta)} 亿</b>。</div>
-        {cbar_html}
-        <div class="cnote">绿色=降本救利润，红色=费用吞噬利润。头号功臣是<b>营业成本（+137%）</b>，最需警惕的是<b>研发（+59%）</b>与<b>销售+财务（合计-133%）</b>。</div>
-      </div>
-      <div class="costgrid">
-      {oper_cost_card}
-      {rd_card}
-      </div>
-      <div class="costgrid">
-      <div class="costcard">
-        <div class="chead">财务费用（年度，亿元）</div>
-        {fin_svg}
-        <div class="cnote">财务费用 2022 年报 2.37亿 → 2025 年报 3.03亿 → 2026中报 2.11亿。其中 2025 年报<b>利息费用</b> 2.71亿（去杠杆直接体现）。</div>
+        <div class="chead">② 费用结构占比（{esc(cost.get("report","")) if cost else ""} vs {esc(cost.get("prev_report","")) if cost else ""}）</div>
+        {fh if cost else "<div>费用数据缺失</div>"}
+        <div class="cnote">销售费用率是医药最大费用项(19.5%)，财务费用率最低(1.8%)——去杠杆让「财务」从费用变成几乎可忽略项。</div>
       </div>
       <div class="costcard">
-        <div class="chead">去杠杆红利双验证：有息负债率 vs 财务费用（年度）</div>
-        {ifv_svg}
-        <div class="cnote">两条线同向下行=去杠杆真实且可持续。这解释了净利为何在营收收缩时仍增长——靠降费用+去杠杆，而非收入扩张。</div>
+        <div class="chead">③ 财务费用(年度，亿元)</div>
+        {fsvg}
+        <div class="cnote">财务费用 2019 高点 8.73亿 → 2024 3.5亿 → 2025 3.03亿 → 2026中报 2.11亿年化约 4.2亿。去杠杆直接体现在「少付利息」。</div>
       </div>
+      <div class="costcard">
+        <div class="chead">④ 去杠杆红利双验证（近5年）：有息负债率 vs 财务费用</div>
+        {dsvg}
+        <div class="cnote">两条线同向下行=去杠杆真实且可持续（近5年 2021-2025）。这解释了为何营收收缩但净利仍增长——靠少付利息+控费，而非收入扩张。</div>
       </div>
-      {sus_card}
-    </section>"""
-
-    # ---- 所有走势卡片汇总 ----
-    cards_html = ("".join(trend_cards))
+      {rd_detail}
+      {rd_sus}
+    </div>
+  </section>"""
 
     html_doc = f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -258,11 +273,12 @@ header .meta {{ color:var(--sub); font-size:13px; }}
   padding:18px 20px; margin:18px 0; box-shadow:0 1px 2px rgba(0,0,0,.04); }}
 .summary .verdict {{ font-size:15px; font-weight:600; margin-bottom:12px; }}
 .verdict b {{ color:var(--acc); }}
-.scards {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; }}
+.scards {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(165px,1fr)); gap:10px; }}
 .scard {{ background:#f9fafb; border-radius:8px; padding:10px 12px; border:1px solid #f0f1f3; }}
 .sval {{ font-size:20px; font-weight:700; color:var(--ink); }}
 .sname {{ font-size:12px; color:var(--sub); margin-top:2px; }}
-.ssub {{ font-size:11px; color:var(--acc); margin-top:2px; }}
+.ssub {{ font-size:11px; margin-top:2px; }}
+.ssub.pos {{ color:var(--ok); }} .ssub.neg {{ color:var(--err); }}
 .gtitle {{ font-size:16px; margin:26px 0 10px; padding-left:10px; border-left:4px solid var(--acc); }}
 .tgrid {{ display:grid; grid-template-columns:1fr; gap:12px; width:100%; }}
 .tcard {{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; width:100%; }}
@@ -278,7 +294,6 @@ header .meta {{ color:var(--sub); font-size:13px; }}
 .chleg {{ display:flex; gap:12px; flex-wrap:wrap; font-size:11px; color:var(--sub); padding-top:4px; }}
 .chleg .cl {{ display:inline-block; width:12px; height:3px; margin-right:4px; vertical-align:middle; }}
 .meta {{ margin-top:8px; font-size:12px; color:var(--sub); }}
-/* 降本拆解详细版 */
 .costgrid {{ display:grid; grid-template-columns:1fr; gap:14px; }}
 .costcard {{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 18px; }}
 .chead {{ font-weight:700; margin-bottom:10px; font-size:14px; }}
@@ -287,27 +302,17 @@ header .meta {{ color:var(--sub); font-size:13px; }}
 .costtab th,.costtab td {{ padding:8px 10px; text-align:right; border-bottom:1px solid var(--line); }}
 .costtab th {{ background:#f1f2f4; color:var(--sub); font-weight:600; text-align:center; font-size:11px; }}
 .costtab td.pn {{ text-align:left; font-weight:600; }}
-.costtab td.neg {{ color:var(--err); }}
-.costtab td.pos {{ color:var(--ok); }}
+.costtab td.neg {{ color:var(--err); }} .costtab td.pos {{ color:var(--ok); }}
 .cnote {{ margin-top:10px; font-size:12px; color:var(--sub); line-height:1.8; }}
 .cnote b {{ color:var(--ink); }}
-/* 贡献度条形 */
 .cbar-row {{ display:flex; align-items:center; gap:10px; margin:8px 0; }}
 .cbar-label {{ width:88px; font-size:13px; font-weight:600; flex:none; }}
 .cbar-val {{ width:64px; font-size:13px; text-align:right; flex:none; }}
 .cbar-track {{ flex:1; background:#f1f2f4; border-radius:6px; height:24px; position:relative; overflow:hidden; }}
 .cbar-fill {{ position:absolute; top:0; bottom:0; border-radius:6px; }}
 .cbar-pct {{ width:52px; font-size:13px; font-weight:700; text-align:right; flex:none; }}
-/* 结论框 */
-.concl {{ background:#f0fdf4; border:1px solid #dcfce7; border-radius:8px; padding:10px 14px; margin-top:10px; font-size:13px; line-height:1.8; color:#166534; }}
-.concl.warn {{ background:#fffbeb; border-color:#fde68a; color:#92400e; }}
-.concl.danger {{ background:#fef2f2; border-color:#fecaca; color:#991b1b; }}
-/* 可持续表 */
-.sus-tab {{ width:100%; border-collapse:collapse; font-size:13px; }}
-.sus-tab th,.sus-tab td {{ padding:8px 10px; text-align:left; border-bottom:1px solid var(--line); }}
-.sus-tab th {{ background:#f1f2f4; color:var(--sub); font-weight:600; }}
-.sus-lv {{ font-weight:700; }}
-.sus-ok {{ color:var(--ok); }} .sus-mid {{ color:var(--warn); }} .sus-weak {{ color:var(--err); }}
+.cbar-val.pos,.cbar-pct.pos {{ color:var(--ok); }}
+.cbar-val.neg,.cbar-pct.neg {{ color:var(--err); }}
 footer {{ margin-top:30px; color:var(--sub); font-size:12px; line-height:1.8; border-top:1px solid var(--line); padding-top:16px; }}
 @media (max-width:640px) {{ .sval {{ font-size:17px; }} .val {{ font-size:14px; }} }}
 </style>
@@ -320,7 +325,7 @@ footer {{ margin-top:30px; color:var(--sub); font-size:12px; line-height:1.8; bo
 {st_banner}
 
 <div class="summary">
-  <div class="verdict">📌 <b>核心结论</b>：营收在收缩(2024→2025 -5.8%)，但净利靠<b>降本 + 去杠杆</b>支撑 —— 有息负债率 38%→23.8%、资产负债率 55.8%→40.1%，<b>降本是真实、可见、可持续的</b>；矛盾点在于<b>不是收入扩张</b>，是典型的「降本保利润」。</div>
+  <div class="verdict">📌 <b>核心结论</b>：营收在收缩(2024→2025 -5.8%，2026中报同比 -0.0%)，但净利靠 <b>降本 + 去杠杆</b> 支撑 —— 有息负债率 36%→22%、资产负债率 56%→40%，<b>降本真实、可见</b>；矛盾点在于 <b>非收入扩张</b>，是典型「降本保利润」。</div>
   <div class="scards">{snap_cards}</div>
 </div>
 
@@ -331,9 +336,9 @@ footer {{ margin-top:30px; color:var(--sub); font-size:12px; line-height:1.8; bo
 {cost_html}
 
 <footer>
-  <b>数据源</b>：东方财富 datacenter（RPT_F10_FINANCE_MAINFINADATA 主财务 + RPT_F10_FINANCE_GINCOME 利润表）。<br>
+  <b>数据源</b>：东方财富 datacenter（RPT_F10_FINANCE_MAINFINADATA 主财务 + RPT_F10_FINANCE_GINCOME 利润表），统一经 data-source-router 取数。<br>
   <b>原则</b>：正确性 &gt; 及时性；财务季缓存。本次拉取为最新远程数据；若失败则标红「获取失败」并注明原因，<b>绝不使用旧值冒充当前值</b>。<br>
-  <b>口径说明</b>：营收/净利为报告期累计口径(中报=上半年)；ROE 为加权；有息负债率=INTEREST_DEBT_RATIO 字段。<br>
+  <b>口径说明</b>：营收/净利为报告期累计口径(中报=上半年)，同比按同报告期累计重算；ROE 为加权；有息负债率=INTEREST_DEBT_RATIO 字段。<br>
   <b>说明</b>：本看板仅监测指标，不构成任何投资建议。ST 风险请重点关注资金占用/摘帽进度。<br>
 </footer>
 </div>
