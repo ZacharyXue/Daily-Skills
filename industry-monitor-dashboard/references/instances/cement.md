@@ -20,10 +20,11 @@ related_skills: [dashboard-style, data-source-router, stock-analysis, commodity-
 - **产物**：`/root/cement-dashboard/output/cement_dashboard.html`（可挂博客 public/exports/）
 
 ## 更新（手动/可 cron）
+> **代码位置**：`industry-monitor-dashboard/references/instances/cement/code`（软链 `/root/cement-dashboard`，git 管理）。触发时按此路径找代码。
 ```bash
-cd /root/cement-dashboard
+cd /root/zach-skills/industry-monitor-dashboard/references/instances/cement/code
 python3 scripts/extract_report.py   # 财报期跑一次(提取吨数据+分红)
-python3 scripts/fetch.py            # 拉全部指标
+python3 scripts/fetch.py            # 拉全部指标(走 data-source-router)
 python3 scripts/render_html.py      # 生成 HTML
 ```
 

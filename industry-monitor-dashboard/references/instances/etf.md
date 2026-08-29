@@ -21,8 +21,10 @@ tags: [etf, 红利, 看板, valuation, technical]
 
 ## 更新流程（手动触发）
 
+> **代码位置**：`industry-monitor-dashboard/references/instances/etf/code`（软链 `/root/ZacharyXue.github.io/etf-dashboard`）。触发时按此路径找代码。
+
 ```bash
-cd /root/ZacharyXue.github.io/etf-dashboard
+cd /root/zach-skills/industry-monitor-dashboard/references/instances/etf/code
 python3 update.py
 # 每日收盘后跑一次; 产物已更新 public/exports/etf-dashboard.html
 cd /root/ZacharyXue.github.io
