@@ -3,10 +3,10 @@
 > **总风格/数据规范**：见 `dashboard-style/SKILL.md`（自包含 HTML 骨架 + 数据走 `data-source-router.get()`）。
 > **新增看板**：`zach-skills/<name>-dashboard/SKILL.md`（各自 md）+ 注册到本文件 + 复用骨架模板。
 
-| 看板 | 类型 | Skill | 工程路径 | 数据触发 | 持续更新 | 产物 |
+| 看板 | 类型 | 实例详情(母纲) | 工程路径 | 数据触发 | 持续更新 | 产物 |
 |---|---|---|---|---|---|---|
-| **水泥 & 海螺** | 行业+龙头(盈利底) | `cement-dashboard` | `/root/cement-dashboard` | `cn_cement_index`/`cn_cement_spread`/`cn_financial`/`cn_stock_*` | `cd /root/cement-dashboard && python3 scripts/extract_report.py && python3 scripts/fetch.py && python3 scripts/render_html.py` | `output/cement_dashboard.html` |
-| **ETF 技术温度** | ETF(红利+行业/主题) | `etf-dashboard` | `/root/ZacharyXue.github.io/etf-dashboard` | `cn_stock_quote`/`cn_stock_kline`(腾讯) + 中证/天天基金(估值) | `cd /root/ZacharyXue.github.io/etf-dashboard && python3 update.py` | `public/exports/etf-dashboard.html` |
+| **水泥 & 海螺** | 行业+龙头(盈利底) | `industry-monitor-dashboard/references/instances/cement.md` | `/root/cement-dashboard` | `cn_cement_index`/`cn_cement_spread`/`cn_financial`/`cn_stock_*` | `cd /root/cement-dashboard && python3 scripts/extract_report.py && python3 scripts/fetch.py && python3 scripts/render_html.py` | `output/cement_dashboard.html` |
+| **ETF 技术温度** | ETF(红利+行业/主题) | `industry-monitor-dashboard/references/instances/etf.md` | `/root/ZacharyXue.github.io/etf-dashboard` | `cn_stock_quote`/`cn_stock_kline`/`cn_csindex_pe`/`cn_ttfund_index` | `cd /root/ZacharyXue.github.io/etf-dashboard && python3 update.py` | `public/exports/etf-dashboard.html` |
 
 ## 各看板要盯什么（简述）
 
