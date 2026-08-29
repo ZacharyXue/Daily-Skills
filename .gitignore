@@ -1,2 +1,5 @@
 # 私密数据：不进公开仓库（本地私有仓，独立版本控制）
 career-data/
+# 看板过程数据：可重新 fetch 生成，不随公开仓同步；cache 含投资/财务数据
+industry-monitor-dashboard/references/instances/*/cache/
+industry-monitor-dashboard/references/instances/*/output/
