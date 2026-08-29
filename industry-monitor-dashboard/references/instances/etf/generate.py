@@ -20,6 +20,14 @@ UA = {"User-Agent": "Mozilla/5.0"}
 API = "/root/.local/bin"
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.environ.get("ETF_OUT") or os.path.normpath(os.path.join(HERE, "../public/exports/etf-dashboard.html"))
+def _router_root():
+    d = HERE
+    for _ in range(8):
+        if os.path.isdir(os.path.join(d, "data-source-router")): return d
+        d = os.path.dirname(d)
+    return os.environ.get("ZACH_SKILLS", "/root/zach-skills")
+sys.path.insert(0, os.path.join(_router_root(), "data-source-router"))
+import data_router as DSR   # 统一数据层: 行情/K线/中证PE/天天基金 全部走 router, 见 data-source-router
 YEARS = 5  # 估值分位窗口(年)
 
 # ---------- 数据获取 ----------
@@ -34,55 +42,37 @@ def http_json(url, timeout=15, retry=3):
     raise last
 
 def csindex_pe_pct(index_code):
-    """中证官网历史PE(peg) -> 5年分位"""
-    end = datetime.now().strftime("%Y%m%d")
-    start = str(int(end[:4]) - YEARS) + end[4:]
-    d = http_json(f"https://www.csindex.com.cn/csindex-home/perf/index-perf?indexCode={index_code}&startDate={start}&endDate={end}&frequency=daily")
-    data = d.get("data") or []
-    flat = []
-    for r in data:
-        flat.append(r[0] if isinstance(r, list) and r else r)
-    pe = [r.get("peg") for r in flat if r.get("peg") is not None]
-    if not pe: return None
-    cur = pe[-1]
-    pct = sum(1 for x in pe if x <= cur) / len(pe) * 100
-    return {"cur_pe": round(cur, 2), "pct": round(pct, 1),
-            "lo": round(min(pe), 2), "hi": round(max(pe), 2), "n": len(pe)}
+    """中证官网历史PE(peg) -> 5年分位 (走 data-source-router 统一取数)"""
+    try:
+        d = DSR.get('cn_csindex_pe', index_code=index_code)[0]
+        if not (d and d.get("ok")): return None
+        return {"cur_pe": d.get("pe_ttm"), "pct": d.get("pe_pct_5y"),
+                "lo": None, "hi": None, "n": d.get("n")}
+    except Exception:
+        return None
 
 def ttskill_index_info(index_id):
-    r = subprocess.run(["ttskill", "invoke", "TTFUND_INDEX_INFO", "--action", "query",
-                        "--body", json.dumps({"index_id": index_id}, ensure_ascii=False)],
-        capture_output=True, text=True, timeout=60,
-        env={"PATH": f"{API}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"})
+    """天天基金 TTFUND_INDEX_INFO -> PE/PB 10年分位+ROE (走 router)"""
     try:
-        d = json.loads(r.stdout)["data"]["raw_result"]["body"]["data"]
-        v = d.get("valuation") or {}
-        return {"name": d.get("index_profile", {}).get("full_index_name"),
-                "pe10y": v.get("pe_percentile_10y"), "pb10y": v.get("pb_percentile_10y"),
-                "pb": v.get("pb"), "roe": v.get("roe"), "pe_ttm": v.get("pe_ttm")}
+        d = DSR.get('cn_ttfund_index', index_id=index_id)[0]
+        if not (d and d.get("ok")): return {}
+        return {"name": None, "pe10y": d.get("pe_pct_10y"), "pb10y": d.get("pb_pct_10y"),
+                "pb": None, "roe": d.get("roe"), "pe_ttm": d.get("pe_ttm")}
     except Exception:
         return {}
 
 def tencent_quote(symbol):
-    """腾讯实时行情: 现价/涨跌幅"""
-    req = urllib.request.Request(f"https://qt.gtimg.cn/q={symbol}", headers=UA)
-    raw = urllib.request.urlopen(req, timeout=15).read().decode("gbk", errors="replace")
-    f = raw.split('"')[1].split("~")
-    return {"name": f[1], "price": float(f[3]), "chg_pct": float(f[32])}
+    """腾讯实时行情: 现价/涨跌幅 (走 router)"""
+    try:
+        d = DSR.get('cn_stock_quote', symbol=symbol)[0]
+        return {"name": d.get("name"), "price": d.get("price"), "chg_pct": d.get("change_pct")}
+    except Exception as e:
+        raise ValueError(f"腾讯行情失败 {symbol}: {e}")
 
-def tencent_kline(symbol, days=300, retry=3):
-    """腾讯前复权K线 -> [(date, close, high, vol)]"""
-    for i in range(retry):
-        try:
-            url = f"https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param={symbol},day,,,{days},qfq"
-            req = urllib.request.Request(url, headers={**UA, "Referer": "https://gu.qq.com/"})
-            d = json.loads(urllib.request.urlopen(req, timeout=15).read())
-            data = d["data"][symbol]
-            kl = data.get("qfqday") or data.get("day")
-            return [(r[0], float(r[2]), float(r[3]), float(r[5])) for r in kl]
-        except Exception:
-            if i == retry - 1: raise
-            time.sleep(1)
+def tencent_kline(symbol, days=300):
+    """腾讯前复权K线 -> [(date, close, high, vol)] (走 router)"""
+    kl = DSR.get('cn_stock_kline', symbol=symbol, count=days)[0]
+    return [(r["date"], r["close"], r["high"], r["volume"]) for r in kl]
 
 # ---------- 指标计算 ----------
 def vbias(closes, price, n=20):
