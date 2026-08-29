@@ -21,12 +21,12 @@ tags: [etf, 红利, 看板, valuation, technical]
 
 ## 更新流程（手动触发）
 
-> **代码位置**：代码就在本目录（`generate.py` / `generate_html.py` / `update.py` / `watchlist.json` 真实文件，自包含）；工程源 `/root/ZacharyXue.github.io/etf-dashboard`（博客 repo，含部署）。触发时按本目录路径运行。
+> ⚠️ **必须用博客生产目录运行**：`update.py` 里的 `../public/exports/` 是相对路径，只有以 `/root/ZacharyXue.github.io/etf-dashboard` 为 cwd 才会落到博客 `public/exports/`。**skill 副本目录跑会落错位**（写到 instances 下）。工程源 `/root/ZacharyXue.github.io/etf-dashboard`（博客 repo，含部署）。
 
 ```bash
-cd /root/zach-skills/industry-monitor-dashboard/references/instances/etf
+cd /root/ZacharyXue.github.io/etf-dashboard
 python3 update.py
-# 每日收盘后跑一次; 产物已更新 public/exports/etf-dashboard.html
+# 每日收盘后跑一次; 产物已更新 博客 public/exports/etf-dashboard.html
 cd /root/ZacharyXue.github.io
 git add etf-dashboard public/exports/etf-dashboard.html src/content/projects/etf-dashboard.md
 git commit -m "update etf dashboard $(date +%F)"
