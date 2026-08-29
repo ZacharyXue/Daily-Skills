@@ -1,0 +1,41 @@
+{
+  "title": "ETF 技术温度看板",
+  "refresh_note": "手动触发更新：cd etf-dashboard && python3 update.py",
+  "watchlist": [
+    {
+      "name": "中证红利",
+      "csindex": "000922",
+      "ttfund_index": "000922",
+      "etf_symbol": "sh515180",
+      "etf_code": "515180"
+    },
+    {
+      "name": "红利低波易方达",
+      "csindex": "H30269",
+      "ttfund_index": "H30269",
+      "etf_symbol": "sh563020",
+      "etf_code": "563020"
+    },
+    {
+      "name": "港股央企红利",
+      "csindex": "931722",
+      "ttfund_index": "931722",
+      "etf_symbol": "sh520900",
+      "etf_code": "520900"
+    },
+    {
+      "name": "中证电池主题",
+      "csindex": "931719",
+      "ttfund_index": "931719",
+      "etf_symbol": "sz159796",
+      "etf_code": "159796"
+    },
+    {
+      "name": "港股通红利低波",
+      "csindex": "987016",
+      "ttfund_index": "987016",
+      "etf_symbol": "sz159545",
+      "etf_code": "159545"
+    }
+  ]
+}

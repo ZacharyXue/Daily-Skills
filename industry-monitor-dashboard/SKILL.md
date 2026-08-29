@@ -60,8 +60,8 @@ tags: [dashboard, monitoring, data-source, html-render, a-share-report, commodit
 
 | 看板 | 实例详情 | 类型 |
 |---|---|---|
-| 水泥 & 海螺 | `references/instances/cement.md` | 行业 + 龙头(盈利底) |
-| ETF 技术温度 | `references/instances/etf.md` | ETF(估值 + 技术) |
+| 水泥 & 海螺 | `references/instances/cement/README.md` (+ `cement/` 含全部工程代码，自包含可迁移) | 行业 + 龙头(盈利底) |
+| ETF 技术温度 | `references/instances/etf/README.md` (+ `etf/` 含脚本；运行需 ttskill/产物可配 ETF_OUT) | ETF(估值 + 技术) |
 
 - **风格模板** → 复用 `dashboard-style/templates/dashboard_skeleton.html`（自包含 HTML 骨架：details 折叠/多线 SVG/表格/徽章）
 - **数据获取** → 一律走 `data-source-router.get()`（行情/K线/财报/中国水泥网/中证PE/天天基金分位/GitHub 已统一下沉）
