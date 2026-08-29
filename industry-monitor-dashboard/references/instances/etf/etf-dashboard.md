@@ -1,6 +1,6 @@
 # ETF / 指数看板：无 QMT 数据源 + 指标算法 + PIL 绘图坑（完整速查）
 
-本文件是 `etf-dashboard` skill 的详细速查。数据源、指标、信号、用户偏好、PIL 绘图坑全部固化于此。
+本文件是母纲 `industry-monitor-dashboard` 下 **ETF 实例**的详细速查（数据源、指标、信号、用户偏好、PIL 绘图坑）。ETF 看板已并入母纲，不单独成 skill。
 
 ## 一、数据源（实测，免费无 key）
 
