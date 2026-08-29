@@ -43,6 +43,9 @@ def _register():
         # ---- 行业指数(中国水泥网, 免费公开源) ----
         "cn_cement_index":  (lambda p: fin.cn_cement_index(p["index_type"]), "ccement", TTL["industry_price"], "T1"),
         "cn_cement_spread": (lambda p: fin.cn_cement_spread(), "ccement", TTL["industry_price"], "T1"),
+        # ---- 指数估值(ETF 看板: 中证官网PE + 天天基金分位) ----
+        "cn_csindex_pe":    (lambda p: fin.cn_csindex_pe(p["index_code"], p.get("years", 5)), "csindex", TTL["cn_stock_kline"], "T1"),
+        "cn_ttfund_index":  (lambda p: fin.cn_ttfund_index(p["index_id"]), "ttfund", TTL["cn_stock_kline"], "T1"),
         # ---- GitHub 读/搜 ----
         "github_repo":      (lambda p: gh.repo(p["owner"], p["repo"]), "github_api", TTL["github_repo"], "T1"),
         "github_issues":    (lambda p: gh.issues(p["owner"], p["repo"], p.get("state", "all"), p.get("limit", 100)), "github_api", TTL["github_issues"], "T1"),
@@ -88,7 +91,7 @@ def get(kind, cache_ns=None, **params):
 def _domain_for(source):
     return {"tencent": "qt.gtimg.cn", "eastmoney": "datacenter-web.eastmoney.com",
             "sec_edgar": "data.sec.gov", "github_api": "api.github.com",
-            "ccement": "index.ccement.com"}.get(source)
+            "ccement": "index.ccement.com", "csindex": "www.csindex.com.cn"}.get(source)
 
 def sources_status():
     """返回可用数据源开关状态(读config)。"""

@@ -30,6 +30,8 @@ sources:
   akshare:      { enabled: true, note: "仅财报可用，行情接口ECS上断连" }
   nighttally:   { enabled: true }   # 天天基金 ttskill(ETF估值)
   ccement:      { enabled: true, note: "中国水泥网行业指数(价格/成本/需求代理), 偶发丢包重试即可" }
+  csindex:      { enabled: true, note: "中证官网指数历史PE(peg)→5y分位; 非中证系无peg" }
+  ttfund:       { enabled: true, note: "天天基金 ttskill CLI(指数10y PE/PB分位+ROE), 需已login" }
 
 # ---------------- 速率限制 ----------------
 rate:

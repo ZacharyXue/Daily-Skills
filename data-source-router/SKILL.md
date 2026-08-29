@@ -31,6 +31,10 @@ related_skills: [etf-dashboard, whale-holdings, stock-analysis, github-repo-mana
 | 美股财报(facts) | `us_financial_sec` | SEC EDGAR `companyfacts` | ✅ 200(带UA) | 即时 |
 | 美股营收提取 | `us_revenue_sec` | SEC EDGAR | ✅ 200 | 即时 |
 | 宏观 | (预留) | 国家统计局 `data.stats.gov.cn` | ✅ 200 | 月度 |
+| 行业指数(水泥网) | `cn_cement_index` | 中国水泥网 `index.ccement.com` | ✅ 200(丢包重试) | 日频 |
+| 水泥-熟料价差 | `cn_cement_spread` | 中国水泥网(合成) | ✅ | 日频 |
+| 指数PE(中证) | `cn_csindex_pe` | 中证官网 `csindex-home/perf/index-perf` 的 `peg` | ✅ 200 | 日频 |
+| 指数估值(天天基金) | `cn_ttfund_index` | 天天基金 `ttskill TTFUND_INDEX_INFO` | ✅ CLI | 日频 |
 | GitHub 仓库元数据 | `github_repo` | GitHub REST v3 | ✅ 200 | 实时 |
 | GitHub Issues | `github_issues` | GitHub REST v3 | ✅ 200 | 实时 |
 | GitHub PR | `github_pulls` | GitHub REST v3 | ✅ 200 | 实时 |

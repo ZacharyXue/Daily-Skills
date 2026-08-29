@@ -224,3 +224,42 @@ def cn_cement_spread():
     recent = common[-7:] if len(common) >= 7 else common
     return {"ok": True, "latest": round(sum(recent) / len(recent), 1), "latest_date": "近一周均值",
             "series_k": len(common)}
+
+
+# ============ 指数估值（ETF 看板用：中证官网 PE + 天天基金分位） ============
+def cn_csindex_pe(index_code, years=5):
+    """中证官网历史PE(peg 字段) → 5年分位。index_code: 000922/H30269/931719 等。
+    返回 {ok, pe_pct_5y, pe_ttm, n}。非中证系指数(国证/恒生)无 peg → ok=False。"""
+    import datetime as dt
+    end = dt.datetime.now().strftime("%Y%m%d")
+    start = str(int(end[:4]) - years) + end[4:]
+    url = (f"https://www.csindex.com.cn/csindex-home/perf/index-perf?indexCode={index_code}"
+           f"&startDate={start}&endDate={end}&frequency=daily")
+    try:
+        r = _req(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=20)
+        data = r.json().get("data") or []
+        pe = [x.get("peg") for x in data if isinstance(x, dict) and x.get("peg") is not None]
+    except Exception as e:
+        return {"ok": False, "note": "中证官网异常: " + str(e)[:50]}
+    if not pe:
+        return {"ok": False, "note": "无peg(非中证系指数)"}
+    cur = pe[-1]
+    pct = sum(1 for x in pe if x <= cur) / len(pe) * 100
+    return {"ok": True, "pe_pct_5y": round(pct, 1), "pe_ttm": round(cur, 2), "n": len(pe)}
+
+def cn_ttfund_index(index_id):
+    """天天基金 TTFUND_INDEX_INFO → PE/PB 10年分位 + ROE。走本地 ttskill CLI(需已login)。
+    返回 {ok, pe_ttm, pe_pct_10y, pb_pct_10y, roe}。"""
+    import subprocess, os
+    api = "/root/.local/bin"
+    try:
+        r = subprocess.run(["ttskill", "invoke", "TTFUND_INDEX_INFO", "--action", "query",
+                            "--body", json.dumps({"index_id": index_id}, ensure_ascii=False)],
+            capture_output=True, text=True, timeout=60,
+            env={"PATH": f"{api}:/usr/local/bin:/usr/bin:/bin"})
+        d = json.loads(r.stdout)["data"]["raw_result"]["body"]["data"]
+    except Exception as e:
+        return {"ok": False, "note": "ttskill解析失败: " + str(e)[:60]}
+    v = d.get("valuation") or {}
+    return {"ok": True, "pe_ttm": v.get("pe_ttm"), "pe_pct_10y": v.get("pe_percentile_10y"),
+            "pb_pct_10y": v.get("pb_percentile_10y"), "roe": v.get("roe")}
