@@ -26,6 +26,7 @@ ln -sfn $(pwd)/<skill-name> ~/.hermes/skills/<skill-name>
 | [stock-analysis](stock-analysis/) | 股票基本面深度分析：PDF 财报提取→商业模式→财务三表→利润构成→风险排查→企业道德/治理→同行对比→估值→芒格评估 | 分析个股、看商业模式/财务/同行 |
 | [investment-mindset](investment-mindset/) | 投资/人生决策思维模型库：芒格(25种心理倾向/多元思维模型/能力圈/逆向)、巴菲特(价值投资四基石/护城河/安全边际/致股东信进阶概念)、李录(价值投资三基石/ROIC/文明演进/20年检验·防价值陷阱)、段永平(本分/平常心/不为清单/买股票就是买公司)、孙宇晨(另类高风险视角,警示) | 从大佬思维多角度分析投资/人生决策、避免单一视角偏颇、风险体检、四大师对撞交叉验证 |
 | [whale-holdings](whale-holdings/) | 大佬持仓跟踪：SEC 13F 机构持仓披露，巴菲特/李录/Burry 等买什么、加仓、清仓 | 说「看下 XX 的持仓」「13F」 |
+| [data-source-router](data-source-router/) | **统一数据源层**：数据源地图 + SQLite缓存 + Tier路由 + 合规红线。其他 skill 及未来 skill 一律通过本层取数，杜绝重复探索/拿错数据/烧token。覆盖 A股/港股/美股行情与K线(腾讯)、A股财报(东财datacenter)、美股财报(SEC)、宏观(统计局)、GitHub 仓库/Issues/PR/Release/搜索/健康度(REST) | 任何需要拉金融或 IT 数据的任务 |
 | [zacharyxue-blog](zacharyxue-blog/) | 维护 ZacharyXue.github.io Astro 博客：写作偏好（图标多文字少/先提纲）、技术细节、部署 | 写博客、修渲染、发文章 |
 | [ttskill-headless](ttskill-headless/) | 无桌面服务器上装天天基金 ttskill CLI 并远程扫码登录 | ECS 装 ttskill、Secret Service 报错 |
 
