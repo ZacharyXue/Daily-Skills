@@ -3,64 +3,30 @@
 白电三巨头(美的/海尔/格力) 监测看板 —— 渲染层
 ==============================================
 读 cache/dashboard_data.json → output/whitegoods_dashboard.html
-自包含单文件 HTML（内嵌 CSS/JS），可直接挂 Astro 博客 public/exports/。
+自包含单文件 HTML（内嵌 CSS），可直接挂 Astro 博客 public/exports/。
 
-核心：三家「核心指标对比总表」(财务/行情/估值/股息) + 每家一张「财务走势趋势图」。
+核心：三家「核心指标对比总表」(财务/行情/估值/股息/ROIC) + 每指标三家对比趋势图。
+trend_svg 复用 dashboard-style/scripts/dashboard_shared.py（消除跨看板重复）。
 数据正确性铁律：只渲染 fetch.py 从数据源取到的数据，绝不 hardcode。
 """
-import json, os, html
+import json, os, sys, html
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, BASE)
+
+def _shared_dir():
+    d = os.path.dirname(os.path.abspath(__file__))
+    for _ in range(8):
+        if os.path.isdir(os.path.join(d, "dashboard-style", "scripts")):
+            return os.path.join(d, "dashboard-style", "scripts")
+        d = os.path.dirname(d)
+    return os.path.join(os.environ.get("ZACH_SKILLS", "/root/zach-skills"), "dashboard-style", "scripts")
+sys.path.insert(0, _shared_dir())
+
+from dashboard_shared import esc, fnum, pct, trend_svg
+
 DATA = os.path.join(BASE, "cache", "dashboard_data.json")
 OUT = os.path.join(BASE, "output", "whitegoods_dashboard.html")
-
-def esc(x):
-    return html.escape(str(x)) if x is not None else "—"
-
-def fnum(x, nd=1):
-    return f"{x:,.{nd}f}" if isinstance(x, (int, float)) else "—"
-
-def pct(x, nd=1):
-    if x is None: return "—"
-    return f"{x:,.{nd}f}%"
-
-def trend_svg(charts, w=640, h=120):
-    """共用 x 轴多线趋势图 + 图例。years 升序。"""
-    if not charts:
-        return ""
-    pts = [(str(p["d"]), float(p["v"])) for ch in charts for p in ch.get("points", []) if p.get("v") is not None]
-    if len(pts) < 2:
-        return ""
-    xd = sorted(set(d for d, _ in pts))
-    mn = min(v for _, v in pts); mx = max(v for _, v in pts); yspan = (mx - mn) or 1
-    pad = 8; n = max(1, len(xd) - 1)
-    X = lambda i: pad + i / n * (w - 2 * pad)
-    Y = lambda v: h - 14 - (v - mn) / yspan * (h - 28)
-    svg = f'<svg viewBox="0 0 {w} {h}" width="100%" height="{h}" preserveAspectRatio="none" class="tsvg">'
-    svg += f'<line x1="{pad}" y1="{Y(mn):.1f}" x2="{w-pad}" y2="{Y(mn):.1f}" stroke="#eef1f4"/>'
-    svg += f'<line x1="{pad}" y1="{Y(mx):.1f}" x2="{w-pad}" y2="{Y(mx):.1f}" stroke="#eef1f4"/>'
-    for ch in charts:
-        coords = []
-        for p in ch.get("points", []):
-            if p.get("v") is None: continue
-            d = str(p["d"])
-            if d in xd:
-                idx = xd.index(d)
-                coords.append(f"{X(idx):.1f},{Y(float(p['v'])):.1f}")
-        if coords:
-            svg += f'<polyline points="{" ".join(coords)}" fill="none" stroke="{ch.get("color","#2563eb")}" stroke-width="2"/>'
-            lx, ly = coords[-1].split(",")
-            svg += f'<circle cx="{lx}" cy="{ly}" r="3" fill="{ch.get("color","#2563eb")}"/>'
-    if len(xd) >= 2:
-        svg += f'<text x="{pad}" y="{h-2}" font-size="9" fill="#9ca3af">{esc(xd[0])}</text>'
-        svg += f'<text x="{w-pad}" y="{h-2}" font-size="9" fill="#9ca3af" text-anchor="end">{esc(xd[-1])}</text>'
-    svg += "</svg>"
-    if len(charts) > 1:
-        leg = '<div class="chleg">' + "".join(
-            f'<span><span class="cl" style="background:{ch.get("color","#2563eb")}"></span>{esc(ch.get("name"))}</span>'
-            for ch in charts) + '</div>'
-        return svg + leg
-    return svg
 
 def build():
     data = json.load(open(DATA, encoding="utf-8"))
@@ -129,7 +95,7 @@ details p{font-size:12px;color:#475569;margin-top:6px}
     # ============ ① 核心指标对比总表 ============
     html_doc += '<div class="card"><h2>① 核心指标对比总表</h2><div class="table-wrap"><table><thead><tr>'
     headers = ["公司", "现价", "PE", "PB", "52周位置", "近一年", "最大回撤",
-               "营收(中报)", "归母净利(中报)", "净利同比", "ROE", "毛利率", "净利率",
+               "营收(中报)", "归母净利(中报)", "净利同比", "ROE", "ROIC", "毛利率", "净利率",
                "股息率", "隐含回报(ROE/PB)"]
     for h in headers:
         html_doc += f"<th>{h}</th>"
@@ -154,6 +120,7 @@ details p{font-size:12px;color:#475569;margin-top:6px}
         row += f"<td>{fnum(fin.get('np'))}亿</td>"
         row += f"<td class='{ 'down' if (np_yoy or 0)>=0 else 'up'}'>{pct(np_yoy)}</td>"
         row += f"<td>{pct(fin.get('roe'),2)}</td>"
+        row += f"<td>{pct(val.get('roic'),1)}</td>"
         row += f"<td>{pct(fin.get('gm'))}</td><td>{pct(fin.get('nm'))}</td>"
         row += f"<td><b>{pct(div.get('yield'),2)}</b></td>"
         row += f"<td>{pct(val.get('implied_r'),2)}</td></tr>"

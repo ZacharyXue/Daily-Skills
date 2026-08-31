@@ -14,57 +14,22 @@ BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(BASE, "cache", "dashboard_data.json")
 OUT = os.path.join(BASE, "output", "renfu_dashboard.html")
 
-def esc(x):
-    return html.escape(str(x)) if x is not None else "—"
-
-def fnum(x, nd=1):
-    return f"{x:,.{nd}f}" if isinstance(x, (int, float)) else "—"
+# 复用 dashboard-style 共享库（esc/fnum/trend_svg），消除跨看板重复
+def _ds_dir():
+    d = os.path.dirname(os.path.abspath(__file__))
+    for _ in range(8):
+        if os.path.isdir(os.path.join(d, "dashboard-style", "scripts")):
+            return os.path.join(d, "dashboard-style", "scripts")
+        d = os.path.dirname(d)
+    return os.path.join(os.environ.get("ZACH_SKILLS", "/root/zach-skills"), "dashboard-style", "scripts")
+sys.path.insert(0, _ds_dir())
+from dashboard_shared import esc, fnum, trend_svg  # noqa: E402
 
 def badge(st):
     if st == "failed": return ("err", "获取失败")
     if st == "ok": return ("ok", "正常")
     if st == "pending": return ("gray", "接入中")
     return ("err", "异常")
-
-def trend_svg(charts, w=640, h=130):
-    """把 charts=[{name,color,points:[{d,v}]}] 画成共享 x 轴(年份升序)的多线趋势图 + 图例。"""
-    if not charts:
-        return ""
-    pts = [(str(p["d"]), float(p["v"])) for ch in charts for p in ch.get("points", []) if p.get("v") is not None]
-    if len(pts) < 2:
-        return ""
-    xd = sorted(set(d for d, _ in pts))
-    mn = min(v for _, v in pts); mx = max(v for _, v in pts); yspan = (mx - mn) or 1
-    pad = 8; n = max(1, len(xd) - 1)
-    X = lambda i: pad + i / n * (w - 2 * pad)
-    Y = lambda v: h - 14 - (v - mn) / yspan * (h - 30)
-    svg = f'<svg viewBox="0 0 {w} {h}" width="100%" height="{h}" preserveAspectRatio="none" class="tsvg">'
-    # 网格 + 上下参考线
-    svg += f'<line x1="{pad}" y1="{Y(mn):.1f}" x2="{w-pad}" y2="{Y(mn):.1f}" stroke="#eef1f4"/>'
-    svg += f'<line x1="{pad}" y1="{Y(mx):.1f}" x2="{w-pad}" y2="{Y(mx):.1f}" stroke="#eef1f4"/>'
-    for ch in charts:
-        coords = []
-        for p in ch.get("points", []):
-            if p.get("v") is None: continue
-            d = str(p["d"])
-            if d not in xd: continue
-            idx = xd.index(d)
-            coords.append(f"{X(idx):.1f},{Y(float(p['v'])):.1f}")
-        if coords:
-            svg += f'<polyline points="{" ".join(coords)}" fill="none" stroke="{ch.get("color","#2563eb")}" stroke-width="2"/>'
-            lx, ly = coords[-1].split(",")
-            svg += f'<circle cx="{lx}" cy="{ly}" r="3" fill="{ch.get("color","#2563eb")}"/>'
-    # x 轴标签
-    if len(xd) >= 2:
-        svg += f'<text x="{pad}" y="{h-2}" font-size="9" fill="#9ca3af">{esc(xd[0])}</text>'
-        svg += f'<text x="{w-pad}" y="{h-2}" font-size="9" fill="#9ca3af" text-anchor="end">{esc(xd[-1])}</text>'
-    svg += "</svg>"
-    if len(charts) > 1:
-        leg = '<div class="chleg">' + "".join(
-            f'<span><span class="cl" style="background:{ch.get("color","#2563eb")}"></span>{esc(ch.get("name"))}</span>'
-            for ch in charts) + '</div>'
-        return svg + leg
-    return svg
 
 def build():
     data = json.load(open(DATA, encoding="utf-8"))

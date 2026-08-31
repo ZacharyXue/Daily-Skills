@@ -18,9 +18,13 @@
 ## 工程
 ```
 instances/whitegoods/
-├── scripts/fetch.py       # 循环3家：财务序列 + 腾讯行情 + K线位置 + 东财分红 → cache/dashboard_data.json
+├── scripts/fetch.py       # 循环3家：财务序列 + 腾讯行情 + K线位置 + 东财分红 + ROIC → cache/dashboard_data.json
 ├── scripts/render_html.py # 三家对比总表 + 每指标三家对比趋势图 → output/whitegoods_dashboard.html
 └── output/whitegoods_dashboard.html
+
+共用：dashboard-style/scripts/dashboard_shared.py
+  - fetch 用共享库的 财务序列工具(_find/_series_of/_self_yoy) + stock_quote/market_position/annual_dividend
+  - render 用共享库的  trend_svg/esc/fnum/pct（消除跨看板重复）
 ```
 
 ## 更新命令（手动，勿设 cron 定时）

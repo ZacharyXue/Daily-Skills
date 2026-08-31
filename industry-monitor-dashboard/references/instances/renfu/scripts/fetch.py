@@ -14,8 +14,18 @@ import json, os, sys, time, datetime
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(BASE, "scripts"))
 
+# 复用 dashboard-style 共享工具库（_find/_year_rows/_series_of/_get 同构，消除跨看板重复）
+def _ds_dir():
+    d = os.path.dirname(os.path.abspath(__file__))
+    for _ in range(8):
+        if os.path.isdir(os.path.join(d, "dashboard-style", "scripts")):
+            return os.path.join(d, "dashboard-style", "scripts")
+        d = os.path.dirname(d)
+    return os.path.join(os.environ.get("ZACH_SKILLS", "/root/zach-skills"), "dashboard-style", "scripts")
+sys.path.insert(0, _ds_dir())
+from dashboard_shared import _find, _year_rows, _series_of, _get  # noqa: E402
+
 def _zach_root():
-    """自动定位 zach-skills 根（含 data-source-router），迁移可用。"""
     d = os.path.dirname(os.path.abspath(__file__))
     for _ in range(8):
         if os.path.isdir(os.path.join(d, "data-source-router")):
@@ -63,16 +73,7 @@ def em_fin_direct(secucode, report_arg, page=40):
     return em_fin(secucode, report_arg, page)
 
 # ---------- 工具 ----------
-def _find(rows, name):
-    for r in rows:
-        if r.get("REPORT_DATE_NAME") == name:
-            return r
-    return None
-
-def _year_rows(rows):
-    """只保留「年报」报告期(累计口径不重复)，按年份升序。"""
-    return [r for r in rows if r.get("REPORT_DATE_NAME") and "年报" in r.get("REPORT_DATE_NAME")]
-
+# _find/_year_rows/_series_of/_get 复用 dashboard-style 共享库(dashboard_shared)，不在此重复定义
 def _rev_yoy_by_self(rows):
     """按同报告期累计值重算营收同比。返回 {报告期名: yoy%}。"""
     by_period = {}

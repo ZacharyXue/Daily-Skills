@@ -36,7 +36,14 @@ d, source, meta, tier = DSR.get("<kind>", **params)   # 返回 (data, source, me
 ## 三、样式索引（HTML 模板在哪）
 
 - **主模板**：`templates/dashboard_skeleton.html`（自包含骨架：CSS + details 折叠卡片 + 多线 SVG 趋势图 + 批量表格 + 摘要达标徽章 + 来源/时间/TTL 元数据行）。复制它改数据即可。
-- **完整参考实现**：`industry-monitor-dashboard/references/instances/cement/scripts/render_html.py`（水泥看板渲染，含样式细节与 signal/meaning 的展开逻辑）；ETF 参考 `instances/etf/generate_html.py`。
+- **共享工具库**：`scripts/dashboard_shared.py`（**新增看板优先复用，消除跨看板重复**）：
+  - `trend_svg(charts)` 多线 SVG 趋势图 + 图例（cement/renfu/whitegoods 已统一用它）
+  - `_find/_year_rows/_series_of/_self_yoy` 财务序列工具（报告期定位 + 年度序列 + 同比重算）
+  - `em_fin/em_stmt` 东财财务取数（走 data-source-router，DSR 不可用直连兜底）
+  - `stock_quote/market_position` 腾讯行情 + 52周位置/回撤
+  - `annual_dividend` 分红年度口径（白电「年度+中期」双分红必用，别取中报预案）
+  - 用法：脚本顶部 `sys.path.insert` 定位 dashboard-style/scripts 后 `from dashboard_shared import ...`
+- **完整参考实现**：`industry-monitor-dashboard/references/instances/<name>/`（cement/renfu/whitegoods 均已接入共享库 fetch/render；ETF 参考 `instances/etf/generate_html.py`）。
 - **样式要点**（亮色、响应式、卡片式）：
   - 顶部摘要区：一句话结论（达标计数）+ 七维 ✓/✗ 徽章（价格/成本/量/供给/盈利/财务/估值）
   - 每个指标 = 一张 `<details>` 卡片：主行 = 指标名 + 当前值 + 状态徽章(正常/获取失败/人工/接入中)；点开 = 「为什么关注 / 看什么信号 / 来源(链接) / 更新时间 / TTL / 数据日期」+ 趋势 SVG
