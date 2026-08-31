@@ -4,18 +4,19 @@ dashboard-style 共享工具库 —— 各行业/个股看板复用（消除跨�
 ====================================================================
 所有看板实例(cement/etf/renfu/whitegoods)共用的：
   1. trend_svg()        多线 SVG 趋势图 + 图例（自包含，可挂 Astro 博客）
-  2. 财务取数工具        _find/_year_rows/_series_of/_self_yoy + 东财直连
+  2. 财务序列处理       _find/_year_rows/_series_of/_self_yoy
   3. esc/fnum/pct        HTML 转义 + 数字格式化
+  4. 取数入口调 router  em_fin(经 cn_financial_series) / 股息(经 cn_stock_dividend)
+                      / 行情(经 cn_stock_quote) / K线位置(基于 cn_stock_kline)
 
-用法（在实例 render_html.py / fetch.py 顶部）：
-    import sys, os
-    BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    sys.path.insert(0, os.path.join(os.path.dirname(BASE), "scripts"))
-    # 或直接定位 dashboards-index: 见下方 _shared_dir()
+设计（2026-08 定稿，消除重复）：
+  - **取数统一走 data-source-router.get()**，本库不直连东财/腾讯（router 是唯一取数入口，
+    含缓存/重试/Tier；直连逻辑全部下沉在 router adapters）。
+  - market_position 是基于 kline 数据算的 derivative 算法（52周位置/回撤/动量），
+    属于「渲染前处理」，留在本库；它从 router 拿 kline 原始数据后再算。
 
-设计目的：
-  - 数据正确性铁律仅在共享层实现一次，各看板不再各自复制。
-  - 取数统一走 data-source-router（_zach_root 自动定位），DSR 不可用才直连兜底。
+数据正确性铁律（用户强要求）仅在共享层实现一次：
+  - 正确性 > 及时性；远程失败诚实标 failed+error，绝不拿旧值冒充当前值。
 """
 import json, os, sys, time, html, urllib.request
 
@@ -75,9 +76,9 @@ def trend_svg(charts, w=640, h=120):
     return svg
 
 
-# ---------- 路径定位 ----------
+# ---------- 路径定位 + router 单例 ----------
 def _zach_root():
-    """自动定位 zach-skills 根（含 data-source-router + dashboard-style），迁移可用。"""
+    """自动定位 zach-skills 根（含 data-source-router），迁移可用。"""
     d = os.path.dirname(os.path.abspath(__file__))
     for _ in range(8):
         if os.path.isdir(os.path.join(d, "data-source-router")):
@@ -85,43 +86,50 @@ def _zach_root():
         d = os.path.dirname(d)
     return os.environ.get("ZACH_SKILLS", "/root/zach-skills")
 
-def _dsr():
-    """复用单一 DSR import（防各脚本重复 sys.path 注入）。"""
-    sys.path.insert(0, os.path.join(_zach_root(), "data-source-router"))
-    try:
-        import data_router as DSR
-        return DSR, True
-    except Exception:
-        return None, False
+sys.path.insert(0, os.path.join(_zach_root(), "data-source-router"))
+try:
+    import data_router as DSR
+    _HAS_DSR = True
+except Exception as e:
+    DSR = None
+    _HAS_DSR = False
+    print(f"[warn] data-source-router 未就绪({e})，共享库取数不可用")
 
-DSR, _HAS_DSR = _dsr()
 
-UA = {"User-Agent": "Mozilla/5.0", "Referer": "https://emweb.securities.eastmoney.com/"}
+def _router_get(kind, **params):
+    """统一取数入口。DSR 不可用抛异常（调用方 catch）。"""
+    if DSR is None:
+        raise RuntimeError("data-source-router 不可用")
+    d, _s, _m, _t = DSR.get(kind, **params)
+    return d
 
-def _get(url, headers=UA, timeout=30, retry=3):
-    last = None
-    for i in range(retry):
-        try:
-            req = urllib.request.Request(url, headers=headers)
-            return json.loads(urllib.request.urlopen(req, timeout=timeout).read().decode())
-        except Exception as e:
-            last = e; time.sleep(1.0)
-    raise last
 
-# ---------- 财务取数（统一走 router；兜底直连东财） ----------
+# ---------- 财务取数（统一走 router） ----------
 def em_fin(secucode, report="RPT_F10_FINANCE_MAINFINADATA", page=40):
-    """主财务序列(含 INTEREST_DEBT_RATIO 有息负债率)。优先 router；DSR 不可用才直连。"""
-    if DSR is not None:
-        d, _s, _m, _t = DSR.get("cn_financial_series", secucode=secucode, report_name=report, page=page)
-        if isinstance(d, list) and d:
-            return d
-    url = ("https://datacenter.eastmoney.com/securities/api/data/v1/get?reportName=" + report + "&columns=ALL"
-           f"&filter=(SECUCODE%3D%22{secucode}%22)&pageNumber=1&pageSize={page}&sortTypes=-1&sortColumns=REPORT_DATE")
-    return _get(url)["result"]["data"]
+    """主财务序列(含 INTEREST_DEBT_RATIO 有息负债率)。经 router cn_financial_series。"""
+    rows = _router_get("cn_financial_series", secucode=secucode, report_name=report, page=page)
+    return rows if isinstance(rows, list) else []
 
 def em_stmt(secucode, report, page=60):
     return em_fin(secucode, report, page)
 
+def stock_quote(symbol):
+    """现价/PE/PB/市值。经 router cn_stock_quote。symbol=sh600519/sz000333。"""
+    q = _router_get("cn_stock_quote", symbol=symbol)
+    return q if isinstance(q, dict) else {}
+
+def cn_kline(symbol, count=120):
+    """前复权日K({date,open,close,high,low,volume}[])。经 router cn_stock_kline。"""
+    rows = _router_get("cn_stock_kline", symbol=symbol, count=count)
+    return rows if isinstance(rows, list) else []
+
+def stock_dividend(secucode, page=12):
+    """分红原始 rows(每10股税前派息)。经 router cn_stock_dividend。"""
+    rows = _router_get("cn_stock_dividend", secucode=secucode, page=page)
+    return rows if isinstance(rows, list) else []
+
+
+# ---------- 财务序列工具 ----------
 def _find(rows, name):
     for r in rows:
         if r.get("REPORT_DATE_NAME") == name:
@@ -162,27 +170,14 @@ def _self_yoy(rows, key="PARENTNETPROFIT", periods=None):
                 break
     return out
 
-# ---------- 股票行情（腾讯） ----------
-def stock_quote(tq):
-    """腾讯实时行情。tq = sh600519/sz000333。返回 dict(price/pe/pb/mktcap/chg_pct/turnover/name)。"""
-    url = f"https://qt.gtimg.cn/q={tq}"
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://gu.qq.com/"})
-    text = urllib.request.urlopen(req, timeout=20).read().decode("gbk")
-    body = text.split('="', 1)[1].rsplit('"', 1)[0]; f = body.split("~")
-    def g(i, conv=None):
-        try: return float(f[i]) if conv == float else f[i]
-        except Exception: return None
-    return {"name": f[1], "price": g(3, float), "chg_pct": g(32, float), "pe": g(39, float),
-            "pb": g(46, float), "mktcap": g(45, float), "turnover": g(38, float)}
 
-def market_position(tq, window=400):
-    """腾讯前复权K线 → 52周区间位置 + 最大回撤 + 近一年涨跌。"""
-    url = f"https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param={tq},day,,,{window},qfq"
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://gu.qq.com/"})
-    d = json.loads(urllib.request.urlopen(req, timeout=25).read().decode("utf-8"))
-    node = d["data"][tq]
-    rows = node.get("qfqday") or node.get("day") or []
-    kl = [(x[0], float(x[2])) for x in rows]
+# ---------- 市场位置（基于 cn_stock_kline 的 derivative 算法，保留在渲染层） ----------
+def market_position(symbol, window=400):
+    """腾讯前复权K线(经 router) → 52周区间位置 + 最大回撤 + 近一年涨跌。"""
+    d = cn_kline(symbol, window)
+    if not isinstance(d, list) or len(d) < 2:
+        return {"stale": True, "error": "K线数据不足"}
+    kl = [(str(r.get("date")), float(r.get("close"))) for r in d if r.get("close") is not None]
     if len(kl) < 2:
         return {"stale": True, "error": "K线数据不足"}
     closes = [x[1] for x in kl]; px = closes[-1]
@@ -198,14 +193,12 @@ def market_position(tq, window=400):
     return {"stale": False, "pos52": round(pos52, 1), "maxdd": round(maxdd, 1),
             "mdd_date": mdd_date, "ret1y": round((px / y_ago - 1) * 100, 1)}
 
-# ---------- 分红（年度口径，白电等「年度+中期」双分红公司必用） ----------
+
+# ---------- 分红年度口径（基于 cn_stock_dividend 的 derivative） ----------
 def annual_dividend(secucode, years=("2025", "2024", "2023", "2022", "2021")):
     """返回 {'years':[{year,d10}], 'latest_year', 'd10'}：取最近年报(12-31期)派息为股息率基准。
     绝不取最近一期(中报预案)——否则像美的会算错股息率。"""
-    url = ("https://datacenter.eastmoney.com/securities/api/data/v1/get"
-           "?reportName=RPT_SHAREBONUS_DET&columns=ALL"
-           f"&filter=(SECUCODE%3D%22{secucode}%22)&pageNumber=1&pageSize=12&sortTypes=-1&sortColumns=REPORT_DATE")
-    rows = _get(url)["result"]["data"]
+    rows = stock_dividend(secucode)
     annual = [r for r in rows if str(r.get("REPORT_DATE", "")).endswith("12-31 00:00:00") and r.get("PRETAX_BONUS_RMB")]
     seen = {}
     for r in annual:

@@ -48,6 +48,11 @@ class Quote:
     low: float
     volume: float
     ts: str
+    # 估值字段(仅 A/港股有意义, 美股常为空): PE/PB/总市值/换手率
+    pe: float | None = None
+    pb: float | None = None
+    mktcap: float | None = None   # 总市值(亿)
+    turnover: float | None = None  # 换手率%
 
 def _req(url, headers=None, timeout=10):
     r = SESSION.get(url, headers=headers or {}, timeout=timeout)
@@ -80,9 +85,17 @@ def _parse_tencent_quote(symbol, text):
                 return default
         # 取 ts（含日期那一位）
         ts = next((x for x in f if "/" in x and ":" in x), "")
+        # 估值字段：腾讯 A股固定位 ≈ [39]PE [45]总市值(亿) [46]PB [38]换手率%
+        # 容错：某位越界/空/非法 → None，不因单个字段失败拖垮整条解析
+        def _fully(i):
+            try:
+                return float(f[i]) if i < len(f) and f[i] else None
+            except (ValueError, TypeError):
+                return None
         return Quote(symbol=symbol, name=name, price=price, change_pct=round(change_pct, 2),
                      prev_close=prev_close, open=open_p, high=_f(33), low=_f(34),
-                     volume=_f(6), ts=ts)
+                     volume=_f(6), ts=ts, pe=_fully(39), pb=_fully(46),
+                     mktcap=_fully(45), turnover=_fully(38))
     except Exception as e:
         raise ValueError(f"腾讯行情解析失败 {symbol}: {e}")
 
@@ -119,6 +132,28 @@ def cn_financial(code):
     if not data:
         return {"code": code, "ok": False, "msg": "no data"}
     return {"code": code, "ok": True, "data": data[0]}
+
+
+def cn_stock_dividend(secucode, page=12):
+    """A股分红送配明细(每10股税前派息)。东财 RPT_SHAREBONUS_DET。
+    secucode: 带后缀 e.g. '000333.SZ'。
+    返回原始 rows(按 REPORT_DATE 倒序)。白电「年度+中期」双分红口径注释:
+      股息率基准应取「最近年报(12-31期)派息」, 别用最近一期中报预案(见 dashboards-index 坑位)。
+    """
+    filt = urllib.parse.quote('(SECUCODE="' + secucode + '")')
+    url = ("https://datacenter.eastmoney.com/securities/api/data/v1/get"
+           "?reportName=RPT_SHAREBONUS_DET&columns=ALL&filter=" + filt
+           + "&pageNumber=1&pageSize=" + str(page) + "&sortTypes=-1&sortColumns=REPORT_DATE")
+    last = None
+    for i in range(3):
+        try:
+            r = _req(url, timeout=35)
+            j = r.json()
+            return j.get("result", {}).get("data", [])
+        except Exception as e:
+            last = e
+            time.sleep(1.2)
+    raise last
 
 
 def cn_financial_series(secucode, report_name="RPT_F10_FINANCE_MAINFINADATA", page=40):

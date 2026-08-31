@@ -23,7 +23,7 @@ def _ds_dir():
         d = os.path.dirname(d)
     return os.path.join(os.environ.get("ZACH_SKILLS", "/root/zach-skills"), "dashboard-style", "scripts")
 sys.path.insert(0, _ds_dir())
-from dashboard_shared import _find, _year_rows, _series_of, _get  # noqa: E402
+from dashboard_shared import _find, _year_rows, _series_of, em_fin, em_stmt  # noqa: E402
 
 def _zach_root():
     d = os.path.dirname(os.path.abspath(__file__))
@@ -46,31 +46,8 @@ DATA_PATH = os.path.join(CACHE, "dashboard_data.json")
 
 UA = {"User-Agent": "Mozilla/5.0", "Referer": "https://emweb.securities.eastmoney.com/"}
 
-def _get(url, headers=UA, timeout=35, retry=2):
-    import urllib.request
-    last = None
-    for i in range(retry):
-        try:
-            req = urllib.request.Request(url, headers=headers)
-            return json.loads(urllib.request.urlopen(req, timeout=timeout).read().decode())
-        except Exception as e:
-            last = e; time.sleep(1.2)
-    raise last
-
-# ---------- 东财取数（统一走 router） ----------
-def em_fin(secucode, report_arg="RPT_F10_FINANCE_MAINFINADATA", page=40):
-    """主财务序列(含 INTEREST_DEBT_RATIO 有息负债率)。优先走 router；DSR 不可用才直连。"""
-    if _HAS_DSR:
-        d, _s, _m, _t = DSR.get("cn_financial_series", secucode=secucode,
-                                 report_name=report_arg, page=page)
-        if isinstance(d, list):
-            return d
-    url = ("https://datacenter.eastmoney.com/securities/api/data/v1/get?reportName=" + report_arg + "&columns=ALL"
-           f"&filter=(SECUCODE%3D%22{secucode}%22)&pageNumber=1&pageSize={page}&sortTypes=-1&sortColumns=REPORT_DATE")
-    return _get(url)["result"]["data"]
-
-def em_fin_direct(secucode, report_arg, page=40):
-    return em_fin(secucode, report_arg, page)
+# ---------- 东财取数（统一走共享库 em_fin/em_stmt → router cn_financial_series） ----------
+# em_fin/em_stmt/_find/_year_rows/_series_of 全部复用 dashboard_shared，不在此重复定义
 
 # ---------- 工具 ----------
 # _find/_year_rows/_series_of/_get 复用 dashboard-style 共享库(dashboard_shared)，不在此重复定义
@@ -193,10 +170,7 @@ def get_cost_struct():
             "prev_finance": ratio(prev, "FINANCE_EXPENSE", (prev.get("TOTAL_OPERATE_INCOME") or 1)) if prev else None,
             "stale": False}
 
-def em_stmt(secucode, report_arg, page=60):
-    return em_fin(secucode, report_arg, page)
-
-# ========== 财务费用年度趋势（去杠杆红利验证） ==========
+# ---------- 财务费用年度趋势（去杠杆红利验证） ----------
 def get_trend_fin_exp():
     rows = em_stmt("600079.SH", "RPT_F10_FINANCE_GINCOME", page=80)
     annual = _series_of(rows, "FINANCE_EXPENSE", scale=1e8)
