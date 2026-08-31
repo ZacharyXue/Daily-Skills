@@ -29,6 +29,7 @@ ln -sfn $(pwd)/<skill-name> ~/.hermes/skills/<skill-name>
 | [industry-monitor-dashboard](industry-monitor-dashboard/) | **看板综合母纲**：行业+龙头/ETF 监测看板的通用方法论（注释驱动指标元数据、免费源取数、自包含HTML、财报提取）；水泥/ETF 作为**实例**并入 references/instances/，不单独成 skill | 「做XX监测看板」「更新水泥/ETF看板」「看水泥/红利现状」 |
 | [dashboard-style](dashboard-style/) | **看板风格模板+数据规范**：自包含HTML骨架(details折叠/多线SVG/表格/徽章)、数据走 data-source-router、看板索引(dashboards-index.md) | 「做新看板」「复用看板模板」「看有哪些看板」 |
 | [data-source-router](data-source-router/) | **统一数据源层**：数据源地图 + SQLite缓存 + Tier路由 + 合规红线。其他 skill 及未来 skill 一律通过本层取数，杜绝重复探索/拿错数据/烧token。覆盖 A股/港股/美股行情与K线(腾讯)、A股财报(东财datacenter)、美股财报(SEC)、宏观(统计局)、GitHub 仓库/Issues/PR/Release/搜索/健康度(REST) | 任何需要拉金融或 IT 数据的任务 |
+| [opencode-go-model-selection](opencode-go-model-selection/) | **opencode-go 模型选择 + 429 排错**：配额机制($12/5h+$30/周+$60/月)、模型性价比(便宜→请求多)、多模态判定、切换主模型、GoUsageLimitError(周配额用尽)排查 | 对话报「iteration/retry backoff」「429配额用尽」、问「哪个模型省钱/有多模态」、切换主模型 |
 | [zacharyxue-blog](zacharyxue-blog/) | 维护 ZacharyXue.github.io Astro 博客：写作偏好（图标多文字少/先提纲）、技术细节、部署 | 写博客、修渲染、发文章 |
 | [ttskill-headless](ttskill-headless/) | 无桌面服务器上装天天基金 ttskill CLI 并远程扫码登录 | ECS 装 ttskill、Secret Service 报错 |
 
