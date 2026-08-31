@@ -26,7 +26,7 @@ Phase 0 文件就位 → Phase 1 PDF提取 → Phase 2 商业模式 → Phase 3 
 
 各 Phase 通用，周期股在 Phase 7 走 `references/cycle-stock.md` 模板。**所有数据接口（东财 datacenter/腾讯行情/研报/K线）见 `references/data-apis.md`**。**具体大师的思维框架（芒格/巴菲特/李录/段永平/聂夫/马克斯/孙宇晨）统一在 `investment-mindset` skill，本 skill 不内置。**
 
-A股聚合技巧与 grep 锚点表见 `references/eastmoney-peer-compare.md`（含固定输出维度七步模板）、电解铝成本框架见 `references/aluminum-coal-cost-framework.md`、股息敏感性+行情降级链见 `references/dividend-valuation-and-market-apis.md`、完整实例见 `references/worked-example-shenhuo.md`。
+A股聚合技巧与 grep 锚点表见 `references/eastmoney-peer-compare.md`（含固定输出维度七步模板）、电解铝成本框架见 `references/aluminum-coal-cost-framework.md`、股息敏感性+行情降级链见 `references/dividend-valuation-and-market-apis.md`、消费白马/ROE稳定股安全边际估值（合理PB=ROE/r + Gordon增长下限）见 `references/growth-valuation-safety-margin.md`、完整实例见 `references/worked-example-shenhuo.md`。
 
 ---
 
@@ -130,7 +130,11 @@ python3 scripts/peers_compare.py 000933.SZ 601600.SH 000807.SZ
 
 - 通用：PE/PB/股息率（行情接口）→ 与同业、历史分位对比
 - **周期股**：走 `references/cycle-stock.md`（商品价格敏感性模型 + 情景A/B + 3%股息率反推股价）
-- 消费/成长股：偏重 DCF 逻辑、增速与估值匹配
+- **消费/ROE稳定的白马**（白电/食品饮料/品牌制造）：走 `references/growth-valuation-safety-margin.md`
+  - `合理PB = ROE ÷ r`（r=要求回报 8/10/12% 多档）锚定合理价
+  - `市场隐含r = ROE ÷ 现PB` 看市场给的质量溢价（隐含r低=贵，高=便宜）
+  - Gordon `合理PB = (ROE−g)/(r−g)` 反解市场隐含增速 `g*=(ROE−PB·r)/(1−PB)`，对比**实际增速**判断现价「预支增长」还是「压缩增长」
+  - 盯 ROE 中枢：ROE 稳住→便宜是机会；ROE 下滑→便宜是陷阱
 
 ## Phase 8: 调用 investment-mindset 做多视角评估（可选收尾）
 
