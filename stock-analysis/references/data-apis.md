@@ -1,6 +1,6 @@
 # 股票数据接口速查（实战验证）
 
-> **数据源统一规范**：通用行情（A股/港股/美股实时、K线）、通用财报（东财 datacenter、SEC EDGAR）**一律走 `data-source-router` skill**（`/root/zach-skills/data-source-router/`），勿在本文件重复实现，避免口径不一致。本文件只保留 stock-analysis **领域专属**接口：分产品收入(MAINOP)、股东户数(HOLDERNUMLATEST)、机构研报(reportapi)、商品K线/期货(push2his/push2delay)。腾讯行情 `qt.gtimg.cn` / 东财 datacenter 的封装入口见 data-source-router `adapters/finance.py` + `data_router.py`。
+> **数据源统一规范**：通用行情（A股/港股/美股实时、K线）、通用财报（东财 datacenter、SEC EDGAR）**一律走 `data-source-router` skill**（`/root/zach-skills/data-source-router/`），勿在本文件重复实现，避免口径不一致。本文件只保留 stock-analysis **领域专属**接口：分产品收入(MAINOP)、股东户数(HOLDERNUMLATEST)、机构研报(reportapi)、商品K线/期货(push2his/push2delay)、**股息率(RPT_SHAREBONUS_DET)**。腾讯行情 `qt.gtimg.cn` / 东财 datacenter 的封装入口见 data-source-router `adapters/finance.py` + `data_router.py`。
 
 本文件汇总 `stock-analysis` 流水线用到的**全部数据接口**，均经真实调用验证。
 核心原则：
@@ -25,11 +25,13 @@ curl -s "https://qt.gtimg.cn/q=sz000933" -H "User-Agent: Mozilla/5.0"
 | 3 | 现价 | 42 | 52周最低 |
 | 4 | 昨收 | 45 | 总市值(亿) |
 | 5 | 今开 | 46 | PB |
+| **38** | **⚠️ 换手率** | — | — |
 
 - 编码：`gbk`（`urllib` 读 `decode("gbk")`）
 - 前缀：`6/9` 开头 → `sh`，否则 → `sz`
 - 多只：`q=sz000933,sh601600` 逗号分隔
 - 参考脚本：`scripts/quote_query.py`
+- ⚠️ **字段38 = 换手率，不是股息率！** 股息率没有行情直读字段，必须按「每10股派息 ÷ 现价」现算（见第 9 节）。千万别把腾讯字段38当股息率。
 
 ## 2. 财务数据主力（东方财富 datacenter）
 
@@ -42,6 +44,7 @@ https://datacenter.eastmoney.com/securities/api/data/v1/get
   &pageNumber=1&pageSize=30&sortTypes=-1&sortColumns=REPORT_DATE
 ```
 - `filter` 里 `%3D` = `=`，`%22` = `"`
+- ⚠️ **SECUCODE 必须带市场后缀**：`(SECUCODE="600079.SH")`，纯代码 `600079` 会返回空（沪尾 `.SH` / 深尾 `.SZ`）
 - 返回 `result.data[]`，含全部报告期（年报/中报/季报），按日期倒序
 - **常用字段**（中文财报字段名）：
 
@@ -116,6 +119,37 @@ curl -s "https://push2delay.eastmoney.com/api/qt/stock/get?secid=113.alm&fields=
 | `www.smm.cn` | 上海有色现货 | ⚠️ 404/需登录 |
 | `futsseapi.eastmoney.com` | 期货 | ⚠️ 404 |
 
+## 9. 股息率（分红送配，现算）—— 必读
+
+**股息率没有行情直读字段，必须现算**：
+```
+股息率 = (PRETAX_BONUS_RMB / 10) / 现价 * 100
+# PRETAX_BONUS_RMB = 每10股税前派息(元) → 每股 = PRETAX_BONUS_RMB/10
+```
+
+**接口**（东财 `RPT_SHAREBONUS_DET`）：
+```
+reportName=RPT_SHAREBONUS_DET
+filter=(SECUCODE%3D%22600079.SH%22)     # 同样必须带后缀
+```
+| 字段 | 含义 |
+|------|------|
+| `PRETAX_BONUS_RMB` | 每10股税前派息(元)，算股息率用 |
+| `REPORT_DATE` / `ASSIGN_PROGRESS` | 报告期 / 分配进度 |
+| `EX_DIVIDEND_DATE` | 除权除息日 |
+
+- ⚠️ **别读腾讯字段38当股息率**（那个是换手率），也别用"分红总额/市值"粗糙算法——用每10股派息现算最准。
+- **现成脚本**：`scripts/dividend_yield.py`（本 skill 自带，纯 urllib，一条命令拿现价+近年分红+每股股息率：`python3 scripts/dividend_yield.py <code>`，市场后缀自动判断）。
+- 实例：ST人福 2025年报每10股派4.80元、现价18.66 → 4.80/10/18.66 = 2.57%。
+
+## 10. 治理/事件背景（雷区用）
+
+| 接口 | 用途 | 字段/说明 |
+|------|------|------|
+| 东财十大股东 `RPT_F10_EH_HOLDERS` | 看实控人/大股东质押、集中度 | `HOLDER_NAME`/`HOLD_NUM_RATIO`/`MARKET_TYPE`（同股东因 market 重复，需去重） |
+| 东财公告 `np-anotice-stock.eastmoney.com` | 近 ST/风险警示类公告 | 标题匹配；⚠️ `"年度报告" in title` 会误配"半年度报告"，需排除 `"半年度"` |
+| **Google News RSS** | ST 根因/事件背景 | 用 `chinese-web-content` skill 的 rss 方法最稳，curl 直抓搜索引擎常被反爬 |
+
 ---
 
 ## 快速选择指南
@@ -129,11 +163,15 @@ curl -s "https://push2delay.eastmoney.com/api/qt/stock/get?secid=113.alm&fields=
 | 机构研报/评级 | 东财 reportapi | — |
 | 商品历史K线/周期分位 | 东财 push2his | cycle-stock.md |
 | 期货/商品实时价 | 东财 push2delay | — |
+| **股息率** | 东财 RPT_SHAREBONUS_DET | dividend_yield.py |
 
 ## Pitfalls
 
 - **`columns=ALL` 先探字段**：东财字段是拼音缩写且有时拼错（GROSS_RPOFIT_RATIO 不是 PROFIT），先用 ALL dump 一条看实际 keys
 - **filter 编码**：`(` `)` `=` `"` 必须 URL 编码，否则返回空
+- **SECUCODE 必须带 `.SH/.SZ` 后缀**：纯代码返回空（财务/分红/股东接口都如此）
+- **股息率别读腾讯字段38**：那是换手率，必须用 RPT_SHAREBONUS_DET 每10股派息 ÷ 现价现算
 - **返回多报告期/多维度行**：MAINOP 同报告期多行（分产品+分行业+分地区），务必按 REPORT_NAME 过滤；财务数据按 REPORT_DATE_NAME 定位
 - **接口偶发失败**：东财 push2 实时行情在部分网络环境 502，统一用腾讯行情兜底
 - **限速**：批量拉多家时加 `time.sleep(0.3)`，避免被封
+- **海外收入占比高的公司，别把财务费用波动当经营变化**：先拆 `FINANCE_EXPENSE - (FE_INTEREST_EXPENSE - FE_INTEREST_INCOME)` 反推汇兑（非经营性、可剔除），见 `references/forex-profit-trap.md`。
