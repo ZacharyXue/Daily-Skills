@@ -80,6 +80,8 @@ grep 定位：
 
 **产出**：利润传导链（子公司汇总 → 少数股东 → 归母）+ 核心利润引擎识别。
 
+**ROIC（李录视角"经济性"核心指标）**：评估"这门生意能以多高回报持续再投资"，比 ROE 更准（扣了税 + 算上有息负债）。`python3 scripts/roic.py <code.SH/.SZ>` 直接出 ROIC/ROE/投入资本/NOPAT。判定：ROIC 明显高于资本成本（白电这类制造业资本成本约 8%）→ 生意经济性好，可长期复利再投入；低 ROIC + 低 PE + 衰退 = 价值陷阱画像（见 investment-mindset 李录）。
+
 ## Phase 5: 风险排查（哪里会暴雷）
 
 | 风险类型 | 关键词 |
@@ -129,6 +131,10 @@ python3 scripts/peers_compare.py 000933.SZ 601600.SH 000807.SZ
 ## Phase 7: 估值与敏感性
 
 - 通用：PE/PB/股息率（行情接口）→ 与同业、历史分位对比
+- **市场位置/情绪定位**（马克斯钟摆 + 聂夫时机的数据输入）：`python3 scripts/market_position.py <sh/sz代码>` 直接出52周区间位置 + 最大回撤 + 近一年涨跌。
+  - 52周区间位置：<35% = 低位（恐惧端/可逆向）、70%+ = 高位（贪婪端/警惕追高）
+  - 最大回撤：判断「已经跌了多少/安全垫多厚」
+  - 近一年涨跌：动量，与估值结合判断「贵是热出来的还是便宜是冷出来的」
 - **周期股**：走 `references/cycle-stock.md`（商品价格敏感性模型 + 情景A/B + 3%股息率反推股价）
 - **消费/ROE稳定的白马**（白电/食品饮料/品牌制造）：走 `references/growth-valuation-safety-margin.md`
   - `合理PB = ROE ÷ r`（r=要求回报 8/10/12% 多档）锚定合理价
@@ -154,6 +160,8 @@ python3 scripts/peers_compare.py 000933.SZ 601600.SH 000807.SZ
 | `scripts/extract_pdf.py` | PDF → 分页文本 | 任意 PDF |
 | `scripts/peers_compare.py` | 同行财务对比 | 任意 A 股 |
 | `scripts/quote_query.py` | 行情/股价/估值查询 | 任意 A 股 |
+| `scripts/roic.py` | **ROIC/ROE/投入资本/NOPAT**（经济性核心，李录维度）| 任意 A 股 |
+| `scripts/market_position.py` | **52周区间位置/最大回撤/近一年涨跌**（马克斯钟摆+聂夫时机）| 任意 A 股 |
 
 ## 输出格式
 
