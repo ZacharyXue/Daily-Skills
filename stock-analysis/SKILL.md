@@ -136,6 +136,7 @@ python3 scripts/peers_compare.py 000933.SZ 601600.SH 000807.SZ
   - 最大回撤：判断「已经跌了多少/安全垫多厚」
   - 近一年涨跌：动量，与估值结合判断「贵是热出来的还是便宜是冷出来的」
 - **周期股**：走 `references/cycle-stock.md`（商品价格敏感性模型 + 情景A/B + 3%股息率反推股价）
+  - **判断框架**：邹佩轩「穿透三书」方法论（财报定下限/估值定上限/叙事看拐点）见 `references/zou-peixuan-methodology.md`——做「市场位置 + 估值 + 趋势」综合判断时对照它，警惕绩优股≠跑赢、PE只对业绩高点有用、景气度判不了终点
 - **消费/ROE稳定的白马**（白电/食品饮料/品牌制造）：走 `references/growth-valuation-safety-margin.md`
   - `合理PB = ROE ÷ r`（r=要求回报 8/10/12% 多档）锚定合理价
   - `市场隐含r = ROE ÷ 现PB` 看市场给的质量溢价（隐含r低=贵，高=便宜）
