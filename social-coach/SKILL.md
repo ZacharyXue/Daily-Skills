@@ -58,7 +58,7 @@ tags: [social, communication, interpersonal, 边界感, 分寸]
 ## 数据保存（隐私边界）
 
 - **学习账本**（私有，含具体对话与复盘，不 push 公仓）：
-  `/root/zach-skills/career-data/social-ledger.md`（career-data 已 gitignored，独立本地 git）
+  `/root/zach-skills/social-data/social-ledger.md`（独立本地 git 仓，无远端，由 .gitignore 保护）
   记录每段复盘的「场景 / 欠妥点 / 更好的说法 / 进步点」，累积可见成长
 - **本 skill 本体**（框架/铁律/教学知识）：公开，随 Daily-Skills 走
 
