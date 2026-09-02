@@ -99,3 +99,20 @@ def _domain_for(source):
 def sources_status():
     """返回可用数据源开关状态(读config)。"""
     return {k: v.get("enabled", True) for k, v in config.sources.items()}
+
+
+# =====================================================================
+# CodeAct 声明式入口暴露（推荐新代码用；老代码继续用 get() 不变）
+# =====================================================================
+# 只需对 LLM/其他 skill 暴露 achieve：意图名 → (摘要+data_ref)，自动完成
+#   [1] 意图解析  [2] 成功判定  [3] 摘要+指针  [4] 确定性失败链
+# 大 payload 绝不进上下文，全量在 data_ref，需要时 fetch_detail。
+from codeact import (
+    achieve, fetch_detail, resolve_intent, validate, summarize,
+    INTENT_MAP, VALIDATORS, FAILOVER_KINDS,
+)  # noqa: E402  (codeact 反向 import data_router，属于规避循环依赖的常规做法)
+
+__all__ = [
+    "get", "achieve", "fetch_detail", "resolve_intent", "validate", "summarize",
+    "ROUTES", "INTENT_MAP", "VALIDATORS", "FAILOVER_KINDS", "sources_status",
+]

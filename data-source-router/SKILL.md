@@ -71,18 +71,49 @@ zach-skills/data-source-router/
 ├── config.yaml     ← TTL/速率/开关/环境变量
 ├── config_loader.py
 ├── cache.py        ← SQLite 缓存 + TTL + SWR + 交叉校验 + 冷却
-├── data_router.py  ← 路由入口 get(kind, **params)
-├── __init__.py
+├── data_router.py  ← 路由入口 get(kind, **params) + CodeAct 声明式入口
+├── codeact.py      ← ★ CodeAct 层：意图解析/成功判定/摘要+指针/确定性失败链
+├── selfcheck.py    ← CodeAct 层自检（真实取数）
 └── adapters/
     ├── __init__.py
     ├── finance.py  ← 腾讯行情/K线 + 东财财报 + SEC EDGAR
     └── github.py   ← REST 读/搜 + 速率控制
 ```
 
-## 调用方式（其他 skill 唯一入口）
+## 调用方式（推荐：CodeAct 声明式入口）
+
+> ★ 新代码优先用 CodeAct 声明式入口 `achieve()`，它自动做 4 件 CodeAct 优化，
+> 比 `get()` 更省注意力、更抗上下文衰减（详见下方"CodeAct 层"）。
 
 ```python
-import sys; sys.path.insert(0, '~/.hermes/../zach-skills/data-source-router')
+import sys; sys.path.insert(0, '/root/zach-skills/data-source-router')
+from data_router import achieve, fetch_detail
+
+# 高意图名 + 高层字段，codeact 自动路由到正确 kind+params（LLM 不记魔法串）
+r = achieve("quote", symbol="600519")              # 行情摘要 {name,price,pe,pb}
+r = achieve("kline", symbol="600519", count=250)   # 行情返回摘要，全量在 r.data_ref
+d = fetch_detail(r.data_ref)                        # 需要全量K线才二次加载
+r = achieve("financial", code="600519")
+r = achieve("financial_series", code="600519", report_name="RPT_F10_FINANCE_GINCOME")
+r = achieve("dividend", code="000333")              # 分红
+r = achieve("us_finance", cik="0000320193");  r = achieve("us_revenue", cik="0000320193")
+r = achieve("gh_repo", owner="volcano-sh", repo="volcano")
+r = achieve("gh_issues", owner="volcano-sh", repo="volcano", state="open")
+r = achieve("gh_search", q="kubernetes language:go")
+```
+
+**`achieve()` 返回 `AchieveResult`**：
+- `r.ok` / `r.reason`：取数是否成功 + 原因（失败链已自动走过）
+- `r.summary`：结构化摘要（**直接进 LLM 上下文用这个**，不塞全量）
+- `r.data`：进上下文的轻量数据（大 payload 时 = 摘要）
+- `r.data_ref`：全量数据落盘路径，需要时 `fetch_detail(r.data_ref)`
+- `r.source` / `r.chain`：数据源 / 实际走过的取数链
+- `r.as_dict()`：上下文安全 dict（大 payload 只含摘要+指针）
+
+## 底层调用方式（老接口，兼容）
+
+```python
+import sys; sys.path.insert(0, '/root/zach-skills/data-source-router')
 # 注意：zach-skills 在外部目录，见下"路径说明"
 
 from data_router import get
@@ -188,21 +219,37 @@ sys.path.insert(0, '/root/zach-skills/data-source-router')
 | `github-oss-evaluation` | 5维度健康度**判读方法论**（pushed_at风险/厂商集中度/bot剔除/label缺失） | `repo`/`contributors`/`release`/`label计数` 抓取**本层提供**（`github_contributors`/`github_label_counts`），其只保留解读 |
 | `open-source-contribution` | 介入流程/候选项目路径/AI贡献政策 | 甄别真社区数据**本层提供**（同上 `github_contributors` 等），只保留判读阈值 |
 
+## CodeAct 层（4 个优化点，对照广发《AI投研》report data-gateway 案例）
+
+让 LLM 只"声明要什么"，把取数/失败/判定全部下沉到确定性代码。`achieve()` 自动完成：
+
+**[1] 意图地图 DSL** `resolve_intent()`：LLM 报简洁意图名（quote/kline/financial/...），
+代码路由到正确 kind + 填好魔法串参数（report_name/page/秒内代码前辍等），LLM 不记 API 细节。
+
+**[2] 成功判定 DSL** `validate()`：每 kind 一个校验器（quote价格>0、kline非空且含字段、
+财报ok、SEC营收非null、GitHub有结果）。数据不合格 → 视为失败触发失败链，绝不把脏数据静默上交。
+
+**[3] 摘要+指针（抗 Context Rot）** `summarize()` / `fetch_detail()`：大 payload
+（SEC facts、完整财务序列、K线、GitHub列表）只回结构化摘要 + data_ref 落盘路径，
+需要全量才 `fetch_detail(data_ref)` 二次加载 → 避免几 MB 原始数据把模型上下文打散。
+
+**[4] 确定性失败链** `FAILOVER_KINDS`：某 kind 失败时按固定顺序试语义等价备选
+（cn_financial→cn_financial_series，us_revenue_sec→us_financial_sec，
+cn_ttfund_index→cn_csindex_pe），指数退避/源切换写法都在代码，模型永不参与"下一步试哪个源"。
+
+> 设计红线：新 skill 取数**一律走 `achieve()`**；`get()` 仅作老接口兼容。摘要进上下文、全量走 data_ref。
+
 ## 快速自检
 
 ```bash
-cd /root/zach-skills/data-source-router
+cd /root/zach-skills/data-source-router && python3 selfcheck.py   # ~14 项真实验证, 退出码0=通过 | 快检:
 python3 -c "
 import sys; sys.path.insert(0,'.')
 import data_router as R
-# 行情
-d,s,m,t = R.get('cn_stock_quote', symbol='sh600519'); print('行情', d.get('name'), d.get('price'), '源=', s)
-# 财报
-d,s,m,t = R.get('cn_financial', code='600519'); print('财报', d.get('data',{}).get('SECURITY_NAME_ABBR'))
-# SEC
-d,s,m,t = R.get('us_revenue_sec', cik='0000320193'); print('SEC营收', d.get('end'), d.get('val'))
-# GitHub
-d,s,m,t = R.get('github_release', owner='volcano-sh', repo='volcano'); print('GH', d[0].get('tag_name'))
+r = R.achieve('quote', symbol='600519'); print('行情', r.summary.get('name'), r.summary.get('price'))
+r = R.achieve('financial', code='600519'); print('财报', r.summary.get('name'))
+r = R.achieve('us_revenue', cik='0000320193'); print('SEC营收', r.summary.get('end'), r.summary.get('val'))
+r = R.achieve('gh_repo', owner='volcano-sh', repo='volcano'); print('GH', r.summary.get('full_name'))
 "
 ```
-预期输出 4 行真实数据（茅台行情 / 财报 / Apple 最新季营收 / volcano 最新 release），全部命中可用源。
+预期输出 4 行真实数据（茅台行情 / 财报 / Apple 最新季营收 / volcano 仓库），全部命中可用源。
