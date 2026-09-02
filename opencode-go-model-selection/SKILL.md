@@ -44,9 +44,10 @@ grep -i "limitName.*weekly" ~/.hermes/logs/agent.log | tail -3
 | Qwen3.7-Plus | 6x | $60 | 21,600 | image |
 | Hy3 | ~8x | $60 | 21,500 | 否 |
 | MiniMax M3 | 6x | $60 | 16,000 | image |
-| GLM-5.2 | 6x | $60 | 4,300 | image |
+| **GLM-5.2** | 6x | $60 | 4,300 | ❌纯文本(实测不支持image) |
 | Kimi K2.7-Code | 6x | $60 | 6,750 | image |
 | GPT-5.6 Luna | 1.5x | $15 | 10,250 | image |
+| GLM-5.3-flash | 1.5x | $15 | — | image+video+pdf(vision辅助推荐) |
 | GLM-5.3 | 1.5x | $15 | 1,080 | 否 |
 | Qwen3.8-Max | 1.5x | $15 | 810 | 全模态 |
 | Grok 4.5 | 1.5x | $15 | 600 | image |
