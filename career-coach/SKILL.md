@@ -44,9 +44,10 @@ tags: [career, growth, review, resume, architecture]
 
 ## 深挖池工作流（平时零散记录 → 集中爆发深挖）
 
-用户平时没时间逐轮迭代，用「零散囤 + 集中挖」的节奏。两个文件分工：
-- `/root/zach-skills/career-data/deepdive-backlog.md` — 待深挖问题池（平时囤，集中挖）
+用户平时没时间逐轮迭代，用「零散囤 + 集中挖」的节奏。数据文件分工：
+- `/root/zach-skills/career-data/deepdive-backlog.md` — 待深挖问题池 + 顶部「深挖记录索引」
 - `/root/zach-skills/career-data/knowledge-ledger.md` — 知识画像（掌握度/盲区/方向）
+- `/root/zach-skills/career-data/deepdives/<话题>.md` — 已深挖话题的完整上下文（可回查）
 
 **平时记录（用户丢一句话即可，不用写格式）：**
 - 用户发「记个问题：XXX」「待挖：XXX」「深挖：XXX」→ 追加到 deepdive-backlog.md，按主攻线归类
@@ -55,6 +56,8 @@ tags: [career, growth, review, resume, architecture]
 **集中深挖（用户主动发起）：**
 - 用户发「开始深挖」「深挖吧」→ **先载入 `/root/zach-skills/career-data/job-demand.md` 总览**，确定当前市场侧重的技能（高频/高薪 = 优先深挖），深挖方向对齐市场
 - 从 deepdive-backlog.md 取一个最值得挖的问题（优先「市场刚需 + 一面最易被追问」），按「一句话本质→流程图→原理链→决策链→盲区」挖透
+- 话题深挖到有质量（能讲透架构/协议/一致性/边界）→ 把完整上下文写进 `deepdives/<话题>.md`，并在 deepdive-backlog.md 顶部「深挖记录索引」登记一行
+- 用户说「继续 <话题>」→ 先读对应 `deepdives/<话题>.md` 再接新问题，**不从零开始**
 - 挖完打【✅已深挖】并附成果摘要，更新 knowledge-ledger.md（技能升层/盲区补齐）
 - 每次集中只挖透 1 个点，用「还想挖哪个」收尾
 
