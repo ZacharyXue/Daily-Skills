@@ -308,8 +308,10 @@ def cn_csindex_pe(index_code, years=5):
     return {"ok": True, "pe_pct_5y": round(pct, 1), "pe_ttm": round(cur, 2), "n": len(pe)}
 
 def cn_ttfund_index(index_id):
-    """天天基金 TTFUND_INDEX_INFO → PE/PB 10年分位 + ROE。走本地 ttskill CLI(需已login)。
-    返回 {ok, pe_ttm, pe_pct_10y, pb_pct_10y, roe}。"""
+    """天天基金 TTFUND_INDEX_INFO → PE/PB 10年分位 + ROE + 行业分布 + 多期收益。
+    走本地 ttskill CLI(需已login)。国证/成长/价值100 也支持(如"成长100"/"价值100").
+    返回 {ok, pe_ttm, pe_pct_10y, pb_pct_10y, roe, point, ytd,
+           return_1m/3m/6m/1y, top_industries:[{industry, weight_pct, mktcap_yi, yoy}]}。"""
     import subprocess, os
     api = "/root/.local/bin"
     try:
@@ -321,5 +323,23 @@ def cn_ttfund_index(index_id):
     except Exception as e:
         return {"ok": False, "note": "ttskill解析失败: " + str(e)[:60]}
     v = d.get("valuation") or {}
-    return {"ok": True, "pe_ttm": v.get("pe_ttm"), "pe_pct_10y": v.get("pe_percentile_10y"),
-            "pb_pct_10y": v.get("pb_percentile_10y"), "roe": v.get("roe")}
+    q = d.get("quote") or {}
+    p = d.get("performance") or {}
+    prof = d.get("index_profile") or {}
+    out = {"ok": True, "pe_ttm": v.get("pe_ttm"), "pe_pct_10y": v.get("pe_percentile_10y"),
+           "pb_pct_10y": v.get("pb_percentile_10y"), "roe": v.get("roe"),
+           "pb": v.get("pb"), "point": q.get("current_point"),
+           "ytd": q.get("ytd_return"),
+           "return_1m": p.get("return_1m"), "return_3m": p.get("return_3m"),
+           "return_6m": p.get("return_6m"), "return_1y": p.get("return_1y"),
+           "return_3y": p.get("return_3y"), "return_5y": p.get("return_5y"),
+           "index_code": prof.get("index_code"), "index_name": prof.get("full_index_name")}
+    # 行业分布(带权重/市值/年内涨跌) — composition.top_industries
+    comp = d.get("composition") or {}
+    inds = comp.get("top_industries") or []
+    out["industry_count"] = comp.get("industry_count")
+    out["top_industries"] = [{
+        "industry": x.get("INDUSTRY_NAME"), "weight_pct": round(float(x.get("FREEMV_RATIO", 0) or 0), 2),
+        "mktcap_yi": round(float(x.get("TOTAL_MARKET_CAP", 0) or 0) / 1e4, 2),
+        "yoy": round(float(x.get("PCTCHANGE_YR", 0) or 0), 1)} for x in inds]
+    return out
