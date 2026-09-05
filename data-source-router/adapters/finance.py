@@ -311,7 +311,7 @@ def cn_ttfund_index(index_id):
     """天天基金 TTFUND_INDEX_INFO → PE/PB 10年分位 + ROE + 行业分布 + 多期收益。
     走本地 ttskill CLI(需已login)。国证/成长/价值100 也支持(如"成长100"/"价值100").
     返回 {ok, pe_ttm, pe_pct_10y, pb_pct_10y, roe, point, ytd,
-           return_1m/3m/6m/1y, top_industries:[{industry, weight_pct, mktcap_yi, yoy}]}。"""
+          return_1m/3m/6m/1y, top_industries:[{industry, weight_pct, mktcap_yi, yoy}]}。"""
     import subprocess, os
     api = "/root/.local/bin"
     try:
@@ -343,3 +343,21 @@ def cn_ttfund_index(index_id):
         "mktcap_yi": round(float(x.get("TOTAL_MARKET_CAP", 0) or 0) / 1e4, 2),
         "yoy": round(float(x.get("PCTCHANGE_YR", 0) or 0), 1)} for x in inds]
     return out
+
+
+def cn_macro_10y_rate():
+    """中国10Y国债收益率 + 60日变化bp（成长/价值风格方向闸门）。
+    源: akshare bond_zh_us_rate（需运行环境的 python 装有 akshare；ECS hermes-venv 已装）。
+    返回 {ok, rate, date, delta_60d_bp, n}。利率上行(delta>0)→压制长久期成长。"""
+    try:
+        import akshare as ak
+        df = ak.bond_zh_us_rate()
+        df = df.dropna(subset=["中国国债收益率10年"]).reset_index(drop=True)
+        series = df["中国国债收益率10年"].astype(float).tolist()
+        dates = df["日期"].astype(str).tolist()
+        latest = series[-1]
+        prev60 = series[-61] if len(series) > 61 else series[0]
+        return {"ok": True, "rate": round(latest, 3), "date": dates[-1],
+                "delta_60d_bp": round((latest - prev60) * 100, 1), "n": len(series)}
+    except Exception as e:
+        return {"ok": False, "note": str(e)[:80]}

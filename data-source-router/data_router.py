@@ -49,6 +49,8 @@ def _register():
         # ---- 指数估值(ETF 看板: 中证官网PE + 天天基金分位) ----
         "cn_csindex_pe":    (lambda p: fin.cn_csindex_pe(p["index_code"], p.get("years", 5)), "csindex", TTL["cn_stock_kline"], "T1"),
         "cn_ttfund_index":  (lambda p: fin.cn_ttfund_index(p["index_id"]), "ttfund", TTL["cn_stock_kline"], "T1"),
+        # ---- 宏观(中国10Y国债, 风格方向闸门) ----
+        "cn_macro_10y_rate": (lambda p: fin.cn_macro_10y_rate(), "akshare", TTL["cn_macro_10y_rate"], "T1"),
         # ---- GitHub 读/搜 ----
         "github_repo":      (lambda p: gh.repo(p["owner"], p["repo"]), "github_api", TTL["github_repo"], "T1"),
         "github_issues":    (lambda p: gh.issues(p["owner"], p["repo"], p.get("state", "all"), p.get("limit", 100)), "github_api", TTL["github_issues"], "T1"),

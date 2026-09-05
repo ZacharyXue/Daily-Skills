@@ -17,6 +17,7 @@ cache:
     github_release: 604800     # release 7天
     github_search: 3600        # 搜索 1小时
     macro: 2592000             # 宏观 30天
+    cn_macro_10y_rate: 86400   # 中国10Y国债收益率 1天
     industry_price: 604800     # 行业现货 7天
   stale_while_revalidate: true # 命中旧缓存先返回，后台刷新
   db_path: "~/.hermes/data-cache.db"

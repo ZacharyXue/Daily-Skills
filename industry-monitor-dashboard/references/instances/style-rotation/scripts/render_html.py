@@ -132,9 +132,30 @@ def val_band_svg(idx, name, cls):
 
 val_bands = f'<div class="valbands">{val_band_svg(g, "成长100 (980080)", "g")}{val_band_svg(v, "价值100 (980081)", "v")}</div>'
 
+# 分位环比（上次更新对比，需累计多次更新才有数据）
+_prev = DATA.get("valuation_prev") or {}
+def _chg(cur_key, prev_key, label):
+    if not _prev or _prev.get(prev_key) is None or g.get(cur_key) is None:
+        return ""
+    cur = g.get(cur_key); old = _prev.get(prev_key)
+    d = round(cur - old, 1)
+    arrow = "&#9650;" if d > 0.5 else ("&#9660;" if d < -0.5 else "&#9654;")
+    col = "#c0392b" if d > 0.5 else ("#2e9e5b" if d < -0.5 else "#7f8c9b")
+    return f'<span style="color:{col};font-size:12px">{label} {arrow} {d:+.1f}pp</span>'
+_prev_note = ""
+if _prev:
+    _prev_note = ("较上次更新(" + str(_prev.get("date", "?")) + "): "
+        + _chg("pe_pct_10y", "g_pe_pct", "成长PE分位")
+        + "&nbsp;|&nbsp;" + _chg("pb_pct_10y", "g_pb_pct", "成长PB分位")
+        + "&nbsp;|&nbsp;" + _chg("pe_pct_10y", "v_pe_pct", "价值PE分位")
+        + "&nbsp;|&nbsp;" + _chg("pb_pct_10y", "v_pb_pct", "价值PB分位"))
+else:
+    _prev_note = "分位环比：暂无历史（本版起自动记录，下次更新显示变化）"
+
 val_table = f'''
 <div class="card"><h3>估值 & 盈利质量对比</h3>
 {val_bands}
+<p class="note">{_prev_note}</p>
 <table><thead><tr><th>指标</th><th class="g">成长100 (980080)</th><th class="v">价值100 (980081)</th></tr></thead>
 <tbody>
 {vrow("PE(TTM)", g["pe_ttm"], v["pe_ttm"])}

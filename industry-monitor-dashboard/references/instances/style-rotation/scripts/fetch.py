@@ -86,19 +86,10 @@ def _growth_diff():
 
 
 def _macro_10y_rate():
-    """中国10Y国债收益率 + 60日变化bp（风格方向闸门）。
-    数据源 akshare bond_zh_us_rate（本机 hermes-venv 已装）；待稳定后下沉 data-source-router。"""
+    """中国10Y国债收益率 + 60日变化bp（风格方向闸门）。已下沉 data-source-router（cn_macro_10y_rate）。"""
     try:
-        import akshare as ak
-        df = ak.bond_zh_us_rate()
-        df = df.dropna(subset=["中国国债收益率10年"]).reset_index(drop=True)
-        series = df["中国国债收益率10年"].astype(float).tolist()
-        dates = df["日期"].astype(str).tolist()
-        latest = series[-1]
-        prev60 = series[-61] if len(series) > 61 else series[0]
-        delta_bp = (latest - prev60) * 100
-        return {"ok": True, "rate": round(latest, 3), "date": dates[-1],
-                "delta_60d_bp": round(delta_bp, 1)}
+        d, src, meta, tier = DSR.get("cn_macro_10y_rate")
+        return d if isinstance(d, dict) else {"ok": False, "note": str(d)[:60]}
     except Exception as e:
         return {"ok": False, "note": str(e)[:60]}
 
@@ -134,6 +125,30 @@ def main():
         })
 
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
+    # ---- 分位历史存档（供看板环比） ----
+    hist_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "cache", "valuation_history.json")
+    hist = {"points": []}
+    if os.path.exists(hist_path):
+        try:
+            hist = json.load(open(hist_path))
+        except Exception:
+            hist = {"points": []}
+    pts = hist.get("points", [])
+    if pts:
+        data["valuation_prev"] = pts[-1]
+    if growth.get("ok") and value.get("ok"):
+        pts.append({
+            "date": datetime.datetime.now().strftime("%Y-%m-%d"),
+            "g_pe_pct": growth.get("pe_pct_10y"), "g_pb_pct": growth.get("pb_pct_10y"),
+            "v_pe_pct": value.get("pe_pct_10y"), "v_pb_pct": value.get("pb_pct_10y"),
+            "g_point": growth.get("point"), "v_point": value.get("point"),
+            "g_w": (data["engine"] or {}).get("growth_w_pct"),
+        })
+        pts = pts[-30:]
+    hist["points"] = pts
+    with open(hist_path, "w") as fh:
+        json.dump(hist, fh, ensure_ascii=False, indent=1)
+
     with open(OUT, "w") as fh:
         json.dump(data, fh, ensure_ascii=False, indent=1)
     print("written", OUT)
