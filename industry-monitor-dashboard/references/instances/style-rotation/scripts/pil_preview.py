@@ -11,7 +11,7 @@ FONT = "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc"
 HERE = "/root/zach-skills/industry-monitor-dashboard/references/instances/style-rotation"
 D = json.load(open(os.path.join(HERE, "cache", "dashboard_data.json")))
 
-W, H = 1500, 1900
+W, H = 1500, 2360
 img = Image.new("RGB", (W, H), "#f4f6fa")
 dr = ImageDraw.Draw(img)
 
@@ -211,20 +211,30 @@ track(60, label_y + 34, 620, g["etf"]["drawdown60"], v["etf"]["drawdown60"], -35
 label_y += 92
 row("52周位置", g["etf"]["pos52"], v["etf"]["pos52"], "0=低位  100=高位")
 track(60, label_y + 34, 620, g["etf"]["pos52"], v["etf"]["pos52"], 0, 100)
-# 右侧: 估值条（PE/ROE/分位）
-rx = 860
-def est_row(label, gv, vv, y, scale, unit="x"):
-    txt(rx, y, label, 21, "#1f2d3d")
-    dr.rounded_rectangle([rx + 200, y + 2, rx + 200 + 240, y + 14], radius=4, fill="#eef0f4")
-    lg = min(gv / scale, 1.0); lv = min(vv / scale, 1.0)
-    dr.rounded_rectangle([rx + 200, y + 2, rx + 200 + 240 * lg, y + 14], radius=4, fill=G)
-    dr.rounded_rectangle([rx + 200, y + 18, rx + 200 + 240 * lv, y + 30], radius=4, fill=V)
-    txt(rx + 455, y + 2, "成长 %.1f%s" % (gv, unit), 17, G)
-    txt(rx + 455, y + 18, "价值 %.1f%s" % (vv, unit), 17, V)
-est_row("PE(TTM)", g["pe_ttm"], v["pe_ttm"], top + 24, 70, "x")
-est_row("ROE", g["roe"], v["roe"], top + 84, 15, "%")
-est_row("PE10y分位", g["pe_pct_10y"], v["pe_pct_10y"], top + 144, 100, "%")
-est_row("PB10y分位", g["pb_pct_10y"], v["pb_pct_10y"], top + 204, 100, "%")
+# 右侧: 估值区位条（0-100% 三段着色 + PE/PB 双标记点 + 绝对值）
+def val_band(dr, x0, y0, w, idx, label, color):
+    pe = idx.get("pe_pct_10y") or 0
+    pb = idx.get("pb_pct_10y") or 0
+    txt(x0, y0, label, 21, "#1f2d3d")
+    txt(x0 + w - 120, y0, "PE %.1fx" % (idx.get("pe_ttm") or 0), 17, "#7f8c9b")
+    by = y0 + 34
+    z1 = x0 + w * 0.30; z2 = x0 + w * 0.70
+    dr.rounded_rectangle([x0, by, z1, by + 14], radius=4, fill="#2e9e5b")
+    dr.rounded_rectangle([z1, by, z2, by + 14], radius=2, fill="#e3b23c")
+    dr.rounded_rectangle([z2, by, x0 + w, by + 14], radius=4, fill="#e0563f")
+    px_pos = x0 + w * pe / 100.0
+    pb_pos = x0 + w * pb / 100.0
+    dr.ellipse([px_pos - 8, by - 4, px_pos + 8, by + 18], fill="#c0392b")
+    dr.ellipse([pb_pos - 8, by - 4, pb_pos + 8, by + 18], fill="#2c6fd0")
+    txt(px_pos - 34, y0 + 16, "PE %.0f%%" % pe, 17, "#c0392b")
+    txt(pb_pos - 34, by + 22, "PB %.0f%%" % pb, 17, "#2c6fd0")
+    txt(x0, by + 42, "低估值区", 14, "#2e9e5b")
+    txt(x0 + w * 0.30 + 6, by + 42, "中枢区", 14, "#b8860b")
+    txt(x0 + w * 0.70 + 6, by + 42, "高估区", 14, "#c0392b")
+val_band(dr, 862, top + 22, 280, g, "成长100", G)
+val_band(dr, 1152, top + 22, 270, v, "价值100", V)
+txt(862, top + 150, "解读: 两指数 PE10y 分位都在 76~78% (高估区), 但绝对 PE 差 5.9 倍",
+    18, "#b03a2e")
 
 txt(40, H - 46, "数据源: 天天基金TTFUND_INDEX_INFO + 腾讯ETF K线 + 成分净利聚合  |  正确性>及时性", 18, "#a8b0bc")
 

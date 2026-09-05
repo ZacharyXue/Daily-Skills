@@ -89,8 +89,47 @@ def vrow(label, gv, vv, fmt=_f):
     if not callable(fmt):
         fmt = lambda x: x if isinstance(x, str) else ("—" if x is None else str(x))
     return f'<tr><td>{label}</td><td class="g">{fmt(gv)}</td><td class="v">{fmt(vv)}</td></tr>'
+
+def val_band_svg(idx, name, cls):
+    """估值区位条：0-100% 三段着色(绿<30低估/黄30-70中枢/红>70高估)，PE/PB 分位双标记。"""
+    pe = idx.get("pe_pct_10y"); pb = idx.get("pb_pct_10y")
+    pe_abs = idx.get("pe_ttm"); pb_abs = idx.get("pb"); roe = idx.get("roe")
+    U0, U1, UW = 10, 450, 440
+    def X(p):
+        p = 0 if p is None else p
+        return U0 + p / 100.0 * UW
+    z1, z2 = X(30), X(70)
+    pe_x = X(pe); pb_x = X(pb)
+    marker = ('<circle cx="{x}" cy="42" r="6" fill="{c}"/>'
+              '<line x1="{x}" y1="24" x2="{x}" y2="60" stroke="{c}" stroke-width="2" stroke-dasharray="3 3"/>')
+    labels = ""
+    if pe is not None:
+        star = ' <text x="%d" y="18" text-anchor="middle" font-size="13" font-weight="600" fill="%s">PE %d%%</text>' % (pe_x, "#c0392b", pe)
+        labels += star
+    if pb is not None:
+        labels += '<text x="%d" y="76" text-anchor="middle" font-size="13" font-weight="600" fill="%s">PB %d%%</text>' % (pb_x, "#2c6fd0", pb)
+    info = ""
+    if pe_abs is not None:
+        info += '<text x="450" y="18" text-anchor="end" font-size="13" fill="#566573">PE %sx</text>' % _f(pe_abs)
+    if roe is not None:
+        info += '<text x="450" y="76" text-anchor="end" font-size="13" fill="#566573">ROE %s%%</text>' % _f(roe)
+    return f'''<div class="valband {cls}">
+<h4>{html.escape(name)}</h4>
+<svg viewBox="0 0 460 86" style="width:100%;height:auto">
+<rect x="{U0}" y="34" width="{z1-U0}" height="16" rx="3" fill="#2e9e5b"/>
+<rect x="{z1}" y="34" width="{z2-z1}" height="16" rx="3" fill="#e3b23c"/>
+<rect x="{z2}" y="34" width="{U1-z2}" height="16" rx="3" fill="#e0563f"/>
+<text x="{U0+6}" y="28" font-size="11" fill="#7f8c9b">&lt;30 低估</text>
+<text x="{(z1+z2)/2}" y="28" text-anchor="middle" font-size="11" fill="#7f8c9b">30-70</text>
+<text x="{U1-6}" y="28" text-anchor="end" font-size="11" fill="#7f8c9b">&gt;70 高估</text>
+{labels}{info}
+</svg></div>'''
+
+val_bands = f'<div class="valbands">{val_band_svg(g, "成长100 (980080)", "g")}{val_band_svg(v, "价值100 (980081)", "v")}</div>'
+
 val_table = f'''
 <div class="card"><h3>估值 & 盈利质量对比</h3>
+{val_bands}
 <table><thead><tr><th>指标</th><th class="g">成长100 (980080)</th><th class="v">价值100 (980081)</th></tr></thead>
 <tbody>
 {vrow("PE(TTM)", g["pe_ttm"], v["pe_ttm"])}
@@ -106,7 +145,7 @@ val_table = f'''
 {vrow("近3年涨跌", g["return_3y"], v["return_3y"], _pct)}
 {vrow("近5年涨跌", g["return_5y"], v["return_5y"], _pct)}
 </tbody></table>
-<p class="note">成长 PE60.6x vs 价值 10.4x（PE 比 {_f(g.get("pe_ttm")/v.get("pe_ttm") if v.get("pe_ttm") else None)}x），成长贵 5.9 倍。但 ROE 差 +2.5pp、盈利更强劲。估值过高≠立即切换，需盈利增速差配合（第一性）。</p>
+<p class="note">成长 PE60.6x vs 价值 10.4x（PE 比 {_f(g.get("pe_ttm")/v.get("pe_ttm") if v.get("pe_ttm") else None)}x），成长贵 5.9 倍。但 <b>两指数 PE 十年分位都在 76~78%（都不便宜）</b>——分位差不大、绝对值差巨大：成长估值由AI盈利爆发支撑（盈利增速差+221pp），价值分位高是被 2024-26 周期行情推高。估值过高≠立即切换，需盈利增速差配合（第一性）。</p>
 </div>'''
 
 # ---- 技术温度 ----
@@ -138,6 +177,11 @@ h1{font-size:20px;margin-bottom:2px}
 h2{font-size:15px;color:var(--dim);font-weight:500;margin-bottom:16px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
 .card h3{font-size:15px;margin-bottom:12px;color:#1f2d3d}
+.valbands{display:flex;gap:16px;flex-wrap:wrap;margin:6px 0 14px}
+.valband{flex:1;min-width:280px;background:#fbfcfe;border:1px solid #eef1f5;border-radius:10px;padding:10px 12px}
+.valband h4{font-size:13px;margin-bottom:6px;color:#1f2d3d}
+.valband.g h4{border-left:4px solid var(--g);padding-left:8px}
+.valband.v h4{border-left:4px solid var(--v);padding-left:8px}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th,td{text-align:left;padding:7px 8px;border-bottom:1px solid #eef1f5}
 th{color:var(--dim);font-weight:600;background:#f8fafc}
