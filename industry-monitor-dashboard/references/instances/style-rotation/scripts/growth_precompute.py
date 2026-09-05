@@ -88,14 +88,31 @@ def _group_latest2(rows, keyf):
     return pairs
 
 def _agg(stocks, label):
+    """等权聚合成分同比，输出 均值/中位数/去离群均值 三口径（中位数最稳健）。"""
     rev, prof = [], []
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as ex:
         for res in ex.map(_stock_tail_yoy, stocks):
             if res:
                 if res[0] is not None: rev.append(res[0])
                 if res[1] is not None: prof.append(res[1])
-    return {"rev_yoy": sum(rev)/len(rev) if rev else None,
-            "profit_yoy": sum(prof)/len(prof) if prof else None,
+    def stats(vals):
+        if not vals:
+            return None, None, None
+        import statistics
+        mean = sum(vals) / len(vals)
+        med = statistics.median(vals)
+        # 去离群均值：剔除偏离均值 2σ 外的点后重算
+        sd = statistics.pstdev(vals)
+        if sd > 0:
+            keep = [x for x in vals if abs(x - mean) <= 2 * sd]
+            trimmed = sum(keep) / len(keep) if keep else mean
+        else:
+            trimmed = mean
+        return mean, med, trimmed
+    rm, rmd, rt = stats(rev)
+    pm, pmd, pt = stats(prof)
+    return {"rev_mean": rm, "rev_median": rmd, "rev_trimmed": rt,
+            "profit_mean": pm, "profit_median": pmd, "profit_trimmed": pt,
             "n": len(stocks), "n_valid_rev": len(rev), "n_valid_prof": len(prof)}
 
 def main():
@@ -108,20 +125,27 @@ def main():
         print(f"{name}: {len(stocks)} 成分，聚合中…")
         agg[style] = _agg(stocks, name)
     if len(agg) == 2:
-        pg, pv = agg["growth"]["profit_yoy"], agg["value"]["profit_yoy"]
-        rg, rv = agg["growth"]["rev_yoy"], agg["value"]["rev_yoy"]
+        g = agg["growth"]; v = agg["value"]
+        def diff(gk, vk):
+            gv, vv = g.get(gk), v.get(vk)
+            return (gv - vv) if (gv is not None and vv is not None) else None
         out.update({
             "ok": True,
-            "profit_growth_pct": pg, "profit_value_pct": pv,
-            "profit_diff_pp": (pg - pv) if (pg is not None and pv is not None) else None,
-            "rev_growth_pct": rg, "rev_value_pct": rv,
-            "rev_diff_pp": (rg - rv) if (rg is not None and rv is not None) else None,
-            "n_growth_valid": agg["growth"]["n_valid_prof"],
-            "n_value_valid": agg["value"]["n_valid_prof"],
-            "note": "等权聚合成分净利/营收同比(免费源无权重)"})
+            "profit_growth_pct": g["profit_mean"], "profit_value_pct": v["profit_mean"],
+            "profit_diff_pp": diff("profit_mean", "profit_mean"),
+            "profit_median_diff_pp": diff("profit_median", "profit_median"),
+            "profit_median_growth_pct": g["profit_median"], "profit_median_value_pct": v["profit_median"],
+            "profit_trimmed_diff_pp": diff("profit_trimmed", "profit_trimmed"),
+            "profit_trimmed_growth_pct": g["profit_trimmed"], "profit_trimmed_value_pct": v["profit_trimmed"],
+            "rev_growth_pct": g["rev_mean"], "rev_value_pct": v["rev_mean"],
+            "rev_diff_pp": diff("rev_mean", "rev_mean"),
+            "rev_median_diff_pp": diff("rev_median", "rev_median"),
+            "n_growth_valid": g["n_valid_prof"], "n_value_valid": v["n_valid_prof"],
+            "note": "等权聚合成分净利/营收同比；均值易被暴涨股拉高，看板口径优先中位数(median)口径"})
         open(OUT, "w").write(json.dumps(out, ensure_ascii=False, indent=1))
         print("written", OUT)
-        print(f"净利增速差 = {out['profit_growth_pct']:.1f}% - {out['profit_value_pct']:.1f}% = {out['profit_diff_pp']:+.1f}pp")
+        print("净利:  均值差 %+.1fpp | 中位数差 %+.1fpp | 去离群差 %+.1fpp" % (
+            out["profit_diff_pp"] or 0, out["profit_median_diff_pp"] or 0, out["profit_trimmed_diff_pp"] or 0))
     else:
         open(OUT, "w").write(json.dumps(out, ensure_ascii=False, indent=1))
         print("未完成，growth_diff 写为失败(引擎走中性)")

@@ -11,7 +11,7 @@ FONT = "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc"
 HERE = "/root/zach-skills/industry-monitor-dashboard/references/instances/style-rotation"
 D = json.load(open(os.path.join(HERE, "cache", "dashboard_data.json")))
 
-W, H = 1500, 2720
+W, H = 1500, 2800
 img = Image.new("RGB", (W, H), "#f4f6fa")
 dr = ImageDraw.Draw(img)
 
@@ -67,26 +67,30 @@ con_s = "偏成长" if e["bias_pts"] > 2 else ("偏价值" if e["bias_pts"] < -2
 txt(60, top + 290, "引擎结论：%s    (并聚力 %d上 / %d下，阈值 %d)" % (con_s, con["pushing_up"], con["pushing_down"], con["threshold"]), 24,
     G if con_s == "偏成长" else (V if con_s == "偏价值" else "#1f2d3d"))
 
-# ================= B. 信号贡献 tornado (h=540) =================
+# ================= B. 信号贡献 tornado (h=620) =================
 y0 += GAP + 400
-top = card(40, y0, W - 80, 540, "信号贡献（正=推高成长权重, 负=推高价值权重）")
+top = card(40, y0, W - 80, 620, "信号贡献（正=推高成长权重, 负=推高价值权重）")
 s = e["signals"]
+m = D.get("macro") or {}
+md = (m.get("delta_60d_bp") if m.get("ok") else None)
 items = [
-    ("盈利增速差\n(第一性)", 30 * 0.25 * s.get("s_growth", 0),
-     "成长+%.0f%% vs 价值%+.0f%% 净利同比" % (gd.get("profit_growth_pct", 0), gd.get("profit_value_pct", 0)) if gd.get("ok") else "未接入"),
-    ("ROE 中枢差\n(长期锚)", 30 * 0.30 * s.get("s_roe", 0),
+    ("盈利增速差\n(第一性)", 30 * 0.22 * s.get("s_growth", 0),
+     "成长+%.0f%% vs 价值%+.0f%% 净利同比(中位数)" % (gd.get("profit_median_growth_pct", 0), gd.get("profit_median_value_pct", 0)) if gd.get("ok") else "未接入"),
+    ("ROE 中枢差\n(长期锚)", 30 * 0.27 * s.get("s_roe", 0),
      "成长 11.0 vs 价值 8.5 (pp)"),
-    ("估值价差\n(安全边际)", 30 * 0.25 * s.get("s_valuation", 0),
+    ("估值价差\n(安全边际)", 30 * 0.22 * s.get("s_valuation", 0),
      "PE比 %.1fx，分位差 %+.1fpp" % (s.get("pe_ratio"), s.get("pe_pct_diff_pp"))),
-    ("行业拥挤度\n(电子58%)", 30 * 0.12 * s.get("s_crowding", 0),
+    ("行业拥挤度\n(电子58%)", 30 * 0.11 * s.get("s_crowding", 0),
      "前3行业占比74%，风控刹车"),
+    ("宏观利率\n(10Y国债)", 30 * 0.10 * s.get("s_rate", 0),
+     ("10Y %.3f%%  60日 %+.1fbp" % (m.get("rate"), md)) if (m.get("ok") and md is not None) else "未接入"),
     ("温和动量\n(仅预警)", 30 * 0.08 * s.get("s_momentum", 0),
      "成长6m %+.1f%% vs 价值 %+.1f%%" % (g.get("return_6m"), v.get("return_6m"))),
 ]
 axis_x = 720
 left_edge, right_edge = 260, 1160
 max_len = max(abs(i[1]) for i in items) * 1.25 or 1
-row_h = 78
+row_h = 72
 yy = top + 22
 for name, contrib, note in items:
     bar_len = abs(contrib) / max_len * (right_edge - axis_x)
@@ -105,13 +109,13 @@ for name, contrib, note in items:
     txt(60, yy + 54, note, 17, "#aab2bc")
     txt(1170, yy + 16, dir_s, 21, color)
     yy += row_h
-dr.rectangle([axis_x, top + 14, axis_x + 2, top + 14 + 5 * row_h], fill="#c7cdd6")
-txt(axis_x - 8, top + 14 + 5 * row_h + 10, "0", 17, "#7f8c9b")
-txt(150, top + 14 + 5 * row_h + 10, "<- 偏价值", 17, V)
-txt(900, top + 14 + 5 * row_h + 10, "偏成长 ->", 17, G)
+dr.rectangle([axis_x, top + 14, axis_x + 2, top + 14 + 6 * row_h], fill="#c7cdd6")
+txt(axis_x - 8, top + 14 + 6 * row_h + 10, "0", 17, "#7f8c9b")
+txt(150, top + 14 + 6 * row_h + 10, "<- 偏价值", 17, V)
+txt(900, top + 14 + 6 * row_h + 10, "偏成长 ->", 17, G)
 
 # ================= C. 行业分布对比条 (h=460) =================
-y0 += GAP + 540
+y0 += GAP + 620
 top = card(40, y0, W - 80, 460, "行业分布（自由流通权重；成长 vs 价值）")
 def ind_block(label, items, x0, y, color, wmax=230, barx=160, colw=540):
     txt(x0, y, label, 23, "#1f2d3d")

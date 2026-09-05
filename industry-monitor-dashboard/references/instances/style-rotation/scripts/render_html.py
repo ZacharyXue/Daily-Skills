@@ -37,6 +37,14 @@ def industry_table(title, inds, klass):
 # ---- 引擎 ----
 e = DATA.get("engine") or {}
 d = {}
+def _fmt_rate_gate(s):
+    r = s.get("rate_10y"); d = s.get("rate_delta_60d_bp")
+    if r is None and d is None:
+        return "—"
+    ss = (f"{r}%" if r is not None else "—")
+    if d is not None:
+        ss += f" (60日 {d:+.1f}bp)"
+    return ss
 if e:
     s = e["signals"]
     c = e["confluence"]
@@ -59,12 +67,13 @@ if e:
         gd_dir = "up" if pd > 8 else ("down" if pd < -8 else "flat")
         gd_note = "等权聚合 {0}/{1} 只成分净利同比，第一性信号".format(gd.get("n_growth_valid"), gd.get("n_value_valid"))
     signal_rows = "".join([
-        sigrow("盈利增速差(净利)", gd_str, gd_dir, gd_note),
-        sigrow("ROE 差(成长−价值)", _f(s.get("roe_diff_pp"))+"pp", e["directions"].get("roe",""), "长期风格锚：成长ROE更强→偏成长"),
-        sigrow("估值价差(PE分位差)", _f(s.get("pe_pct_diff_pp"))+"pp / PE比"+_f(s.get("pe_ratio"))+"x", e["directions"].get("val",""), "成长相对越贵→减成长"),
-        sigrow("行业拥挤度(电子58%)", _f(s.get("s_crowding"),2), "down" if s.get("s_crowding") and s["s_crowding"]<0 else "flat", "成长行业集中→安全边际下调"),
-        sigrow("动量(6m相对,温和)", _pct(s.get("mom_6m_growth")), e["directions"].get("mom",""), "仅极端预警,不做切换依据"),
-    ])
+            sigrow("盈利增速差(净利)", gd_str, gd_dir, gd_note),
+            sigrow("ROE 差(成长−价值)", _f(s.get("roe_diff_pp"))+"pp", e["directions"].get("roe",""), "长期风格锚：成长ROE更强→偏成长"),
+            sigrow("估值价差(PE分位差)", _f(s.get("pe_pct_diff_pp"))+"pp / PE比"+_f(s.get("pe_ratio"))+"x", e["directions"].get("val",""), "成长相对越贵→减成长"),
+            sigrow("行业拥挤度(电子58%)", _f(s.get("s_crowding"),2), "down" if s.get("s_crowding") and s["s_crowding"]<0 else "flat", "成长行业集中→安全边际下调"),
+            sigrow("宏观利率闸门(10Y国债)", _fmt_rate_gate(s), e["directions"].get("rate",""), "利率上行→贴现率升→压制成长(长久期)"),
+            sigrow("动量(6m相对,温和)", _pct(s.get("mom_6m_growth")), e["directions"].get("mom",""), "仅极端预警,不做切换依据"),
+        ])
     default_eng = f'''
     <div class="gauge">
       <div class="g-num">{_f(e.get('growth_w_pct'))}<span class="g-unit">% 成长</span></div>
@@ -91,7 +100,7 @@ def vrow(label, gv, vv, fmt=_f):
     return f'<tr><td>{label}</td><td class="g">{fmt(gv)}</td><td class="v">{fmt(vv)}</td></tr>'
 
 def val_band_svg(idx, name, cls):
-    """估值区位条：0-100% 三段着色(绿<30低估/黄30-70中枢/红>70高估)，PE/PB 分位双标记。"""
+    """估值区位条 v2：PE / PB 各一条 0-100% 三段色 band，每条单一标记点（避免分位接近时重叠）。"""
     pe = idx.get("pe_pct_10y"); pb = idx.get("pb_pct_10y")
     pe_abs = idx.get("pe_ttm"); pb_abs = idx.get("pb"); roe = idx.get("roe")
     U0, U1, UW = 10, 450, 440
@@ -99,30 +108,26 @@ def val_band_svg(idx, name, cls):
         p = 0 if p is None else p
         return U0 + p / 100.0 * UW
     z1, z2 = X(30), X(70)
-    pe_x = X(pe); pb_x = X(pb)
-    marker = ('<circle cx="{x}" cy="42" r="6" fill="{c}"/>'
-              '<line x1="{x}" y1="24" x2="{x}" y2="60" stroke="{c}" stroke-width="2" stroke-dasharray="3 3"/>')
-    labels = ""
-    if pe is not None:
-        star = ' <text x="%d" y="18" text-anchor="middle" font-size="13" font-weight="600" fill="%s">PE %d%%</text>' % (pe_x, "#c0392b", pe)
-        labels += star
-    if pb is not None:
-        labels += '<text x="%d" y="76" text-anchor="middle" font-size="13" font-weight="600" fill="%s">PB %d%%</text>' % (pb_x, "#2c6fd0", pb)
-    info = ""
-    if pe_abs is not None:
-        info += '<text x="450" y="18" text-anchor="end" font-size="13" fill="#566573">PE %sx</text>' % _f(pe_abs)
-    if roe is not None:
-        info += '<text x="450" y="76" text-anchor="end" font-size="13" fill="#566573">ROE %s%%</text>' % _f(roe)
+    def one_band(pct, band_y, label, color, val_label):
+        p = pct if pct is not None else 0
+        pos = X(p)
+        out = f'''<rect x="{U0}" y="{band_y}" width="{z1-U0}" height="15" rx="3" fill="#2e9e5b"/>
+<rect x="{z1}" y="{band_y}" width="{z2-z1}" height="15" rx="3" fill="#e3b23c"/>
+<rect x="{z2}" y="{band_y}" width="{U1-z2}" height="15" rx="3" fill="#e0563f"/>
+<circle cx="{pos}" cy="{band_y+7.5}" r="6" fill="{color}"/>
+<text x="{pos+16}" y="{band_y+12}" font-size="13" font-weight="600" fill="{color}">{label}</text>
+<text x="{U1}" y="{band_y-8}" text-anchor="end" font-size="12" fill="#566573">{val_label}</text>'''
+        return out
     return f'''<div class="valband {cls}">
 <h4>{html.escape(name)}</h4>
-<svg viewBox="0 0 460 86" style="width:100%;height:auto">
-<rect x="{U0}" y="34" width="{z1-U0}" height="16" rx="3" fill="#2e9e5b"/>
-<rect x="{z1}" y="34" width="{z2-z1}" height="16" rx="3" fill="#e3b23c"/>
-<rect x="{z2}" y="34" width="{U1-z2}" height="16" rx="3" fill="#e0563f"/>
-<text x="{U0+6}" y="28" font-size="11" fill="#7f8c9b">&lt;30 低估</text>
-<text x="{(z1+z2)/2}" y="28" text-anchor="middle" font-size="11" fill="#7f8c9b">30-70</text>
-<text x="{U1-6}" y="28" text-anchor="end" font-size="11" fill="#7f8c9b">&gt;70 高估</text>
-{labels}{info}
+<svg viewBox="0 0 460 158" style="width:100%;height:auto">
+<text x="{U0+6}" y="14" font-size="11" fill="#7f8c9b">PE 10年分位</text>
+{one_band(pe, 52, ("PE %d%%" % pe) if pe is not None else "—", "#c0392b", ("PE %sx" % _f(pe_abs)) if pe_abs is not None else "")}
+<text x="{U0+6}" y="70" font-size="11" fill="#7f8c9b">PB 10年分位</text>
+{one_band(pb, 108, ("PB %d%%" % pb) if pb is not None else "—", "#2c6fd0", ("ROE %s%%" % _f(roe)) if roe is not None else "")}
+<text x="{U0+6}" y="142" font-size="10" fill="#7f8c9b">&lt;30 低估</text>
+<text x="{(z1+z2)/2}" y="142" text-anchor="middle" font-size="10" fill="#7f8c9b">30-70 中枢</text>
+<text x="{U1-6}" y="142" text-anchor="end" font-size="10" fill="#7f8c9b">&gt;70 高估</text>
 </svg></div>'''
 
 val_bands = f'<div class="valbands">{val_band_svg(g, "成长100 (980080)", "g")}{val_band_svg(v, "价值100 (980081)", "v")}</div>'

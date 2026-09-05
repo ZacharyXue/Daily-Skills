@@ -32,8 +32,8 @@ G_MIN, G_MAX = 40.0, 70.0   # 限幅
 CONFLUENCE_THRESHOLD = 2    # 同向信号数 ≥2 才明显偏移
 CONFLUENCE_TOLERANCE = 12.0 # 并聚力不足时，允许的最大偏移 pt
 
-# 各信号权重（和为1）
-W = {"roe": 0.30, "val": 0.25, "growth": 0.25, "crowd": 0.12, "mom": 0.08}
+# 各信号权重（和为1；rate=宏观利率方向闸门）
+W = {"roe": 0.27, "val": 0.22, "growth": 0.22, "crowd": 0.11, "mom": 0.08, "rate": 0.10}
 
 
 def _clamp(x, lo, hi):
@@ -99,10 +99,18 @@ def score_momentum(rm6_g, rm6_v):
 
 
 def score_growth(gdiff_nm):
-    """盈利增速差(成长-价值 净利同比, pp)。『第一性』主导信号：增速差向上→增配成长。"""
+    """盈利增速差(成长-价值 净利同比中位数, pp)。『第一性』主导信号：增速差向上→增配成长。"""
     if gdiff_nm is None:
         return 0.0
     return _clamp(gdiff_nm / 20.0, -1.0, 1.0)   # ±20pp 饱和
+
+
+def score_rate(delta_bp):
+    """宏观利率闸门：中国10Y国债收益率 60日变化(bp)。利率上行→贴现率升→压制成长(长久期)。
+    这是风格轮动最可靠的宏观 separator（tradethepool 等实证）；作为方向闸门参与加权。"""
+    if delta_bp is None:
+        return 0.0
+    return _clamp(-delta_bp / 20.0, -1.0, 1.0)   # +20bp→-1(利空成长), -20bp→+1(利多成长)
 
 
 def run(data):
@@ -140,9 +148,16 @@ def run(data):
     signals["growth_diff_nm"] = data.get("growth_diff_nm")
     signals["s_growth"] = _fmt(s_growth); directions["growth"] = _dir(s_growth)
 
+    # 6) 宏观利率闸门(10Y国债60日变化bp)
+    rate_delta = data.get("macro_rate_delta_bp")
+    s_rate = score_rate(rate_delta)
+    signals["rate_10y"] = data.get("macro_rate_10y")
+    signals["rate_delta_60d_bp"] = rate_delta
+    signals["s_rate"] = _fmt(s_rate); directions["rate"] = _dir(s_rate)
+
     # 加权偏移
     bias = (W["roe"] * s_roe + W["val"] * s_val + W["growth"] * s_growth
-            + W["crowd"] * s_crowd + W["mom"] * s_mom) * 30.0   # 满偏 ±1 → ±30pt
+            + W["crowd"] * s_crowd + W["mom"] * s_mom + W["rate"] * s_rate) * 30.0   # 满偏 ±1 → ±30pt
 
     # 信号并聚：同向推动成长的信号数
     pushing_up = sum(1 for k in directions if directions[k] == "up")

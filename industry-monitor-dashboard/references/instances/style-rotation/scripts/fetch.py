@@ -85,12 +85,31 @@ def _growth_diff():
     return None
 
 
+def _macro_10y_rate():
+    """中国10Y国债收益率 + 60日变化bp（风格方向闸门）。
+    数据源 akshare bond_zh_us_rate（本机 hermes-venv 已装）；待稳定后下沉 data-source-router。"""
+    try:
+        import akshare as ak
+        df = ak.bond_zh_us_rate()
+        df = df.dropna(subset=["中国国债收益率10年"]).reset_index(drop=True)
+        series = df["中国国债收益率10年"].astype(float).tolist()
+        dates = df["日期"].astype(str).tolist()
+        latest = series[-1]
+        prev60 = series[-61] if len(series) > 61 else series[0]
+        delta_bp = (latest - prev60) * 100
+        return {"ok": True, "rate": round(latest, 3), "date": dates[-1],
+                "delta_60d_bp": round(delta_bp, 1)}
+    except Exception as e:
+        return {"ok": False, "note": str(e)[:60]}
+
+
 def main():
     growth = _ttfund(GROWTH)
     value = _ttfund(VALUE)
     g_tech = _technical(GROWTH["etf_symbol"])
     v_tech = _technical(VALUE["etf_symbol"])
     gd = _growth_diff()
+    macro = _macro_10y_rate()
 
     data = {
         "meta": {"updated": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -98,13 +117,20 @@ def main():
         "growth": {**growth, "etf": g_tech},
         "value": {**value, "etf": v_tech},
         "growth_diff": gd,
+        "macro": macro,
         "engine": None,
     }
     if growth.get("ok") and value.get("ok"):
         data["engine"] = engine.run({
             "growth": {**growth, "return_6m": growth.get("return_6m")},
             "value": {**value, "return_6m": value.get("return_6m")},
-            "growth_diff_nm": (gd or {}).get("profit_diff_pp"),
+            # 盈利增速差优先中位数口径(抗极端值)，退而去离群均值
+            "growth_diff_nm": (gd or {}).get("profit_median_diff_pp")
+                              if (gd or {}).get("profit_median_diff_pp") is not None
+                              else (gd or {}).get("profit_trimmed_diff_pp"),
+            # 宏观利率闸门
+            "macro_rate_delta_bp": (macro or {}).get("delta_60d_bp"),
+            "macro_rate_10y": (macro or {}).get("rate"),
         })
 
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
