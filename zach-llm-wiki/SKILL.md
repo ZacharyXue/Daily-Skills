@@ -16,6 +16,10 @@ tags: [wiki, knowledge-base, knowledge-management, llm-wiki]
 1. **助力子皓整理知识**：把散落在博客/读书/研究的认知，缝合成互联的知识点地图
 2. **agent 获取知识记忆**：Hermes/任何 LLM agent 回答问题时，wiki 是子皓知识的首选记忆层——先查 wiki 再回答，不用每次重新翻 raw 资料
 
+**源材料定位（避免全盘搜的坑）：**
+- 子皓说「我的笔记/知识在 X」时，X 几乎总指**博客文章** `/root/ZacharyXue.github.io/src/content/`，
+  不是字面路径（当初「./out」实际就是博客）。先看 `references/blog-source-map.md`，再 clarify 确认。
+
 **分工铁律（SCHEMA 原文）：**
 - **进 wiki**：知识经验、判断框架、原理、方法、经验教训、跨文章缝合的认知
 - **留博客**：单纯数据收集展示（行情/财报数字/看板）、一次性时点结论、对外综合文章
