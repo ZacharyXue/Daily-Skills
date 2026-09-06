@@ -1,5 +1,5 @@
 ---
-name: llm-wiki
+name: zach-llm-wiki
 description: 子皓个人知识库的 LLM Wiki 工作流 — 博客 vs wiki 分工、ingest 提炼、query 检索、lint 维护。数据本体在 /root/wiki（git-crypt 加密私有仓），skill 只含方法论。当子皓说"整理笔记/落库/我的知识库/wiki/queries" 或需要检索个人知识记忆时使用。
 version: 1.1.0
 tags: [wiki, knowledge-base, knowledge-management, llm-wiki]
