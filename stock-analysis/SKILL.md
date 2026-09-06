@@ -60,6 +60,26 @@ python3 scripts/extract_pdf.py /tmp/shenhuo/2026中报.pdf /tmp/shenhuo/2026中�
 
 ## Phase 3: 财务三表挖数
 
+**双源互验（AI Berkshire 借鉴）**：每个关键财务数据（营收/净利/毛利率/经营现金流/负债率）至少从 **2 个独立来源**取数并比对：
+| 市场 | 主源 | 副源 | 原始一手 |
+|------|------|------|---------|
+| A股 | 东财 datacenter | 巨潮资讯 | 年报/季报 PDF（本 skill Phase 1 已有） |
+| 港股 | aastocks | macrotrends（ADR 代码） | HKEX 披露易 |
+| 美股 | macrotrends | stockanalysis | SEC EDGAR |
+
+误差分级：
+- ≤1% → ✅ 用主源值，标注两源
+- 1%~5% → ⚠️ 标注两值+可能原因（汇率/口径）
+- >5% → ❌ 必须查原始财报核实，不得直接使用
+
+**关键数据统一标注格式**：
+```
+净利润：245亿元 ✅
+  - 东财: 245亿元（归母）
+  - 巨潮: 244.8亿元
+  - 误差: 0.08%
+```
+
 grep 定位：
 
 | 表 | 关键词 | 关键指标 |
@@ -130,6 +150,19 @@ python3 scripts/peers_compare.py 000933.SZ 601600.SH 000807.SZ
 
 ## Phase 7: 估值与敏感性
 
+**先验算、再判断（禁止心算）**：所有涉及乘除的计算必须走工具，禁止 LLM 心算——
+```bash
+python3 scripts/financial_rigor.py verify-market-cap --price 510 --shares 9.11e9 --reported 4.65e12 --currency HKD
+python3 scripts/financial_rigor.py verify-valuation --price 510 --eps 23.5 --bvps 120 --fcf-per-share 18 --dividend 2.4
+python3 scripts/financial_rigor.py cross-validate --field 营收 --values '{"东财": 7518, "巨潮": 7500}' --unit 亿
+python3 scripts/financial_rigor.py three-scenario --price 100 --eps 5 --shares 10 --growth 0.15 0.10 0.05 --pe 25 20 15
+python3 scripts/financial_rigor.py calc --expr '510 * 9.11e9'
+```
+把工具输出直接嵌入报告作为验证记录。**Benford 造假检测**（样本≥50 才可靠）：
+```bash
+python3 scripts/financial_rigor.py benford --values '[历史财务数据序列...]'
+```
+
 - 通用：PE/PB/股息率（行情接口）→ 与同业、历史分位对比
 - **市场位置/情绪定位**（马克斯钟摆 + 聂夫时机的数据输入）：`python3 scripts/market_position.py <sh/sz代码>` 直接出52周区间位置 + 最大回撤 + 近一年涨跌。
   - 52周区间位置：<35% = 低位（恐惧端/可逆向）、70%+ = 高位（贪婪端/警惕追高）
@@ -152,6 +185,23 @@ python3 scripts/peers_compare.py 000933.SZ 601600.SH 000807.SZ
 - 价值：把「基本面事实」与「思维框架视角」分离——基本功在本 skill 算清楚，视角由 mindset 叠加，不混在一起。
 - 产出：多维度结论 + 每个视角的适用边界。
 
+## Phase 9: 报告抽检门禁（准出流程，AI Berkshire 借鉴）
+
+报告定稿后、发布/交付前，**必须**抽检 15% 数据点复核：
+
+```bash
+# Step 1 — 提取抽检清单（自动从报告抽取数据点，15% 随机抽样）
+python3 scripts/report_audit.py extract --report <报告文件路径>
+
+# Step 2 — 对清单每项从独立信源取数（双源互验规范见 Phase 3）
+
+# Step 3 — 输出准出/打回判决
+python3 scripts/report_audit.py verdict --results '<填好的JSON>' --report <报告文件名>
+```
+
+**【准出】** 全部通过 → 报告可交付；**【打回】** 有不通过 → 修正后重审。
+**价值**：防止「分析完了但关键数字抄错」——模型自产自报不自检的盲区，用外部抽检补上。
+
 ---
 
 ## 脚本
@@ -163,10 +213,17 @@ python3 scripts/peers_compare.py 000933.SZ 601600.SH 000807.SZ
 | `scripts/quote_query.py` | 行情/股价/估值查询 | 任意 A 股 |
 | `scripts/roic.py` | **ROIC/ROE/投入资本/NOPAT**（经济性核心，李录维度）| 任意 A 股 |
 | `scripts/market_position.py` | **52周区间位置/最大回撤/近一年涨跌**（马克斯钟摆+聂夫时机）| 任意 A 股 |
+| `scripts/financial_rigor.py` | **市值验算/估值验算/多源交叉验证/Benford造假检测/三情景估值/精确计算**（禁止心算） | 任意市场 |
+| `scripts/report_audit.py` | **报告抽检门禁**（抽取数据点→15%抽样→准出/打回判决） | 任意报告 |
 
 ## 输出格式
 
-一份结构化报告：商业模式 → 财务 → 风险 → 同行 → 估值/敏感性 →（可选）investment-mindset 多视角评估。用户偏好：表格 + 数据支撑 + 一句话结论，先讲透再落博客。
+一份结构化报告：商业模式 → 财务（双源标注） → 风险 → 同行 → 估值/敏感性（工具验算记录） →（可选）investment-mindset 多视角评估 → **Phase 9 抽检记录**。用户偏好：表格 + 数据支撑 + 一句话结论，先讲透再落博客。
+
+**诚实降级协议（AI Berkshire 借鉴）**：若任一环节数据不可得（接口挂、PDF 缺失、联网失败）——
+- 禁止用训练知识冒充联网/实时结果
+- 报告顶部醒目标注：`⚠️ 本报告部分数据未能获取，基于训练知识（截止日期 X），置信度降级`
+- 宁可留白标注「数据不足」，不用推测填满框架伪装确定性
 
 ## Pitfalls
 
