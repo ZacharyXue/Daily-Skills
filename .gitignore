@@ -7,3 +7,6 @@ industry-monitor-dashboard/references/instances/*/output/
 # Python 缓存：不进版本控制
 __pycache__/
 *.pyc
+# llm-wiki 数据本体：独立 git-crypt 仓（/root/wiki），勿进公开仓
+llm-wiki/data/
+llm-wiki/wiki/
