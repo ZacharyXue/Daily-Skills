@@ -100,6 +100,12 @@ wiki/
 **主题线分批**（先做 1-2 条线样例给子皓审，满意再铺开）：
 投资（已完 9 篇）→ 云原生（volcano/containerd/linux-ops 3 篇）→ LLM工程（loop/judge/codex/上下文压缩）→ 算法（DP/单调队列/数论）→ 软技能（关键对话/控制论）
 
+**批量 ingest 模式（2026-09-07 全部 5 线落库验证）**：
+- 15 篇博客 → 3 个 delegate_task 并行子代理通读提炼（按主题线分组），子代理只读不写，输出 JSON（page_name/essence/points/remember/merge_with）
+- 主代理拿到提炼后按规范写 wiki 页、更新 index/log/SCHEMA taxonomy、跑 lint（wikilink 断链 + index 完整性脚本）、commit 一次 + push 远端
+- 子代理 context 必须写明：全部博客路径、wiki 分工铁律（去日期成立才进）、输出结构；schema 的 required 必须放顶层（properties 内部会报错）
+- 例子：算法 6 篇→6 概念页、云原生 4 篇→4 页、LLM 5 篇→5 页、项目 3 篇→3 实体页、随笔（hello-world）判定不建页直接留博客
+
 ### 2. Query（回答子皓问题 / agent 检索知识记忆）
 
 触发：子皓问知识性问题（如「我对水泥的判断框架是啥」），或 agent 需要子皓的背景知识时。
