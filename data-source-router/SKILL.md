@@ -160,7 +160,19 @@ sys.path.insert(0, '/root/zach-skills/data-source-router')
 | GitHub 未认证 | 60/hr | 请求间隔 1.5s + 每小时计数，超 55 抛 `RateLimitExceeded` |
 | GitHub 认证(可选 token) | 5000/hr | 设 `GITHUB_TOKEN` env 自动升级 |
 | SEC | ≤10 req/s | 适配器串行调用 |
-| 单域名(浏览器兜底) | ≤1 req/s | 留接口，默认不装 |
+| 网页源(雪球等) | **低频 + 随机抖动** | 请求间隔 15-60s 随机（模拟人类翻页阅读），单会话每域 ≤50 请求；批量任务拆多轮跑 |
+
+## 模拟人类低频（网页源硬规范）
+
+爬虫/网页源取数**必须模拟人类行为**，防止触发风控、减少对源站压力：
+
+1. **低频**：相邻请求间隔 ≥15s，随机抖动（15-60s 用 `random.uniform`），禁止固定节奏（如恒定 3s）、禁止全速翻页
+2. **节奏随机化**：间隔每次独立随机；必要时混入滚动/停留模拟（playwright 场景）
+3. **批量控制**：单会话同一域名 ≤50 请求；一次性要拉的多用户/多页**拆成多轮**（每轮间隔 ≥10 分钟），不要连跑
+4. **失败退让**：401/403/429/WAF 挑战页出现 → 立即停止，等 10-60 分钟再试；不重试硬刚（重试会延长风控）
+5. **例外**：`--fast` 调试参数可放宽到 5-8s，仅用于连通性验证，**禁止**用于正式取数
+
+> 反例（踩过，2026-09-07）：雪球 user_timeline 翻页用 2-4s 固定间隔 + 一次会话内连发 ~30 请求 → 触发阿里云 WAF 二级风控，连公开 page=1 都被拦，冷却 10-60 分钟。教训：网页源按「人类阅读速度」操作，不是按「API 速度」。
 
 ## 缓存策略（config.yaml 集中定义）
 
@@ -196,7 +208,7 @@ sys.path.insert(0, '/root/zach-skills/data-source-router')
 - **T1** 永远优先，禁为 API 能覆盖的数据开浏览器。
 - **T2** 搜索摘要兜底，仅当 T1 无此数据类型。
 - **T3** 浏览器（playwright/selenium）**默认不装**，因 ECS 上多数数据已有可用 API。若确需，须合规（见下）。
-- **T3 豁免（唯一例外）**：`xueqiu_user_posts` 必须用 playwright（雪球 user_timeline API 对未登录请求返回 10022/WAF 拦截，无纯 HTTP 替代）。合规要求：正常 UA + `disable-blink-features=AutomationControlled` + 覆盖 `navigator.webdriver` + 取数间隔 2-4s 随机。**登录态由 `site-login` skill 管理**（state 在 `~/.cache/data-source-login/xueqiu_state.json`），本层只读 state 不管理；失效返回确定性错误，提示重扫，不给脏数据。
+- **T3 豁免（唯一例外）**：`xueqiu_user_posts` 必须用 playwright（雪球 user_timeline API 对未登录请求返回 10022/WAF 拦截，无纯 HTTP 替代）。合规要求：正常 UA + `disable-blink-features=AutomationControlled` + 覆盖 `navigator.webdriver` + **取数间隔 15-60s 随机（模拟人类翻页阅读；`--fast` 5-8s 仅供调试）**。**登录态由 `site-login` skill 管理**（state 在 `~/.cache/data-source-login/xueqiu_state.json`），本层只读 state 不管理；失效返回确定性错误，提示重扫，不给脏数据。
 - 每次失败记录原因到 `failures` 表；连续 3 次同域名失败 → 24h 冷却。
 
 ## 合规红线（硬性）
@@ -206,7 +218,8 @@ sys.path.insert(0, '/root/zach-skills/data-source-router')
 3. **不批量下载版权内容**（禁整站镜像）
 4. **Token/Key 用环境变量**（`SEC_USER_AGENT`/`GITHUB_TOKEN`），不写进代码或日志
 5. **单域名 ≤1 req/s；GitHub 未认证 ≤60 req/h**
-6. 检测到合规风险立即停止并报告
+6. **模拟人类低频**（网页源硬规范，见「模拟人类低频」节）：间隔 ≥15s 随机抖动、批量拆多轮、遇 WAF 停手等冷却
+7. 检测到合规风险立即停止并报告
 
 > 若将来启用浏览器兜底：正常 UA（非 HeadlessChrome）、`--disable-blink-features=AutomationControlled`、覆盖 `navigator.webdriver`、页面停留 3-8s 随机、滚动/点击间隔 500-2000ms 随机、尊重 robots.txt；遇 Cloudflare/验证码 → 暂停让用户人工接管；403/429 → 指数退避(1s/2s/4s)，3 次失败标记不可用切备选。
 

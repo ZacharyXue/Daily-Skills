@@ -85,7 +85,12 @@ async def main():
     ap.add_argument("--keywords", default="")
     ap.add_argument("--max-pages", type=int, default=5)
     ap.add_argument("--state", default=DEFAULT_STATE)
+    ap.add_argument("--fast", action="store_true",
+                    help="调试模式: 间隔5-8s(仅连通性验证, 正式取数禁用)")
     args = ap.parse_args()
+
+    # 模拟人类低频: 默认翻页间隔 15-60s 随机; --fast 仅调试 5-8s
+    pause = lambda: asyncio.sleep(random.uniform(5, 8) if args.fast else random.uniform(15, 60))
 
     keywords = [k.strip() for k in args.keywords.split(",") if k.strip()]
     hits = []
@@ -138,7 +143,7 @@ async def main():
                         "text": own[:500] or (rt_text[:500] if rt_text else ""),
                         "url": f"https://xueqiu.com/{args.user_id}/{post.get('id','')}",
                     })
-                await asyncio.sleep(random.uniform(2, 4))  # 反限流
+                await pause()  # 反限流: 模拟人类翻页阅读间隔
 
             await browser.close()
 

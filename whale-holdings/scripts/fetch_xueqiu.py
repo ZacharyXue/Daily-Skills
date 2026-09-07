@@ -9,6 +9,10 @@
   python3 fetch_xueqiu.py --gurus 鹿鼎公,段永平      # 只看部分大佬(代号见 GURU_ALIAS)
   python3 fetch_xueqiu.py --keywords 铝,神火         # 只保留提到关键词的发言
   python3 fetch_xueqiu.py --gurus 鹿鼎公 --keywords 华能 --json
+  python3 fetch_xueqiu.py --fast                     # 仅调试: 缩短间隔, 禁止正式批量
+
+⚠️ 低频规范: 默认每页间隔 15-60s 随机(模拟人类翻页), 全量13位×3页≈30-40分钟,
+   批量任务请拆成多轮(如分3次各拉4-5位), 或先只看重点大佬。
 
 依赖:
   - data-source-router 的 adapters.xueqiu（登录态由 site-login 管理, 失效会报 login_ok=false）
@@ -77,13 +81,19 @@ def main() -> None:
     ap.add_argument("--gurus", default="", help="逗号分隔大佬名(默认全部)")
     ap.add_argument("--keywords", default="", help="逗号分隔关键词, 只保留提到的发言")
     ap.add_argument("--days", type=int, default=7, help="时间窗口(天)")
-    ap.add_argument("--max-pages", type=int, default=5, help="每人大佬最多翻页数(每页20条)")
+    ap.add_argument("--max-pages", type=int, default=3, help="每人大佬最多翻页数(每页20条, 默认3)")
+    ap.add_argument("--fast", action="store_true", help="调试: 缩短间隔(5-8s), 禁止正式批量使用")
     ap.add_argument("--json", action="store_true", help="JSON 输出")
     a = ap.parse_args()
 
     gurus = resolve([g.strip() for g in a.gurus.split(",") if g.strip()]) if a.gurus else GURUS
     since = datetime.now() - timedelta(days=a.days)
     keywords = [k.strip() for k in a.keywords.split(",") if k.strip()]
+
+    if not a.fast:
+        est_min = int(len(gurus) * a.max_pages * 0.6)  # 平均 ~37s/页
+        print(f"低频模式: {len(gurus)} 位大佬 × {a.max_pages} 页 ≈ 预计 {max(est_min,1)} 分钟; "
+              f"批量任务建议拆多轮(--gurus 每次3-4位)", file=sys.stderr)
 
     all_hits = []
     problems = []
@@ -92,7 +102,7 @@ def main() -> None:
             problems.append(f"{name}: user_id 未配置(待查)") 
             continue
         try:
-            res = user_posts(cfg["id"], keywords="", max_pages=a.max_pages)
+            res = user_posts(cfg["id"], keywords="", max_pages=a.max_pages, fast=a.fast)
         except Exception as e:
             problems.append(f"{name}: 异常 {str(e)[:80]}")
             continue

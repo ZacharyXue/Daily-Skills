@@ -21,7 +21,7 @@ PY = "/usr/bin/python3"  # playwright 装在系统 Python
 DEFAULT_STATE = os.path.expanduser("~/.cache/data-source-login/xueqiu_state.json")
 
 
-def user_posts(user_id, keywords="", max_pages=5, state=None):
+def user_posts(user_id, keywords="", max_pages=5, state=None, fast=False):
     """取指定雪球用户时间线，按关键词过滤本人原发言。
 
     参数:
@@ -29,6 +29,7 @@ def user_posts(user_id, keywords="", max_pages=5, state=None):
       keywords  : 逗号分隔关键词（空=全部原发言）
       max_pages : 最多翻页数（每页20条）
       state     : site-login 登录态路径（默认 ~/.cache/data-source-login/xueqiu_state.json）
+      fast      : 调试模式(5-8s间隔)，正式取数保持默认低频(15-60s)
 
     返回 dict: {ok, login_ok, user_id, keyword_hits:[{id,date,text,url}], total_scanned, error}
     """
@@ -40,6 +41,8 @@ def user_posts(user_id, keywords="", max_pages=5, state=None):
     cmd = [PY, FETCH, "--user-id", str(user_id),
            "--keywords", keywords, "--max-pages", str(max_pages),
            "--state", state]
+    if fast:
+        cmd.append("--fast")
     try:
         r = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
         out = r.stdout.strip()
