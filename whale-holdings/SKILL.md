@@ -155,7 +155,8 @@ curl -s -H "User-Agent: Research research@example.com" \
 
 ### 雪球（fetch_xueqiu.py）
 - **必须 `/usr/bin/python3` 运行**（系统 Python 才有 playwright）
-- **10022 = 风控/登录态失效**：先 `python3 scripts/xueqiu_login.py --check`；若 state 有效，就是 IP 风控，等 2-5 分钟冷却，降低批量规模/拉长间隔再跑
+- **10022 报错 = 可能是 IP 风控，不是登录态失效**：取数报「登录态失效（10022）」时先看下层 `xueqiu_fetch` 的**原始响应体**——`<!DOCTYPE html>` 挑战页 = IP 风控（IP 风控连 page=1 公开数据也会一起拦，只能等冷却，见下条）；JSON `error_code:10022` = 真登录态失效，跑 `xueqiu_login.py` 重新扫码
+- **`--check` 只能验 cookie，不能验风控**：`xueqiu_login.py --check` 的 verify_login 在请求被 WAF 拦截时仍可能报「✓ 有效」（请求没到服务器）。取数失败 + `--check` 有效 = 大概率 IP 风控，别误判成需要重扫
 - **IP 风控会连 page=1（公开数据）一起拦**：任何 user_timeline API 都返回阿里云 WAF HTML 挑战页（响应体是 `<!DOCTYPE html>` 而非 JSON）。此时**只能等**（10-60 分钟），重试无效且可能延长风控。判断标准：`check_login` 返回 false 且裸 page=1 也失败 → 等冷却
 - 一次会话内 API 请求数控制在 ~30 次以内，间隔 ≥2s（xueqiu_fetch 已内置 2-4s 随机间隔，**不要在外部再加并行**）
 - 批量拉多位大佬时**不要并发/高频**，按脚本串行即可
