@@ -1,64 +1,47 @@
 ---
 name: whale-holdings
-description: 大佬持仓跟踪 — 拉取 SEC 13F 机构持仓披露，看巴菲特、李录(喜马拉雅)、Michael Burry、Bill Ackman 等大佬美股买了什么、加仓了什么、清仓了什么，支持季度对比。触发时机：用户说"看下 XX 的持仓"、"大佬持仓"、"13F"、"李录/巴菲特最近买了什么"。
-version: 1.0.0
-tags: [investment, 13f, sec, holdings, whale]
+description: 投资参考总入口 — 大佬持仓(SEC 13F) + 大佬观点(雪球大V发言/知识星球言论)。覆盖巴菲特、李录等美股 13F 持仓对比，以及雪球鹿鼎公/段永平/管我财等 13 位大V、知识星球「人生要选对」老钱的近期观点与搜索。触发时机：用户说「看下 XX 的持仓」「大佬持仓」「13F」「鹿鼎公/段永平最近说了什么」「本周大佬观点」「雪球大V怎么说 XXX」「人生要选对 搜 XXX」。数据源走 data-source-router（雪球登录态由 site-login 管理）。
+version: 2.0.0
+tags: [investment, 13f, sec, holdings, whale, xueqiu, zsxq, 投资参考, 大佬观点]
+related_skills: [data-source-router, site-login, zsxq, stock-analysis, whale-holdings]
 ---
 
-# 大佬持仓跟踪（SEC 13F）
+# 投资参考（大佬持仓 + 大佬观点）
 
-> **数据源统一规范**：SEC EDGAR 的 HTTP 访问（需带 User-Agent、CIK 补零）统一由 `data-source-router` skill 提供（`adapters/finance.py` 的 `sec_companyfacts`/`sec_submissions`，入口 `data_router.get('us_financial_sec'/'us_revenue_sec')`）。本 skill 只保留 **13F XML 解析**（领域专属），原始 HTTP 不再重复实现。SEC 坑位（UA必填、CIK前导零、metric变更）见 data-source-router SKILL.md。
+三位一体：**持仓（美股13F）** + **雪球观点** + **知识星球观点**。持仓看「买什么」，观点看「为什么买/怎么看」。
 
-拉取 SEC EDGAR 上的 13F 机构持仓披露（美股多头），看大佬买了什么、加仓了什么、清仓了什么。数据公开免费，通过 EDGAR 接口获取，无需 API key。
+> 资源依赖：数据一律走 `data-source-router`（`adapters/xueqiu.py` 的雪球通道；SEC 由本层提供）；雪球登录态由 `site-login` skill 管理（state 在 `~/.cache/data-source-login/xueqiu_state.json`），失效报 `login_ok=false` 时提示重扫，**不伪造数据**。
 
-## 核心概念
+## 一、大佬持仓（SEC 13F，美股）
 
-- **13F**：SEC 要求管理美股资产超过 1 亿美元的机构投资者，每季度（报告期结束后 45 天内）披露其美股多头持仓。
-- **关键限制**：13F **只披露美股多头**。港股/A 股持仓（如李录的腾讯、比亚迪）**不在 13F 里**，所以 13F 只反映大佬的美股一面。
-- **延迟**：报告期结束到披露有约 45 天延迟。例如 2026Q2（6/30 截止）约 8 月中才披露。
-- 空头、期权、做空仓位不披露；部分持仓可能被申请 confidential treatment 隐藏。
+> 数据源规范：SEC EDGAR 的 HTTP 访问统一由 data-source-router 提供（`us_financial_sec`/`us_revenue_sec`）。本 skill 只保留 13F XML 解析（`scripts/fetch_13f.py`）。
 
-## 工作流
+### 核心概念
+- **13F**：SEC 要求管理美股资产超 1 亿美元的机构每季度（45 天内）披露美股多头持仓。
+- **限制**：只披露美股多头；港股/A股持仓（如李录的腾讯、比亚迪）不在 13F 里。
+- **延迟**：报告期结束后约 45 天披露。如 2026Q2（6/30 截止）约 8 月中披露。
+- 空头/期权不披露；部分持仓可申请 confidential treatment 隐藏。
 
-三步：搜 CIK → 拉持仓 → 季度对比。
-
-### Step 1: 搜索机构 CIK
+### 工作流
 
 ```bash
+# 搜索机构 CIK
 python3 scripts/fetch_13f.py search "Himalaya Capital"
-# → Himalaya Capital Management LLC: 0001709323
-```
-
-如果已知 CIK 可跳过此步（见下方速查表）。
-
-### Step 2: 拉取持仓
-
-```bash
-# 最新一期持仓（终端表格）
+# 最新持仓（终端表格 / JSON）
 python3 scripts/fetch_13f.py fetch --cik 0001709323
-
-# JSON 输出（可管道给其他工具）
 python3 scripts/fetch_13f.py fetch --cik 0001709323 --json
-```
-
-### Step 3: 季度对比
-
-```bash
-# 最近两期对比（加仓/减仓/清仓/新增一目了然）
+# 季度对比（加仓/减仓/清仓/新增）
 python3 scripts/fetch_13f.py diff --cik 0001709323
-
-# JSON 输出
 python3 scripts/fetch_13f.py diff --cik 0001709323 --json
 ```
 
-## 常用机构 CIK 速查表（关注清单）
-
-> **当前关注**：★ = 巴菲特的伯克希尔、李录的喜马拉雅资本。后续依次查看：按表格顺序逐个 `diff`。
+### 常用机构 CIK 速查表
 
 | 机构 | CIK | 状态 |
 |------|-----|------|
-| ★ Himalaya Capital Management（李录/喜马拉雅） | 0001709323 | ✅ 已验证 |
+| ★ Himalaya Capital（李录/喜马拉雅） | 0001709323 | ✅ 已验证 |
 | ★ Berkshire Hathaway（巴菲特） | 0001067983 | ✅ 已验证 |
+| H&H International（段永平） | 需查(见 search) | ⚠️ 可用 search 确认 |
 | Scion Asset Management（Michael Burry） | 0001649339 | ✅ 已验证 |
 | Pershing Square（Bill Ackman） | 0001336528 | 待验证 |
 | Bridgewater Associates（桥水） | 0001350694 | 待验证 |
@@ -67,49 +50,81 @@ python3 scripts/fetch_13f.py diff --cik 0001709323 --json
 | Appaloosa（David Tepper） | 0001029305 | 待验证 |
 | Hillhouse Capital（高瓴） | 0001700066 | 待验证 |
 
-> 除标注 ✅ 的外未经逐一验证。若 `fetch` 报错或结果不符，先用 `search` 重新确认 CIK（机构改名、CIK 变更、多实体时常见）。
->
-> 每次查看完更新此表状态（已验证/待验证），保持清单准确。
+### 13F 分析要点
+1. 新增/清仓 = 最强观点变化；2. 股数变化 vs 市值变化（区分主动交易与股价波动）；3. 持仓集中度变化。
 
-## 当前关注查看顺序
+## 二、雪球大佬观点（脚本：scripts/fetch_xueqiu.py）
 
-按关注优先级，逐个执行季度对比：
+> 数据通道：data-source-router 的 `xueqiu_user_posts`（playwright + site-login 登录态）。**取数慢是正常的**（每页间隔 2-4s 反限流）；批量拉多位大佬时若报 10022 = 触发风控，等 2-5 分钟冷却再跑，别高频连跑。
 
-```bash
-# 1. 李录/喜马拉雅（拼多多大加仓那家）
-python3 scripts/fetch_13f.py diff --cik 0001709323
+### 雪球大佬清单（user_id 记录在此，增删改这里）
 
-# 2. 巴菲特/伯克希尔（最大重仓股变化）
-python3 scripts/fetch_13f.py diff --cik 0001067983
-```
+| 代号 | 雪球昵称 | user_id | 风格标签 |
+|------|---------|---------|---------|
+| 鹿鼎公 | 超级鹿鼎公 | 8790885129 | 周期:煤炭/电力/电解铝/银行, 游戏仓月更 |
+| 段永平 | 大道无形我有型 | 1247347556 | 价值投资/美股/苹果茅台 |
+| 管我财 | 管我财 | 9650668145 | 港股价值, 低估逆向 |
+| 张翼轸 | 张翼轸 | 3559889031 | ETF/资产配置/指数化, EarlETF |
+| 丹书铁券 | 丹书铁券 | 9742512811 | 长期价投/私募基金 |
+| 安娜2012 | 安娜2012 | 3045776970 | 股债平衡, 集中持仓 |
+| 大树 | 孥孥的大树 | 8592131633 | 股市实战/基金/宏观 |
+| 紫金陈 | 紫金陈 | 6515752937 | 悬疑作家, 散户视角/回撤规律 |
+| 郭荆璞 | 郭荆璞 | 7571730629 | 行业分析师视角 |
+| jiancai | jiancai | TBD | 待补充 |
+| qzy69 | qzy69 | 1205946512 | 低产高信噪比 |
+| 狗不叫 | 狗不叫 | TBD | 待补充 |
+| 指汇盈 | 指汇盈 | 5941996397 | 基金策略/行情复盘 |
 
-## 大佬言论订阅（手动触发）
+> TBD = 待查证 user_id。查证方式：雪球网页搜索用户（登录态下 `https://xueqiu.com/query/v1/search/status.json?q=<昵称>`）或 web 搜索 `xueqiu.com/u` 主页。改完记得同步 `scripts/fetch_xueqiu.py` 里的 `GURUS` 字典。
 
-在 13F 持仓跟踪之外，新增「大佬言论」维度：订阅关注的大佬在**知识星球**上的公开言论，手动触发拉取一段时间内的言论汇总。**不设 cron、不实时**——用户主动要求时（如「看看老大佬最近说了什么」）才拉取；也可定时（见文末）。
-
-### 订阅源清单
-
-| 来源 | 平台 | 关注对象(user_id) | 内容特征 |
-|------|------|-------------------|----------|
-| 人生要选对 (`222588821821`) | 知识星球 | **老钱** (`8444584182`) | 投资观点：美债/美股/A股/个股(段永平)、宏观、趋势策略。星球宗旨「信息环境比方法更重要」 |
-
-> 注意：关注对象按 **user_id** 过滤（如老钱 `8444584182`），**不是** group 的 admin_ids——星主身份以实际发帖 owner 为准。新增订阅源时在 `scripts/fetch_whale_posts.py` 的 `SOURCES` 里登记。
-
-### 手动拉取
+### 用法
 
 ```bash
 cd scripts
-python3 fetch_whale_posts.py --limit 30      # 默认: 人生要选对/老钱, 最近30条候选
-python3 fetch_whale_posts.py --limit 30 --json
-# 其他星球: --group-id <id> --watch <user_id>
+# 全部大佬近7天发言
+/usr/bin/python3 fetch_xueqiu.py
+# 近30天 / 只看部分大佬
+/usr/bin/python3 fetch_xueqiu.py --days 30
+/usr/bin/python3 fetch_xueqiu.py --gurus 鹿鼎公,段永平
+# 只保留提到关键词的发言（如"铝"/"神火"/"华能"）
+/usr/bin/python3 fetch_xueqiu.py --gurus 鹿鼎公 --keywords 铝,神火
+# JSON 输出（管道给分析）
+/usr/bin/python3 fetch_xueqiu.py --gurus 鹿鼎公,段永平 --days 7 --json
 ```
 
-### 关联平台
+**注意**：
+- 脚本必须用 `/usr/bin/python3` 跑（playwright 装在系统 Python）
+- `--days` 是时间窗口过滤；`--max-pages` 控制翻页上限（每页 20 条），发帖多的老大多翻几页
+- 拉完的原始文本给 LLM 做概括/对比/提炼，脚本只负责取数
 
-| 平台 | 状态 | 说明 |
-|------|------|------|
-| 知识星球 | ✅ 可用 | `zsxq-cli` 已登录（`~/.config/zsxq-cli/config.json`），`group +topics` 拉取 |
-| 雪球 | ⚠️ 待 cookie | 无 cookie 返回阿里云 WAF 反爬页，需配用户 `xq_a_token` 才能拉真实动态 |
+## 三、知识星球观点（人生要选对 · 老钱）（脚本：scripts/fetch_whale_posts.py）
+
+订阅源清单：
+
+| 星球(group_id) | 关注用户(user_id) | 内容特征 |
+|---|---|---|
+| 人生要选对 (222588821821) | 老钱 (8444584182) | 投资观点:美债/美股/A股/个股、宏观、趋势 |
+
+### 用法
+
+```bash
+cd scripts
+python3 fetch_whale_posts.py                    # 最近30条（兼容旧行为）
+python3 fetch_whale_posts.py --days 7           # 近一周发言
+python3 fetch_whale_posts.py --days 14 --json
+python3 fetch_whale_posts.py --search 铝        # 星球内全文搜索（RAG 语义匹配）
+python3 fetch_whale_posts.py --search 神火,云铝 --json
+```
+
+> 搜索是 RAG 语义匹配：可能漏召/误召；搜股票名建议用个股简称+公司全名多试几个关键词（如"神火"没命中就试"000933"）。`--days` 与 `--search` 互斥。
+
+## 四、典型用法（给 LLM 的组合）
+
+- **「本周大佬都在聊什么」**：雪球全部大佬 `--days 7` + 星球 `--days 7`，合并后按主题归类（周期/美股/宏观/个股），输出一个摘要。
+- **「鹿鼎公怎么看电解铝/神火」**：`--gurus 鹿鼎公 --keywords 铝,神火,云铝`，再拉对应个股的行情（data-source-router `achieve('quote')`）对照。
+- **「段永平最近的观点」**：`--gurus 段永平 --days 14`；他的 13F（H&H International）用 `fetch_13f.py` 同步看。
+- **「巴菲特/李录最新持仓变化」**：`fetch_13f.py diff --cik 0001067983 / 0001709323`。
+- **「人生要选对里关于美债/黄金的讨论」**：`fetch_whale_posts.py --search 美债` / `--search 黄金`。
 
 ## 直接 curl 手动流程（脚本不可用时）
 
@@ -117,34 +132,40 @@ python3 fetch_whale_posts.py --limit 30 --json
 # 1. 搜 CIK
 curl -s -H "User-Agent: Research research@example.com" \
   "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&company=Himalaya+Capital&type=13F&dateb=&owner=include&count=40&output=atom"
-
 # 2. 列 13F filing 列表（取 accession number）
 curl -s -H "User-Agent: Research research@example.com" \
   "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001709323&type=13F-HR&dateb=&owner=include&count=40&output=atom"
-
-# 3. 打开 filing index 页，找 infoTable XML 文件名
+# 3. 打开 filing index 页找 infoTable XML 文件名
 curl -s -H "User-Agent: Research research@example.com" \
   "https://www.sec.gov/Archives/edgar/data/1709323/000204358526000022/0002043585-26-000022-index.htm"
-
-# 4. 下载 infoTable XML（持仓明细）
+# 4. 下载 infoTable XML
 curl -s -H "User-Agent: Research research@example.com" \
   "https://www.sec.gov/Archives/edgar/data/1709323/000204358526000022/13fhciq226.xml"
 ```
 
 ## Pitfalls
 
-- **User-Agent 必填**：SEC 要求请求带 `User-Agent` header（含联系邮箱），否则返回 403。脚本已内置。
-- **限速**：SEC 要求不超过 10 req/s。批量拉取多机构时脚本内置 0.2s 间隔。
-- **titleOfClass 措辞不一致**：同一标的在不同季度可能写 "SPON ADS" vs "SPONSORED ADS"，甚至名字带前导空格（如 " TENCENT MUSIC ENTMT GROUP"）。**解析时用 CUSIP 做主键**，不要用 name+title 组合，否则会把同一持仓拆成两行、误判为"新增+清仓"。
-- **同一标的多 share class**：如 Alphabet 有 CL A 和 CL C 两个持仓，CUSIP 不同，属于两个独立持仓条目，不要合并。
-- **accession number 去横线**：EDGAR 目录路径用 `000204358526000022`（无横线），filing 列表返回的是 `0002043585-26-000022`（有横线），构造 URL 时要去掉横线。
-- **13F-HR/A 是修订版**：列表里 `13F-HR/A` 是对前一份的修订。diff 时注意报告期，别拿修订版和原版比同一季度。
-- **value 是美元**：XML 里 `<ns1:value>` 是持仓市值（美元），`sshPrnamt` 是股数。别把两者搞混。
-- **CIK 前导零**：EDGAR URL 里 CIK 要保留 10 位前导零（`0001709323` 而非 `1709323`），但 `data/{cik}` 目录路径里要去掉前导零（`data/1709323/`）。脚本已处理。
+### 13F / SEC
+- User-Agent 必填（含邮箱），否则 403；限速 ≤10 req/s
+- `titleOfClass` 措辞不一致：**用 CUSIP 做主键**，别用 name+title，否则同持仓拆两行误判新增+清仓
+- 同一标的多 share class（Alphabet CL A/CL C）是两个独立条目
+- accession number 去横线；`13F-HR/A` 是修订版，diff 别拿修订版和原版比同一季度
+- `value` 是美元市值，`sshPrnamt` 是股数；CIK 前导零 10 位
 
-## 分析建议
+### 雪球（fetch_xueqiu.py）
+- **必须 `/usr/bin/python3` 运行**（系统 Python 才有 playwright）
+- **10022 = 风控/登录态失效**：先 `python3 scripts/xueqiu_login.py --check`；若 state 有效，就是 IP 风控，等 2-5 分钟冷却，降低批量规模/拉长间隔再跑
+- **IP 风控会连 page=1（公开数据）一起拦**：任何 user_timeline API 都返回阿里云 WAF HTML 挑战页（响应体是 `<!DOCTYPE html>` 而非 JSON）。此时**只能等**（10-60 分钟），重试无效且可能延长风控。判断标准：`check_login` 返回 false 且裸 page=1 也失败 → 等冷却
+- 一次会话内 API 请求数控制在 ~30 次以内，间隔 ≥2s（xueqiu_fetch 已内置 2-4s 随机间隔，**不要在外部再加并行**）
+- 批量拉多位大佬时**不要并发/高频**，按脚本串行即可
+- 登录二维码若导出 0B 属正常抖动，旧 state 可能仍有效（以 `--check` 为准）
 
-拿到 diff 后重点看：
-1. **新增/清仓**：完全新建或清空某标的 = 大佬最强的观点变化。
-2. **股数变化 vs 市值变化**：股数不变但市值涨 = 纯股价波动（被动）；股数变化 = 主动交易（真正的观点）。区分这两者，避免把"股价涨了"误读成"加仓"。
-3. **持仓集中度**：持仓数骤减（如喜马拉雅 14→8 只）= 向核心仓位集中、做减法。
+### 知识星球（fetch_whale_posts.py）
+- `--limit` 上限 30，超出报 `无效的count`
+- 搜索为 RAG 语义匹配，结果需人工复核相关性
+- 依赖 zsxq-cli（`~/.config/zsxq-cli/config.json`）
+
+## 合规红线
+
+- 不伪造身份/绕过付费墙；雪球登录态只用于读取公开可见发言，不批量下载版权内容
+- key/token（雪球 state、SEC UA）不入 git、不打日志；state 权限 600
