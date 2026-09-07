@@ -24,6 +24,7 @@ from cache import Cache
 from config_loader import config
 from adapters import finance as fin
 from adapters import github as gh
+from adapters import xueqiu as xq
 
 log = logging.getLogger("dsr.router")
 CACHE = Cache()
@@ -51,6 +52,9 @@ def _register():
         "cn_ttfund_index":  (lambda p: fin.cn_ttfund_index(p["index_id"]), "ttfund", TTL["cn_stock_kline"], "T1"),
         # ---- 宏观(中国10Y国债, 风格方向闸门) ----
         "cn_macro_10y_rate": (lambda p: fin.cn_macro_10y_rate(), "akshare", TTL["cn_macro_10y_rate"], "T1"),
+        # ---- 雪球大V发言(需 site-login 登录态; playwright T3 豁免, 见 SKILL.md) ----
+        "xueqiu_user_posts": (lambda p: xq.user_posts(p["user_id"], p.get("keywords", ""), p.get("max_pages", 5)),
+                              "xueqiu", TTL["xueqiu_user_posts"], "T3"),
         # ---- GitHub 读/搜 ----
         "github_repo":      (lambda p: gh.repo(p["owner"], p["repo"]), "github_api", TTL["github_repo"], "T1"),
         "github_issues":    (lambda p: gh.issues(p["owner"], p["repo"], p.get("state", "all"), p.get("limit", 100)), "github_api", TTL["github_issues"], "T1"),
@@ -96,7 +100,8 @@ def get(kind, cache_ns=None, **params):
 def _domain_for(source):
     return {"tencent": "qt.gtimg.cn", "eastmoney": "datacenter-web.eastmoney.com",
             "sec_edgar": "data.sec.gov", "github_api": "api.github.com",
-            "ccement": "index.ccement.com", "csindex": "www.csindex.com.cn"}.get(source)
+            "ccement": "index.ccement.com", "csindex": "www.csindex.com.cn",
+            "xueqiu": "xueqiu.com"}.get(source)
 
 def sources_status():
     """返回可用数据源开关状态(读config)。"""

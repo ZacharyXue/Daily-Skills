@@ -114,6 +114,10 @@ INTENT_MAP = {
     "gh_pulls":     ("github_pulls", lambda p: {"owner": p["owner"], "repo": p["repo"], "state": p.get("state", "all"), "limit": p.get("limit", 100)}, ["owner", "repo"]),
     "gh_file":      ("github_file", lambda p: {"owner": p["owner"], "repo": p["repo"], "path": p["path"]}, ["owner", "repo", "path"]),
     "gh_search":    ("github_search", lambda p: {"q": p["q"], "sort": p.get("sort", "stars"), "limit": p.get("limit", 20)}, ["q"]),
+    # ---- 雪球大V发言(需 site-login 登录态) ----
+    "xueqiu_posts": ("xueqiu_user_posts",
+                     lambda p: {"user_id": p["user_id"], "keywords": p.get("keywords", ""),
+                                "max_pages": p.get("max_pages", 5)}, ["user_id"]),
 }
 
 
@@ -180,6 +184,17 @@ def _v_md(d):
         return True, f"ok n={d.get('n', '')}"
     return False, str(d.get("note", d.get("msg", "ok=False"))) if isinstance(d, dict) else "ok字段缺失"
 
+def _v_xueqiu(d):
+    # 雪球大V发言：ok=True 且登录态有效；关键词过滤后可为空（合法）
+    if not isinstance(d, dict):
+        return False, "xueqiu 非 dict"
+    if not d.get("ok"):
+        return False, str(d.get("error", "ok=False"))
+    if not d.get("login_ok"):
+        return False, "登录态失效，需重扫 site-login"
+    hits = d.get("keyword_hits", [])
+    return True, f"命中 {len(hits)} 条，扫描 {d.get('total_scanned', 0)} 条"
+
 
 VALIDATORS = {
     # 行情/财务
@@ -206,6 +221,8 @@ VALIDATORS = {
     "github_file": _v_gh,
     "github_contributors": _v_gh,
     "github_label_counts": _v_gh,
+    # 雪球大V发言
+    "xueqiu_user_posts": _v_xueqiu,
 }
 
 
@@ -270,6 +287,17 @@ def _summarize_gh(d):
         return slim or {"_unrecognized_dict": True}
     return {"items": 0}
 
+def _summarize_xueqiu(d):
+    # 雪球大V发言：只回命中数+最近3条摘要，绝不全量塞上下文
+    if not isinstance(d, dict):
+        return {"ok": False}
+    hits = d.get("keyword_hits", [])
+    return {
+        "ok": d.get("ok"), "login_ok": d.get("login_ok"),
+        "hits": len(hits), "scanned": d.get("total_scanned", 0),
+        "recent": [{"date": h.get("date"), "text": h.get("text", "")[:80]} for h in hits[:3]],
+    }
+
 _SUMMARIZERS = {
     "cn_stock_quote": _summarize_quote, "hk_stock_quote": _summarize_quote, "us_stock_quote": _summarize_quote,
     "cn_stock_kline": _summarize_kline, "hk_stock_kline": _summarize_kline,
@@ -279,6 +307,7 @@ _SUMMARIZERS = {
     "github_repo": _summarize_gh, "github_release": _summarize_gh, "github_issues": _summarize_gh,
     "github_pulls": _summarize_gh, "github_search": _summarize_gh, "github_file": _summarize_gh,
     "github_contributors": _summarize_gh, "github_label_counts": _summarize_gh,
+    "xueqiu_user_posts": _summarize_xueqiu,
 }
 
 # 这些 kind 的 payload 天生可能巨大 → 强制摘要+指针（不进上下文）

@@ -44,6 +44,7 @@ related_skills: [industry-monitor-dashboard, whale-holdings, stock-analysis, git
 | GitHub 搜索 | `github_search` | GitHub REST v3 | ✅ 200 | 实时 |
 | GitHub 贡献者(健康度) | `github_contributors` | GitHub REST v3 `/contributors`+Link头 | ✅ 200 | 实时 |
 | GitHub 低门槛label计数 | `github_label_counts` | GitHub Search API | ✅ 200 | 实时 |
+| 雪球大V发言(需登录) | `xueqiu_user_posts` | 雪球 user_timeline + playwright | ✅(site-login登录态) | 1天缓存 |
 
 ### ❌ 实测不可用（不要用，写进这里避免重蹈）
 
@@ -195,6 +196,7 @@ sys.path.insert(0, '/root/zach-skills/data-source-router')
 - **T1** 永远优先，禁为 API 能覆盖的数据开浏览器。
 - **T2** 搜索摘要兜底，仅当 T1 无此数据类型。
 - **T3** 浏览器（playwright/selenium）**默认不装**，因 ECS 上多数数据已有可用 API。若确需，须合规（见下）。
+- **T3 豁免（唯一例外）**：`xueqiu_user_posts` 必须用 playwright（雪球 user_timeline API 对未登录请求返回 10022/WAF 拦截，无纯 HTTP 替代）。合规要求：正常 UA + `disable-blink-features=AutomationControlled` + 覆盖 `navigator.webdriver` + 取数间隔 2-4s 随机。**登录态由 `site-login` skill 管理**（state 在 `~/.cache/data-source-login/xueqiu_state.json`），本层只读 state 不管理；失效返回确定性错误，提示重扫，不给脏数据。
 - 每次失败记录原因到 `failures` 表；连续 3 次同域名失败 → 24h 冷却。
 
 ## 合规红线（硬性）
@@ -217,6 +219,8 @@ sys.path.insert(0, '/root/zach-skills/data-source-router')
 | `stock-analysis` | 基本面深度分析（商业模式/三表） | 财报数字来自本层（`cn_financial`/`us_financial_sec`），分析逻辑自留 |
 | `github-*` 系列 | GitHub **写操作**（建repo/PR/release/管理） | 本层只做**读/搜**（`github_repo`/`_issues`/`_pulls`/`_release`/`_search`/`_file`），两者不重叠 |
 | `github-oss-evaluation` | 5维度健康度**判读方法论**（pushed_at风险/厂商集中度/bot剔除/label缺失） | `repo`/`contributors`/`release`/`label计数` 抓取**本层提供**（`github_contributors`/`github_label_counts`），其只保留解读 |
+| `site-login` | 网页数据源**登录态**（扫码/验证/state落盘） | `xueqiu_user_posts` 需要登录态；**本站只管取数**，登录态状态由 site-login 管理、失效返回确定性错误提示重扫 |
+| `stock-analysis` | 基本面分析时若需大V观点 | 调 `achieve('xueqiu_posts', user_id=...)` 取大V发言，分析逻辑自留 |
 | `open-source-contribution` | 介入流程/候选项目路径/AI贡献政策 | 甄别真社区数据**本层提供**（同上 `github_contributors` 等），只保留判读阈值 |
 
 ## CodeAct 层（4 个优化点，对照广发《AI投研》report data-gateway 案例）
