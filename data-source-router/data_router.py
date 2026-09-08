@@ -71,8 +71,9 @@ def _register():
 
 ROUTES = _register()
 
-def get(kind, cache_ns=None, **params):
-    """统一取数入口。kind 见 ROUTES。返回 (data, source, meta, tier)"""
+def get(kind, cache_ns=None, force=False, **params):
+    """统一取数入口。kind 见 ROUTES。返回 (data, source, meta, tier)
+    force=True: 绕过缓存(含SWR旧值返回)，强制回源并写缓存 — 手动看板更新/K线当天数据用。"""
     if kind not in ROUTES:
         raise KeyError(f"未知数据 kind: {kind}。可用: {list(ROUTES)}")
     fetch_fn, source, ttl, tier = ROUTES[kind]
@@ -89,6 +90,11 @@ def get(kind, cache_ns=None, **params):
         except Exception as e:
             CACHE.record_failure(domain or source, str(e)[:200])
             raise
+
+    if force:
+        data = _fetch()
+        CACHE.put(ns, json.dumps(params, sort_keys=True), data, source, ttl)
+        return data, source, {"force_refresh": True}, tier
 
     try:
         data, src, refreshed = CACHE.get_or_set(ns, json.dumps(params, sort_keys=True), _fetch, ttl, source)
