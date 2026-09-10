@@ -74,7 +74,26 @@ def render_row(r):
     else:
         pb_html = '<div class="met"><div class="lab">PB10y 分位</div><div class="val">—</div></div>'
     roe_html = m("ROE", f"{r['roe']:.1f}%" if r.get('roe') is not None else "—")
+    # 历史最大回撤/当前回撤/回撤进度（核心，全资产显示）
+    def dd_color(progress):
+        # 回撤进度: <25% 安全, 25-50% 中, 50-75% 深, >=75% 极深(接近历史大底)
+        if progress >= 0.75: return "var(--hot)"
+        if progress >= 0.50: return "var(--warn)"
+        if progress >= 0.25: return "var(--down)"
+        return "var(--ok)"
+    pro = r.get("dd_progress", 0)
+    ddcol = dd_color(pro)
+    maxdd_html = (f'<div class="met pe5"><div class="lab">历史最大回撤</div>'
+                  f'<div class="val" style="color:var(--down);font-size:15px">{r["max_dd"]:.1f}%'
+                  f' <span style="font-size:12px;color:var(--sub)">({r.get("max_dd_date","")})</span></div></div>')
+    curdd_html = (f'<div class="met pe5"><div class="lab">当前回撤</div>'
+                  f'<div class="val" style="color:{ddcol};font-size:15px">{r["cur_dd"]:.1f}%'
+                  f' <span style="font-size:12px;color:var(--sub)">(峰{r.get("cur_dd_peak_date","")})</span></div></div>')
+    prog_html = (f'<div class="met pe5"><div class="lab">回撤进度 <b>(vs 历史最大)</b></div>'
+                 f'<div class="val" style="color:{ddcol};font-size:15px">{pro*100:.0f}%'
+                 f' <span style="font-size:12px;color:var(--sub)">(历史{abs(r["max_dd"]):.0f}%)</span></div></div>')
     metrics = (
+        maxdd_html + curdd_html + prog_html +
         pe5_html +
         pb_html +
         m("近5日", fmt_pct(r["chg5"])) +
@@ -82,7 +101,7 @@ def render_row(r):
         m("20日BIAS", f"{r['bias20']:+.2f}%" if r["bias20"] is not None else "—") +
         m("距1年高", fmt_pct(r["dd_hi"])) +
         m("MA20", f"{r['ma20']:.3f}") +
-        m("5日均额", f"{r['daily_yi']:.2f}亿") +
+        m("5日均额", f"{r['daily_yi']:.2f}亿" if r.get("daily_yi") is not None else "—") +
         m("目标10%/15%", f"{r['target10']:.2f}/{r['target15']:.2f}") +
         roe_html
     )

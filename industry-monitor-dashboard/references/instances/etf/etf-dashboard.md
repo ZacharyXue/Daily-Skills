@@ -8,8 +8,11 @@
 |------|------|------|
 | ETF 实时行情 | 腾讯 `qt.gtimg.cn/q=sh512890` | gbk，`~` 分隔：f3现价 f32涨跌 f33涨跌% |
 | ETF/指数日K前复权 | 腾讯 `web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh512890,day,,,260,qfq` | 取 `qfqday`（或 `day`），`[date,open,close,high,vol]`，vol=手(100股) |
+| 国际资产历史K线 | 雅虎 `query1.finance.yahoo.com/v8/finance/chart/{sym}?period1=&period2=1768000000&interval=1d` | 标普500 `%5EGSPC` / 纳斯达克100 `%5ENDX` / 黄金 `GC=F`（COMEX期货），2000年起全历史。⚠️ 腾讯美股K线 apps.fqkline 只返回1根，必须用雅虎；`urllib.parse.quote(symbol, safe='%')` 防 `%` 二次转义404 |
 | 指数估值分位 | 天天基金 `TTFUND_INDEX_INFO {"index_id":"H30269"}` | `pe_ttm`/`pe_percentile_10y`/`pb`/`pb_percentile_10y`/`roe` |
 | 长期净值/收益 | 天天基金 `TTFUND_NAV_INFO range=ln` | 多年年度收益 |
+
+**2026-09-10 扩展**：看板改为「红利技术温度 + 长牛资产最大回撤」双视角。新增 `max_drawdown()` 计算三指标：历史最大回撤(负%)+日期、当前回撤(相对最近峰值)+峰值日、回撤进度=当前回撤/历史最大回撤（1.0=回到历史大底，指汇盈抄底位）。雅虎标的(watchlist `kind:yahoo`)无PE/PB/ROE显示「—」，信号回退BIAS/回撤。数据长度：标普/纳指/黄金 2000起；中证红利指数 2018起(腾讯2000根)；其余ETF 存续(2024起)⚠️。
 
 已验指数码：H30269 中证红利低波、000922 中证红利（均有分位）。港股央企红利(520900 跟踪 931722)天天基金**查不到估值分位**→只靠回撤，属数据缺口。
 ⚠️ `TTFUND_DIVIDEND_TEMPERATURE` 实测 body 空，不可用；用估值分位替代。

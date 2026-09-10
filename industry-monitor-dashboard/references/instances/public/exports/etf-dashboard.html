@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>红利 / 长牛资产最大回撤看板</title><style>
+:root{--bg:#edf2f7;--card:#fff;--line:#d7e0eb;--ink:#2a3445;--sub:#7a879c;
+--up:#18a05e;--down:#e2544a;--hot:#f59e0b;--ok:#10b981;--warn:#f59e0b;--watch:#94a3b8;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;padding:24px;max-width:1200px;margin:0 auto}
+.header{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 28px;margin-bottom:16px}
+.header h1{font-size:26px;font-weight:700}
+.header .meta{margin-top:8px;font-size:13px;color:var(--sub)}
+.header .note{margin-top:10px;font-size:13px;color:#5a6b82;background:#f0f5fb;border-radius:8px;padding:8px 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.card .top{display:flex;justify-content:space-between;align-items:flex-start}
+.card .name{font-size:17px;font-weight:600}
+.card .code{font-size:12px;color:var(--sub);margin-top:2px}
+.price{font-size:30px;font-weight:700;margin-top:4px}
+.chg{font-size:15px;margin-top:2px}
+.up{color:var(--up)} .down{color:var(--down)}
+.badge{font-size:13px;font-weight:700;padding:5px 12px;border-radius:20px;color:#fff}
+.badge.add{background:var(--ok)} .badge.dca{background:var(--warn)}
+.badge.hot{background:var(--hot)} .badge.dip{background:var(--down)} .badge.watch{background:var(--watch)}
+.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.met{background:#f6f8fb;border-radius:10px;padding:8px 12px}
+.met .lab{font-size:11px;color:var(--sub)}
+.met .val{font-size:15px;font-weight:600;margin-top:2px}
+.pe5{background:#fff7ed;border:1px solid #fde68a}
+.action{margin-top:2px;background:#eef7f0;border-radius:10px;padding:10px 14px;font-size:13px;color:#33503a;border-left:4px solid var(--ok)}
+.footer{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 28px;font-size:13px;color:var(--sub);line-height:1.8}
+.footer h3{color:var(--ink);font-size:15px;margin-bottom:8px}
+.err{background:#fdf0ef;color:#b0322b;border-radius:8px;padding:8px 12px;margin-top:12px;font-size:13px}
+@media(max-width:600px){.metrics{grid-template-columns:repeat(2,1fr)}}
+</style></head>
+<body>
+  <div class="header">
+    <h1>红利 / 长牛资产最大回撤看板</h1>
+    <div class="meta">更新: 2026-09-10 21:39 &nbsp;·&nbsp; K线截止: 2026-01-09 &nbsp;·&nbsp; 数据源: 中证官网(5年PE) + 天天基金(分位) + 腾讯行情/K线</div>
+    <div class="note"><b>信号 = 技术面(回撤/MA/BIAS) × 估值面(PE 5年分位)</b> 双视角交叉。<br>「现在该怎么做」给的是可执行动作，判断前请结合估值分位(高位>90%别追高，<50%相对便宜)。本页不构成投资建议。</div>
+  </div>
+  <div class="grid">
+<div class="card">
+  <div class="top">
+    <div>
+      <div class="name">标普500</div>
+      <div class="code">%5EGSPC</div>
+      <div class="price">6966.280</div>
+      <div class="chg up">+0.65%</div>
+    </div>
+    <div class="badge watch">观望</div>
+  </div>
+  <div class="metrics"><div class="met pe5"><div class="lab">历史最大回撤</div><div class="val" style="color:var(--down);font-size:15px">-56.8% <span style="font-size:12px;color:var(--sub)">(2009-03-09)</span></div></div><div class="met pe5"><div class="lab">当前回撤</div><div class="val" style="color:var(--ok);font-size:15px">0.0% <span style="font-size:12px;color:var(--sub)">(峰2026-01-09)</span></div></div><div class="met pe5"><div class="lab">回撤进度 <b>(vs 历史最大)</b></div><div class="val" style="color:var(--ok);font-size:15px">0% <span style="font-size:12px;color:var(--sub)">(历史57%)</span></div></div><div class="met"><div class="lab">PE5y 分位</div><div class="val">—</div></div><div class="met"><div class="lab">PB10y 分位</div><div class="val">—</div></div><div class="met"><div class="lab">近5日</div><div class="val">+1.6%</div></div><div class="met"><div class="lab">近20日</div><div class="val">+1.2%</div></div><div class="met"><div class="lab">20日BIAS</div><div class="val">+1.34%</div></div><div class="met"><div class="lab">距1年高</div><div class="val">0.0%</div></div><div class="met"><div class="lab">MA20</div><div class="val">6874.381</div></div><div class="met"><div class="lab">5日均额</div><div class="val">—</div></div><div class="met"><div class="lab">目标10%/15%</div><div class="val">7561.82/7905.54</div></div><div class="met"><div class="lab">ROE</div><div class="val">—</div></div></div>
+  <div class="action"><b>现在该怎么做：</b>数据不足或中性：暂不动，等回撤加深(≥10%) + 5年PE分位回落再看。</div>
+</div>
+
+<div class="card">
+  <div class="top">
+    <div>
+      <div class="name">纳斯达克100</div>
+      <div class="code">%5ENDX</div>
+      <div class="price">25766.260</div>
+      <div class="chg up">+1.02%</div>
+    </div>
+    <div class="badge watch">观望</div>
+  </div>
+  <div class="metrics"><div class="met pe5"><div class="lab">历史最大回撤</div><div class="val" style="color:var(--down);font-size:15px">-82.9% <span style="font-size:12px;color:var(--sub)">(2002-10-07)</span></div></div><div class="met pe5"><div class="lab">当前回撤</div><div class="val" style="color:var(--ok);font-size:15px">-1.4% <span style="font-size:12px;color:var(--sub)">(峰2025-10-29)</span></div></div><div class="met pe5"><div class="lab">回撤进度 <b>(vs 历史最大)</b></div><div class="val" style="color:var(--ok);font-size:15px">2% <span style="font-size:12px;color:var(--sub)">(历史83%)</span></div></div><div class="met"><div class="lab">PE5y 分位</div><div class="val">—</div></div><div class="met"><div class="lab">PB10y 分位</div><div class="val">—</div></div><div class="met"><div class="lab">近5日</div><div class="val">+2.2%</div></div><div class="met"><div class="lab">近20日</div><div class="val">-0.0%</div></div><div class="met"><div class="lab">20日BIAS</div><div class="val">+1.47%</div></div><div class="met"><div class="lab">距1年高</div><div class="val">-1.4%</div></div><div class="met"><div class="lab">MA20</div><div class="val">25392.964</div></div><div class="met"><div class="lab">5日均额</div><div class="val">—</div></div><div class="met"><div class="lab">目标10%/15%</div><div class="val">27932.26/29201.91</div></div><div class="met"><div class="lab">ROE</div><div class="val">—</div></div></div>
+  <div class="action"><b>现在该怎么做：</b>数据不足或中性：暂不动，等回撤加深(≥10%) + 5年PE分位回落再看。</div>
+</div>
+
+<div class="card">
+  <div class="top">
+    <div>
+      <div class="name">黄金</div>
+      <div class="code">GC=F</div>
+      <div class="price">4490.300</div>
+      <div class="chg up">+0.91%</div>
+    </div>
+    <div class="badge watch">观望</div>
+  </div>
+  <div class="metrics"><div class="met pe5"><div class="lab">历史最大回撤</div><div class="val" style="color:var(--down);font-size:15px">-44.4% <span style="font-size:12px;color:var(--sub)">(2015-12-17)</span></div></div><div class="met pe5"><div class="lab">当前回撤</div><div class="val" style="color:var(--ok);font-size:15px">-0.9% <span style="font-size:12px;color:var(--sub)">(峰2025-12-26)</span></div></div><div class="met pe5"><div class="lab">回撤进度 <b>(vs 历史最大)</b></div><div class="val" style="color:var(--ok);font-size:15px">2% <span style="font-size:12px;color:var(--sub)">(历史44%)</span></div></div><div class="met"><div class="lab">PE5y 分位</div><div class="val">—</div></div><div class="met"><div class="lab">PB10y 分位</div><div class="val">—</div></div><div class="met"><div class="lab">近5日</div><div class="val">+4.1%</div></div><div class="met"><div class="lab">近20日</div><div class="val">+7.0%</div></div><div class="met"><div class="lab">20日BIAS</div><div class="val">+2.25%</div></div><div class="met"><div class="lab">距1年高</div><div class="val">-0.9%</div></div><div class="met"><div class="lab">MA20</div><div class="val">4391.295</div></div><div class="met"><div class="lab">5日均额</div><div class="val">—</div></div><div class="met"><div class="lab">目标10%/15%</div><div class="val">4830.42/5049.99</div></div><div class="met"><div class="lab">ROE</div><div class="val">—</div></div></div>
+  <div class="action"><b>现在该怎么做：</b>数据不足或中性：暂不动，等回撤加深(≥10%) + 5年PE分位回落再看。</div>
+</div>
+
+<div class="card">
+  <div class="top">
+    <div>
+      <div class="name">红利ETF易方达</div>
+      <div class="code">515180</div>
+      <div class="price">1.460</div>
+      <div class="chg down">-0.75%</div>
+    </div>
+    <div class="badge hot">过热/减</div>
+  </div>
+  <div class="metrics"><div class="met pe5"><div class="lab">历史最大回撤</div><div class="val" style="color:var(--down);font-size:15px">-15.9% <span style="font-size:12px;color:var(--sub)">(2024-09-13)</span></div></div><div class="met pe5"><div class="lab">当前回撤</div><div class="val" style="color:var(--ok);font-size:15px">-2.1% <span style="font-size:12px;color:var(--sub)">(峰2026-03-12)</span></div></div><div class="met pe5"><div class="lab">回撤进度 <b>(vs 历史最大)</b></div><div class="val" style="color:var(--ok);font-size:15px">13% <span style="font-size:12px;color:var(--sub)">(历史16%)</span></div></div><div class="met pe5"><div class="lab">PE5y 分位 <b>主锚</b></div><div class="val" style="color:var(--down);font-size:18px">96% <span style="font-size:12px;color:var(--sub)">(PE8.64, None~None)</span></div></div><div class="met pe5"><div class="lab">PB10y 分位</div><div class="val" style="color:var(--down);font-size:15px">96% <span style="font-size:12px;color:var(--sub)">(PB—)</span></div></div><div class="met"><div class="lab">近5日</div><div class="val">+0.7%</div></div><div class="met"><div class="lab">近20日</div><div class="val">+3.9%</div></div><div class="met"><div class="lab">20日BIAS</div><div class="val">+0.98%</div></div><div class="met"><div class="lab">距1年高</div><div class="val">-2.8%</div></div><div class="met"><div class="lab">MA20</div><div class="val">1.446</div></div><div class="met"><div class="lab">5日均额</div><div class="val">3.47亿</div></div><div class="met"><div class="lab">目标10%/15%</div><div class="val">1.59/1.66</div></div><div class="met"><div class="lab">ROE</div><div class="val">8.9%</div></div></div>
+  <div class="action"><b>现在该怎么做：</b>高位区：不追高。持有可先减 1/3 锁盈，回落 PE5y<80% 或 BIAS<5% 再考虑回补。</div>
+</div>
+
+<div class="card">
+  <div class="top">
+    <div>
+      <div class="name">红利低波ETF易方达</div>
+      <div class="code">563020</div>
+      <div class="price">1.205</div>
+      <div class="chg up">+0.08%</div>
+    </div>
+    <div class="badge hot">过热/减</div>
+  </div>
+  <div class="metrics"><div class="met pe5"><div class="lab">历史最大回撤</div><div class="val" style="color:var(--down);font-size:15px">-14.7% <span style="font-size:12px;color:var(--sub)">(2024-09-11)</span></div></div><div class="met pe5"><div class="lab">当前回撤</div><div class="val" style="color:var(--ok);font-size:15px">-2.4% <span style="font-size:12px;color:var(--sub)">(峰2025-11-12)</span></div></div><div class="met pe5"><div class="lab">回撤进度 <b>(vs 历史最大)</b></div><div class="val" style="color:var(--ok);font-size:15px">16% <span style="font-size:12px;color:var(--sub)">(历史15%)</span></div></div><div class="met pe5"><div class="lab">PE5y 分位 <b>主锚</b></div><div class="val" style="color:var(--down);font-size:18px">95% <span style="font-size:12px;color:var(--sub)">(PE8.03, None~None)</span></div></div><div class="met pe5"><div class="lab">PB10y 分位</div><div class="val" style="color:var(--down);font-size:15px">98% <span style="font-size:12px;color:var(--sub)">(PB—)</span></div></div><div class="met"><div class="lab">近5日</div><div class="val">+1.1%</div></div><div class="met"><div class="lab">近20日</div><div class="val">+4.8%</div></div><div class="met"><div class="lab">20日BIAS</div><div class="val">+2.01%</div></div><div class="met"><div class="lab">距1年高</div><div class="val">-3.4%</div></div><div class="met"><div class="lab">MA20</div><div class="val">1.181</div></div><div class="met"><div class="lab">5日均额</div><div class="val">3.13亿</div></div><div class="met"><div class="lab">目标10%/15%</div><div class="val">1.30/1.36</div></div><div class="met"><div class="lab">ROE</div><div class="val">9.3%</div></div></div>
+  <div class="action"><b>现在该怎么做：</b>高位区：不追高。持有可先减 1/3 锁盈，回落 PE5y<80% 或 BIAS<5% 再考虑回补。</div>
+</div>
+
+<div class="card">
+  <div class="top">
+    <div>
+      <div class="name">港股通红利ETF广发</div>
+      <div class="code">520900</div>
+      <div class="price">1.025</div>
+      <div class="chg down">-0.49%</div>
+    </div>
+    <div class="badge watch">观望</div>
+  </div>
+  <div class="metrics"><div class="met pe5"><div class="lab">历史最大回撤</div><div class="val" style="color:var(--down);font-size:15px">-19.6% <span style="font-size:12px;color:var(--sub)">(2026-06-30)</span></div></div><div class="met pe5"><div class="lab">当前回撤</div><div class="val" style="color:var(--down);font-size:15px">-8.4% <span style="font-size:12px;color:var(--sub)">(峰2026-03-12)</span></div></div><div class="met pe5"><div class="lab">回撤进度 <b>(vs 历史最大)</b></div><div class="val" style="color:var(--down);font-size:15px">43% <span style="font-size:12px;color:var(--sub)">(历史20%)</span></div></div><div class="met pe5"><div class="lab">PE5y 分位 <b>主锚</b></div><div class="val" style="color:var(--ok);font-size:18px">60% <span style="font-size:12px;color:var(--sub)">(PE9.82, None~None)</span></div></div><div class="met pe5"><div class="lab">PB10y 分位</div><div class="val" style="color:var(--warn);font-size:15px">74% <span style="font-size:12px;color:var(--sub)">(PB—)</span></div></div><div class="met"><div class="lab">近5日</div><div class="val">+2.0%</div></div><div class="met"><div class="lab">近20日</div><div class="val">+6.4%</div></div><div class="met"><div class="lab">20日BIAS</div><div class="val">+1.82%</div></div><div class="met"><div class="lab">距1年高</div><div class="val">-9.5%</div></div><div class="met"><div class="lab">MA20</div><div class="val">1.007</div></div><div class="met"><div class="lab">5日均额</div><div class="val">0.48亿</div></div><div class="met"><div class="lab">目标10%/15%</div><div class="val">1.11/1.16</div></div><div class="met"><div class="lab">ROE</div><div class="val">10.0%</div></div></div>
+  <div class="action"><b>现在该怎么做：</b>数据不足或中性：暂不动，等回撤加深(≥10%) + 5年PE分位回落再看。</div>
+</div>
+
+<div class="card">
+  <div class="top">
+    <div>
+      <div class="name">恒生红利低波ETF易方达</div>
+      <div class="code">159545</div>
+      <div class="price">1.315</div>
+      <div class="chg down">-0.30%</div>
+    </div>
+    <div class="badge watch">观望</div>
+  </div>
+  <div class="metrics"><div class="met pe5"><div class="lab">历史最大回撤</div><div class="val" style="color:var(--down);font-size:15px">-21.2% <span style="font-size:12px;color:var(--sub)">(2026-06-30)</span></div></div><div class="met pe5"><div class="lab">当前回撤</div><div class="val" style="color:var(--warn);font-size:15px">-12.3% <span style="font-size:12px;color:var(--sub)">(峰2026-02-11)</span></div></div><div class="met pe5"><div class="lab">回撤进度 <b>(vs 历史最大)</b></div><div class="val" style="color:var(--warn);font-size:15px">58% <span style="font-size:12px;color:var(--sub)">(历史21%)</span></div></div><div class="met"><div class="lab">PE5y 分位</div><div class="val">—</div></div><div class="met pe5"><div class="lab">PB10y 分位</div><div class="val" style="color:var(--down);font-size:15px">100% <span style="font-size:12px;color:var(--sub)">(PB—)</span></div></div><div class="met"><div class="lab">近5日</div><div class="val">+0.5%</div></div><div class="met"><div class="lab">近20日</div><div class="val">+2.3%</div></div><div class="met"><div class="lab">20日BIAS</div><div class="val">-0.12%</div></div><div class="met"><div class="lab">距1年高</div><div class="val">-12.6%</div></div><div class="met"><div class="lab">MA20</div><div class="val">1.317</div></div><div class="met"><div class="lab">5日均额</div><div class="val">0.48亿</div></div><div class="met"><div class="lab">目标10%/15%</div><div class="val">1.45/1.51</div></div><div class="met"><div class="lab">ROE</div><div class="val">10.0%</div></div></div>
+  <div class="action"><b>现在该怎么做：</b>数据不足或中性：暂不动，等回撤加深(≥10%) + 5年PE分位回落再看。</div>
+</div></div>
+  
+  <div class="footer">
+    <h3>指标速查</h3>
+    <b>MA20</b> = 20日均线，现价在其上=趋势偏多，之下=转弱。<br>
+    <b>BIAS(乖离率)</b> = (现价−MA20)/MA20，衡量涨跌是否过度：>10%过热，负值=超跌。<br>
+    <b>PE5y 分位</b> = 当前PE在近5年所处百分位（用中证官网历史PE自算），判断贵贱的主锚。<br>
+    <b>PB10y 分位</b> = 当前PB在近10年百分位（天天基金口径；中证官网无PB历史、暂无5y PB数据源）。<br>
+    <b>PE5y 显示"—"</b> = 该指数非中证官网编制（如国证/恒生系，如港股通红利低波 159545），无5y PE分位，此时信号回退到 BIAS/回撤判断。<br>
+    <b>目标价</b> = MA20 抬到 BIAS 达 10%/15% 的挂单价。<br>
+    标的池可编辑 <code>etf-dashboard/watchlist.json</code> 增删品种后重跑 <code>python3 generate.py</code> 更新。
+  </div>
+</body></html>

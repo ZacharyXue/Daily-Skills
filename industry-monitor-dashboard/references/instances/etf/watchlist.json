@@ -1,41 +1,63 @@
 {
-  "title": "ETF 技术温度看板",
-  "refresh_note": "手动触发更新：cd etf-dashboard && python3 update.py",
+  "title": "红利 / 长牛资产最大回撤看板",
+  "refresh_note": "手动触发更新：cd etf-dashboard && python3 generate.py",
   "watchlist": [
+    {
+      "name": "标普500",
+      "kind": "yahoo",
+      "yahoo_symbol": "%5EGSPC",
+      "note": "2000年起全历史",
+      "signal": "回撤≥20%且纳斯达克/黄金同时大回撤=系统性机会"
+    },
+    {
+      "name": "纳斯达克100",
+      "kind": "yahoo",
+      "yahoo_symbol": "%5ENDX",
+      "note": "2000年起全历史",
+      "signal": "成长资产代表，回撤≥25%=周期大底区"
+    },
+    {
+      "name": "黄金",
+      "kind": "yahoo",
+      "yahoo_symbol": "GC=F",
+      "note": "2000年起全历史(COMEX期货)",
+      "signal": "回撤≥15%=黄金中期买点(指汇盈方法论)"
+    },
     {
       "name": "中证红利",
       "csindex": "000922",
       "ttfund_index": "000922",
       "etf_symbol": "sh515180",
-      "etf_code": "515180"
+      "etf_code": "515180",
+      "kind": "tencent",
+      "note": "腾讯指数2018起/ETF 2024起"
     },
     {
       "name": "红利低波易方达",
       "csindex": "H30269",
       "ttfund_index": "H30269",
       "etf_symbol": "sh563020",
-      "etf_code": "563020"
+      "etf_code": "563020",
+      "kind": "tencent",
+      "note": "ETF存续2024起"
     },
     {
       "name": "港股央企红利",
       "csindex": "931722",
       "ttfund_index": "931722",
       "etf_symbol": "sh520900",
-      "etf_code": "520900"
-    },
-    {
-      "name": "中证电池主题",
-      "csindex": "931719",
-      "ttfund_index": "931719",
-      "etf_symbol": "sz159796",
-      "etf_code": "159796"
+      "etf_code": "520900",
+      "kind": "tencent",
+      "note": "ETF存续2024起; 天天基金无估值分位"
     },
     {
       "name": "港股通红利低波",
       "csindex": "987016",
       "ttfund_index": "987016",
       "etf_symbol": "sz159545",
-      "etf_code": "159545"
+      "etf_code": "159545",
+      "kind": "tencent",
+      "note": "ETF存续2024起"
     }
   ]
 }

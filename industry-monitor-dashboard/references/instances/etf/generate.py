@@ -13,7 +13,7 @@ ETF 红利 · 技术温度看板 生成脚本
 
 标的池: 编辑同目录 watchlist.json 的 watchlist 数组, 加/换品种即可.
 """
-import json, subprocess, urllib.request, time, sys, os
+import json, subprocess, urllib.request, urllib.parse, time, sys, os
 from datetime import datetime
 
 UA = {"User-Agent": "Mozilla/5.0"}
@@ -74,6 +74,77 @@ def tencent_kline(symbol, days=300):
     kl = DSR.get('cn_stock_kline', symbol=symbol, count=days)[0]
     return [(r["date"], r["close"], r["high"], r["volume"]) for r in kl]
 
+# ---------- 雅虎数据源（标普500/纳斯达克100/黄金，腾讯美股K线不可用） ----------
+YAHOO_SYM = {"%5EGSPC": "标普500", "%5ENDX": "纳斯达克100", "GC=F": "黄金"}
+
+def yahoo_kline(symbol, start_ts=946684800):  # 2000-01-01
+    """雅虎 chart API -> [(date, close, high, vol)], date为YYYY-MM-DD"""
+    url = (f"https://query1.finance.yahoo.com/v8/finance/chart/{urllib.parse.quote(symbol, safe='%')}"
+           f"?period1={start_ts}&period2=1768000000&interval=1d")
+    d = http_json(url, timeout=20)
+    res = (d.get("chart") or {}).get("result") or []
+    if not res:
+        raise ValueError(f"yahoo {symbol}: 空结果")
+    r = res[0]
+    ts = r.get("timestamp") or []
+    q = (r.get("indicators") or {}).get("quote") or [{}]
+    closes = q[0].get("close") or []
+    highs = q[0].get("high") or []
+    vols = q[0].get("volume") or []
+    rows = []
+    for i, t in enumerate(ts):
+        date = time.strftime("%Y-%m-%d", time.localtime(t))
+        c = closes[i] if i < len(closes) and closes[i] is not None else None
+        h = highs[i] if i < len(highs) and highs[i] is not None else None
+        v = vols[i] if i < len(vols) and vols[i] is not None else None
+        if c is not None:
+            rows.append((date, c, h or c, v or 0))
+    if not rows:
+        raise ValueError(f"yahoo {symbol}: 无K线")
+    return rows
+
+def yahoo_quote(symbol):
+    """雅虎最新价/涨跌（chart 最后一个 close + 对比前日）"""
+    kl = yahoo_kline(symbol)
+    price = kl[-1][1]
+    prev = kl[-2][1] if len(kl) > 1 else price
+    return {"name": YAHOO_SYM.get(symbol, symbol), "price": price,
+            "chg_pct": (price / prev - 1) * 100 if prev else 0}
+
+# ---------- 最大回撤指标（核心新增） ----------
+def max_drawdown(kl_rows):
+    """从K线算 {max_dd_pct, max_dd_date, cur_dd_pct, cur_dd_peak, dd_progress}
+    max_dd = 历史最大回撤(负%)；cur_dd = 当前相对历史峰值(负%)；
+    dd_progress = 当前回撤 / 最大回撤（1.0 = 回到历史最大回撤处，指汇盈抄底位）。
+    """
+    peak = -1e18
+    peak_date = ""
+    max_dd = 0.0
+    max_dd_date = ""
+    cur_dd = 0.0
+    cur_peak = -1e18
+    cur_peak_date = ""
+    last_close = kl_rows[-1][1]
+    for date, close, _h, _v in kl_rows:
+        if close > peak:
+            peak = close
+            peak_date = date
+        dd = (close / peak - 1) * 100
+        if dd < max_dd:
+            max_dd = dd
+            max_dd_date = date
+        # 当前回撤：相对最后一个峰值（从最新end反推）
+        if close > cur_peak:
+            cur_peak = close
+            cur_peak_date = date
+    cur_dd = (last_close / cur_peak - 1) * 100
+    progress = abs(cur_dd) / abs(max_dd) if max_dd < 0 else 1.0
+    return {
+        "max_dd": max_dd, "max_dd_date": max_dd_date, "max_dd_peak": peak_date,
+        "cur_dd": cur_dd, "cur_dd_peak_date": cur_peak_date, "dd_progress": progress,
+        "kline_start": kl_rows[0][0], "kline_end": kl_rows[-1][0], "kline_n": len(kl_rows),
+    }
+
 # ---------- 指标计算 ----------
 def vbias(closes, price, n=20):
     if len(closes) < n: return None
@@ -85,8 +156,30 @@ def vi_change(closes, price, n):
     return (price / closes[-1-n] - 1) * 100
 
 def build_row(w):
+    if w.get("kind") == "yahoo":
+        q = yahoo_quote(w["yahoo_symbol"])
+        kl = yahoo_kline(w["yahoo_symbol"])
+        closes = [c for _, c, _, _ in kl]
+        price = q["price"]
+        ma20 = sum(closes[-20:]) / 20
+        dd = max_drawdown(kl)
+        row = {
+            "name": q["name"], "etf_code": w["yahoo_symbol"], "price": price,
+            "chg_pct": q["chg_pct"], "kind": "yahoo",
+            "chg5": vi_change(closes, price, 5), "chg20": vi_change(closes, price, 20),
+            "bias20": vbias(closes, price, 20), "dd_hi": (price / max(c for _, c, _, _ in kl) - 1) * 100,
+            "ma20": ma20, "daily_yi": None,
+            "pe5_cur": None, "pe5_pct": None, "pe5_lo": None, "pe5_hi": None,
+            "pe10y": None, "pb10y": None, "pb": None, "roe": None,
+            "target10": ma20 * 1.10, "target15": ma20 * 1.15,
+            "date": kl[-1][0],
+        }
+        row.update(dd)
+        return row
+
     q = tencent_quote(w["etf_symbol"])
-    kl = tencent_kline(w["etf_symbol"])
+    # 指数(如中证红利 000922)腾讯K线可拉 2000 根(2018起)；ETF 只到上市存续
+    kl = tencent_kline(w["etf_symbol"], days=int(w.get("kline_days", 2000)))
     closes = [c for _, c, _, _ in kl]
     highs  = [h for _, _, h, _ in kl]
     vols   = [v for _, _, _, v in kl]
@@ -98,7 +191,7 @@ def build_row(w):
     pe5 = csindex_pe_pct(w["csindex"])
     row = {
         "name": q["name"], "etf_code": w["etf_code"], "price": price,
-        "chg_pct": q["chg_pct"],
+        "chg_pct": q["chg_pct"], "kind": "tencent",
         "chg5": vi_change(closes, price, 5), "chg20": vi_change(closes, price, 20),
         "bias20": vbias(closes, price, 20), "dd_hi": dd_hi, "ma20": ma20,
         "daily_yi": daily_yi,
@@ -110,6 +203,9 @@ def build_row(w):
         "target10": ma20 * 1.10, "target15": ma20 * 1.15,
         "date": kl[-1][0] if kl else "",
     }
+    # 历史最大回撤（指数用更长K线 2000根；ETF 用全部存续K线）
+    dd = max_drawdown(kl)
+    row.update(dd)
     return row
 
 def signal(r):
@@ -153,7 +249,7 @@ def main():
             if e: errs.append(e)
             else: rows.append(r)
     # 保持 watchlist 原始顺序 (as_completed 无序)
-    order = {w["etf_code"]: i for i, w in enumerate(cfg["watchlist"])}
+    order = {w.get("etf_code") or w.get("yahoo_symbol", ""): i for i, w in enumerate(cfg["watchlist"])}
     rows.sort(key=lambda r: order.get(r["etf_code"], 99))
     return cfg, rows, errs
 
