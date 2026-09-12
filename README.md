@@ -33,6 +33,9 @@ ln -sfn $(pwd)/<skill-name> ~/.hermes/skills/<skill-name>
 | [opencode-go-model-selection](opencode-go-model-selection/) | **opencode-go 模型选择 + 429 排错**：配额机制($12/5h+$30/周+$60/月)、模型性价比(便宜→请求多)、多模态判定、切换主模型、GoUsageLimitError(周配额用尽)排查 | 对话报「iteration/retry backoff」「429配额用尽」、问「哪个模型省钱/有多模态」、切换主模型 |
 | [zacharyxue-blog](zacharyxue-blog/) | 维护 ZacharyXue.github.io Astro 博客：写作偏好（图标多文字少/先提纲）、技术细节、部署 | 写博客、修渲染、发文章 |
 | [ttskill-headless](ttskill-headless/) | 无桌面服务器上装天天基金 ttskill CLI 并远程扫码登录 | ECS 装 ttskill、Secret Service 报错 |
+| [site-login](site-login/) | 网页数据源登录管理：headless 守护式扫码登录、登录态持久化与复用（适配器：雪球） | 数据源要登录、扫码登录、登录态失效 |
+| [social-coach](social-coach/) | 社会分寸教练：该说什么/该做什么，底线三条（不刻薄/不说人坏话/不起争执），三大模式 | 社交场景问答、复盘社交失误、拿捏分寸 |
+| [zach-llm-wiki](zach-llm-wiki/) | 个人知识库 LLM Wiki 工作流：博客 vs wiki 分工、ingest 提炼（含反馈闭环）、query 检索、lint 维护、git-crypt 加密恢复 | 沉淀知识进 wiki、查 wiki、维护知识库 |
 
 ## 仓库结构
 

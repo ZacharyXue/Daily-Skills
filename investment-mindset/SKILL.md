@@ -127,10 +127,10 @@ tags: [投资, 思维模型, 决策, 芒格, 巴菲特, 李录, 段永平, 聂�
 |---|---|---|
 | 巴菲特 | 业务/收入结构、护城河来源、PE/PB/股息率 | `RPT_F10_FN_MAINOP` 分业务、`quote_query.py` |
 | 芒格 | 风险点（海外占比/地产链/价格战）、估值 vs 增长 | 财务三表 + 52周位置 |
-| **李录** | **ROIC**、投入资本、20年需求判断 | `scripts/roic.py`；价值陷阱=低ROIC+低PE+衰退→「便宜死公司」 |
+| **李录** | **ROIC**、投入资本、20年需求判断 | `stock-analysis/scripts/roic.py`；价值陷阱=低ROIC+低PE+衰退→「便宜死公司」 |
 | 段永平 | 生意模式本质、治理/大股东 | `RPT_F10_EH_HOLDERS`、分业务结构 |
-| **聂夫**（可选）| 低PE确认 + 总回报三要素（增长/股息/估值修复）| `quote_query.py` + `market_position.py` |
-| **马克斯**（可选）| **情绪钟摆数据**（52周位置/回撤/动量）+ 风险收益比 | `scripts/market_position.py`（<35%低位恐惧端、70%+高位贪婪端）|
+| **聂夫**（可选）| 低PE确认 + 总回报三要素（增长/股息/估值修复）| `stock-analysis/scripts/quote_query.py` + `stock-analysis/scripts/market_position.py` |
+| **马克斯**（可选）| **情绪钟摆数据**（52周位置/回撤/动量）+ 风险收益比 | `stock-analysis/scripts/market_position.py`（<35%低位恐惧端、70%+高位贪婪端）|
 | 孙宇晨 | 是否热点/情绪化标的 | 定性判断 |
 
 > 核心五维（巴菲特/芒格/李录/段永平/孙宇晨）逐项到位；聂夫/马克斯按标的属性启用。数据先于视角——先把事实（ROIC/股息率/52周位置）拉齐，再用大师的镜片去看这些事实。
