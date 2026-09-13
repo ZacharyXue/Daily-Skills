@@ -10,6 +10,7 @@
 | **人福药业**（财务走势+降本拆解） | 个股(财务+降本) | `industry-monitor-dashboard/references/instances/renfu/` (自包含可迁移) | 同左 | `cn_financial_series`(`report_name=RPT_F10_FINANCE_MAINFINADATA` / `RPT_F10_FINANCE_GINCOME`) — 已下沉 router，**含 `INTEREST_DEBT_RATIO` 有息负债率字段** | `cd /root/zach-skills/industry-monitor-dashboard/references/instances/renfu && python3 scripts/fetch.py && python3 scripts/render_html.py` | `public/exports/renfu-dashboard.html` |
 | **白电三巨头**（美的/海尔/格力） | 行业(白电)+三龙头对比 | `industry-monitor-dashboard/references/instances/whitegoods/` (自包含可迁移) | 同左 | `cn_financial_series`(`RPT_F10_FINANCE_MAINFINADATA` / `RPT_F10_FINANCE_GINCOME`)、腾讯行情 `qt.gtimg.cn`、腾讯K线 `ifzq`、东财分红 `RPT_SHAREBONUS_DET` | `cd /root/zach-skills/industry-monitor-dashboard/references/instances/whitegoods && python3 scripts/fetch.py && python3 scripts/render_html.py` | `output/whitegoods_dashboard.html` → 手动 `cp` 到 `public/exports/whitegoods-dashboard.html` |
 | **成长vs价值风格轮动&配置比例** | 策略(风格轮动)+配置引擎 | `industry-monitor-dashboard/references/instances/style-rotation/` (自包含) | 同左 | `cn_ttfund_index`(成长100/价值100, 含行业分布)、腾讯ETF K线(159259/159263)、成分净利聚合(growth_precompute) | `cd /root/zach-skills/industry-monitor-dashboard/references/instances/style-rotation && /root/hermes-venv/bin/python scripts/growth_precompute.py && python3 scripts/fetch.py && python3 scripts/render_html.py` | `output/style-rotation-dashboard.html` → 手动 `cp` 到 `public/exports/style-rotation-dashboard.html` |
+| **伊利股份**（等击球点·验证ROE锚） | 个股(基本面+估值+击球点) | `industry-monitor-dashboard/references/instances/yili/` (自包含可迁移) | 同左 | `cn_stock_quote`/`cn_stock_kline`(腾讯)、`cn_financial_series`(`MAINFINADATA`/`GINCOME`/`GBALANCE`)、`cn_csindex_pe` | `cd /root/zach-skills/industry-monitor-dashboard/references/instances/yili && python3 scripts/fetch.py && python3 scripts/render_html.py` | `output/yili_dashboard.html` → 手动 `cp` 到 `public/exports/yili-dashboard.html` |
 
 ## 各看板要盯什么（简述）
 
@@ -60,6 +61,19 @@
 - 🔴 **指数代码纠正**：成长100=980080、价值100=980081（旧 399357/399371 是环渤海/1000价值，CAR-z看板回测用错标作废）
 - 数据源：`cn_ttfund_index`(含行业分布) + 腾讯ETF K线 + 成分净利聚合(growth_precompute)
 - 关联：广发《成长与价值风格轮动框架》、`dashboard-style`(骨架)
+
+### yili-dashboard（伊利股份 · 等击球点 + 验证 ROE 锚）
+盯「伊利(600887) 是否进入极端低估击球区(股息>6%≈20元) + 两个验证信号是否出现」，用于买入决策而非跟踪股价。
+- **A 估值与击球点**：现价/52周位置、股息率(2025口径5.18%, 击球>6%)、PE(TTM)、合理价区间(ROE/r 三档 22.5/18/15)
+- **B 增长质量**（管我财信号）：营收同比、液体乳Q2同比(量价驱动)、量/价/成本/结构四拆、毛利率 —— **量价驱动未现=增长仍靠成本红利**
+- **C 成本红利一次性检验**：生鲜乳价格(人工)、正常化ROE(账面20.9%-成本红利≈17.9%)
+- **D 盈利质量(ROE锚)**：账面ROE、剔除减值核心利润(82.2亿+9%)、资产减值/商誉(剩5.97亿)
+- **E 财务健康(负债放大器)**：净头寸(174.4亿，转负=危险)、流动比率/有息负债率(中报41.6%⚠️上升)、财务费用(-5.26亿=息差结构)
+- **F 同行与股东回报**：伊利vs蒙牛营收增速、每股分红/分红率(≥75%承诺)
+- 🎯 核心逻辑：**好公司差价格**——不赚成长钱，等极端低估赚均值回归。否决条件：正常化ROE跌破15%（锚塌）或净头寸转负
+- ⚠️ 2026中报有息负债率41.6% > 年报33.4%（短借647亿）——杠杆上升，需持续盯
+- 数据源：东财 `cn_financial_series`(MAINFINADATA/GINCOME/GBALANCE) + 腾讯行情 + 研报口径人工补录(3项)
+- 关联 skill：`stock-analysis`(基本面深挖，含 Phase 4.5 增长归因+一次性检验)、`investment-mindset`(大师视角)、`dashboard-style`(骨架)
 
 ## 关于数据下沉
 - 原始抓取一律走 `data-source-router`（统一源/缓存/重试/Tier）。

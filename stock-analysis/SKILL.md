@@ -7,7 +7,7 @@ tags: [stock, analysis, fundamental, financial-report, valuation]
 
 # 股票基本面深度分析
 
-一套完整的个股分析流水线：从财报 PDF 到投资结论。**通用框架**适用任何股票；**周期股**（商品价格驱动的资源/能源股）有专门的敏感性分析模板。**「从大佬角度看」这类多维度思维评估不在此 skill，改由 `investment-mindset` 提供**（见 Phase 8）。
+一套完整的个股分析流水线：从财报 PDF 到投资结论。**通用框架**适用任何股票；**周期股**（商品价格驱动的资源/能源股）有专门的敏感性分析模板。**「从大佬角度看」这类多维度思维评估不在此 skill，改由 `investment-mindset` 提供**（见 Phase 8）。**技术面操作（何时买/买多少/止损/分散/纪律）由 `technical-approach` skill 提供**（择时/仓位，见其 references/layer-timing.md）；**红利/高股息选股与择时弹药在 references/redli-framework.md**。
 
 ## 触发场景
 
@@ -26,7 +26,7 @@ Phase 0 文件就位 → Phase 1 PDF提取 → Phase 2 商业模式 → Phase 3 
 
 各 Phase 通用，周期股在 Phase 7 走 `references/cycle-stock.md` 模板。**所有数据接口（东财 datacenter/腾讯行情/研报/K线）见 `references/data-apis.md`**。**具体大师的思维框架（芒格/巴菲特/李录/段永平/聂夫/马克斯/孙宇晨）统一在 `investment-mindset` skill，本 skill 不内置。**
 
-A股聚合技巧与 grep 锚点表见 `references/eastmoney-peer-compare.md`（含固定输出维度七步模板）、电解铝成本框架见 `references/aluminum-coal-cost-framework.md`、股息敏感性+行情降级链见 `references/dividend-valuation-and-market-apis.md`、消费白马/ROE稳定股安全边际估值（合理PB=ROE/r + Gordon增长下限）见 `references/growth-valuation-safety-margin.md`、完整实例见 `references/worked-example-shenhuo.md`。
+A股聚合技巧与 grep 锚点表见 `references/eastmoney-peer-compare.md`（含固定输出维度七步模板）、电解铝成本框架见 `references/aluminum-coal-cost-framework.md`、股息敏感性+行情降级链见 `references/dividend-valuation-and-market-apis.md`、消费白马/ROE稳定股安全边际估值（合理PB=ROE/r + Gordon增长下限）见 `references/growth-valuation-safety-margin.md`、完整实例见 `references/worked-example-shenhuo.md`、红利/高股息选股与择时弹药（股债σ分位替代+9陷阱/7因子+吃息三要素+垄断三层威胁+5点选股法）见 `references/redli-framework.md`。
 
 ---
 
@@ -99,6 +99,29 @@ grep 定位：
 - grep `同比变动原因`、`增减原因` → 毛利率变动归因（涨价？成本降？量增？）
 
 **产出**：利润传导链（子公司汇总 → 少数股东 → 归母）+ 核心利润引擎识别。
+
+#### ⚠️ Phase 4.5 增长归因 + 一次性检验（必做，防"成本红利幻觉"）
+
+> **教训来源（2026-09 伊利复盘）**：只看"利润从哪来"不够——2025 伊利营收 +0.1% 净利 +36.9%，毛利提升 + 扣非干净看似质量高，实际**增长全靠原奶成本红利（一次性、逆周期）**；原奶价格企稳回升后红利递减，量价驱动未现，利润增长不可持续。当时漏判根因：没做"增长构成四拆 + 一次性判定"，把"扣非干净"误当"可持续"。
+
+**步骤 1 — 增长构成四拆**（利润增长的每一项归因）：
+| 归因项 | 怎么查 | 可持续性标记 |
+|---|---|---|
+| 量增贡献 | 分部销量同比（研报有"因销量影响增加/减少 XX 亿"） | 可持续要看行业渗透率 |
+| 价格贡献 | 分部价变（同上，"因价格变动+/-"） | 提价权 = 真实护城河 |
+| 成本贡献 | 毛利率变动 vs 上游原料价格（原奶/糖/包材） | ⚠️ **成本红利逆周期，需标"一次性"** |
+| 结构贡献 | 高毛利品类占比变化 | 可持续 |
+| 减值/非经常 | 资产减值/商誉/政府补助/处置 | 一次性，剔除后看真实经营 |
+
+**步骤 2 — 一次性判定（灵魂拷问）**：
+```
+① 如果原料价格回到正常/上行，利润还有多少？（正常化利润 = 剔除成本红利的利润）
+② 如果减值不再计提，利润还有多少？（上一问的反向）
+③ ROI/ROE 的"正常化口径"是多少？→ 估值锚用正常化 ROE，不用账面 ROE
+```
+**判定规则**：成本红利占利润增量 >50% → 增长不可持续，估值要打"红利回退"折扣；只靠减值和补贴的"低基数高增长"同理。
+
+**步骤 3 — 打分输出**：`增长发动机 = 量价(可持续) / 成本红利(一次性) / 减值出清(一次性) / 结构(可持续)`，一句话写进报告结论。
 
 **ROIC（李录视角"经济性"核心指标）**：评估"这门生意能以多高回报持续再投资"，比 ROE 更准（扣了税 + 算上有息负债）。`python3 scripts/roic.py <code.SH/.SZ>` 直接出 ROIC/ROE/投入资本/NOPAT。判定：ROIC 明显高于资本成本（白电这类制造业资本成本约 8%）→ 生意经济性好，可长期复利再投入；低 ROIC + 低 PE + 衰退 = 价值陷阱画像（见 investment-mindset 李录）。
 

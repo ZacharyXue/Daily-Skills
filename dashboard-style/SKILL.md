@@ -69,3 +69,5 @@ d, source, meta, tier = DSR.get("<kind>", **params)   # 返回 (data, source, me
 - **腾讯 ifzq 不复权K线**：需 `param=code,day,beg,end,count,`（末尾逗号）。
 - **接口字段名易错**（如 `Data.mjc` 实测=煤价非磨机开工率）：先 dump 一条核字段。
 - **`data_router.get()` 首个参数是 kind**：子类型参数别取名 `kind`（会冲突），用 `index_type` 等。
+- **⚠️ 渲染取数两种 key 别混（2026-09-13 伊利看板踩坑）**：indicators.py 的 `id` 与 fetch.py 的 getter 名（即 cache json 的 key）是**两套命名**。渲染时取数一律用 **getter 名**（`data.get(indicator.get("getter"))`），不要用 `data.get(indicator["id"])` 或传 getter 名给按 id 查的函数——查不到返回空 dict → 卡片显示"获取失败/—"、信号条 pill 静默消失（本次商誉 pill 变"—亿"）。规则：**渲染层定义 `gv(getter)`（按 getter 名取数据）+ `v(id)`（指示器 id → getter 名 → 数据）两个函数分开用，别混**。
+- **`market_position()` 返回 key 是 `pos52`（非 `pos_52w`）、无 `hi/lo`（有 `maxdd/mdd_date/ret1y`）**：取 52 周位置用 `mp.get("pos52")`；先 dump 一条再写字段名（2026-09-13 伊利看板：位置显示"—%"）。
