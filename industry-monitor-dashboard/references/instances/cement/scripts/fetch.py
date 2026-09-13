@@ -116,23 +116,23 @@ def _adapt_cement(d, name, color):
             "charts": [{"name": name, "color": color, "points": series}], "stale": False}
 
 def get_cempi():
-    d,s,m,t = DSR.get('cn_cement_index', index_type='cempi')
+    d,s,m,t = DSR.get('cn_cement_index', index_type='cempi', force=True)
     return _adapt_cement(d, "CEMPI", "#2563eb")
 def get_coal():
-    d,s,m,t = DSR.get('cn_cement_index', index_type='coal')
+    d,s,m,t = DSR.get('cn_cement_index', index_type='coal', force=True)
     return _adapt_cement(d, "煤价", "#16a34a")
 def get_po425():
-    d,s,m,t = DSR.get('cn_cement_index', index_type='po425')
+    d,s,m,t = DSR.get('cn_cement_index', index_type='po425', force=True)
     return _adapt_cement(d, "P.O42.5", "#d97706")
 def get_clinker():
-    d,s,m,t = DSR.get('cn_cement_index', index_type='clinker')
+    d,s,m,t = DSR.get('cn_cement_index', index_type='clinker', force=True)
     return _adapt_cement(d, "熟料", "#7c3aed")
 def get_concrete():
-    d,s,m,t = DSR.get('cn_cement_index', index_type='concrete')
+    d,s,m,t = DSR.get('cn_cement_index', index_type='concrete', force=True)
     return _adapt_cement(d, "混凝土", "#0891b2")
 def get_spread():
-    pos,_,_,_ = DSR.get('cn_cement_index', index_type='po425')
-    cls,_,_,_ = DSR.get('cn_cement_index', index_type='clinker')
+    pos,_,_,_ = DSR.get('cn_cement_index', index_type='po425', force=True)
+    cls,_,_,_ = DSR.get('cn_cement_index', index_type='clinker', force=True)
     cod = {x['d']: x['v'] for x in (pos.get('series') or [])}
     cld = {x['d']: x['v'] for x in (cls.get('series') or [])}
     common = sorted(set(cod) & set(cld))
@@ -272,7 +272,10 @@ def get_dividend_yield():
             "note": f"全年每股派息 {dps} 元，现价 {price} 元（10年国债对比待补）", "stale": False}
 
 # ---------- 技术面（腾讯ifzq前复权K线） ----------
-def get_kline(code="sh600585", beg="2024-01-01", end="2026-08-29", cnt=660, qfq=True):
+def get_kline(code="sh600585", beg="2024-01-01", end=None, cnt=660, qfq=True):
+    import datetime
+    if end is None:
+        end = datetime.date.today().isoformat()
     fqs = ",qfq" if qfq else ","
     url = f"https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param={code},day,{beg},{end},{cnt}{fqs}"
     d = _get(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://gu.qq.com/"})

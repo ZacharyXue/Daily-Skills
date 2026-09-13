@@ -66,6 +66,8 @@ python3 scripts/render_html.py      # -> output/cement_dashboard.html
 - **fetch 卡死**：某免费源偶发慢，用 `timeout 400` 后台跑 + `notify_on_complete`，别前台干等。
 - **腾讯 ifzq K线字段顺序**：返回 `[date, open, close, high, low, vol]` → `r[3]=H`、`r[4]=L`。算 KDJ/RSV 时正确是 `lo=min(r[4])`、`hi=max(r[3])`；**取反会让 RSV 分母为负、K/D/J 累积爆炸**（实测 K 算成 315、J 437，远超 0-100）。布林/均线用 `r[2]=close`、量能用 `r[5]=vol` 无此坑。
 - **render 的 `fmt_val` 需特化「无 `latest`/`close` 的 dict 值」**：指标 value 含 `np`/`K`/`mid` 等但**无 `latest/close`** 时，默认回退显示「待接入/未接入」（即使数据在）。给这类加特化分支——净利→`{np}亿·同比%`、KDJ→`K/D/J`、布林→`收/中轨/上轨/下轨`、MACD→`RSI6·RSI14·MACD`。否则会被误判成「没接入」反复排查。
+- **DSR.get() 手动看板刷新必须 force=True**：`cn_cement_index` 等 TTL 命中 SQLite SWR 缓存会**直接返回旧值**（实测首调拿到 8-28 旧值 277.83，force 才有 9-11 的 284.52），后台才触刷新。手动更新看板时 `DSR.get('cn_cement_index', index_type='po425', force=True)`。
+- **腾讯 ifzq K线 beg/end 别写死**：`get_kline()` 的 `end="2026-08-29"` 是当初硬编码，K线/技术面(MA/KDJ/MACD/BOLL)会永久停在 8-29——改 `end=None` + 运行时 `datetime.date.today().isoformat()`。
 - **`data_router.get()` 首个参数是 kind**：子类型参数别取名 `kind`（与首参冲突报 "got multiple values for argument 'kind'"），用 `index_type` 等（如 `get('cn_cement_index', index_type='po425')`）。
 - **迁移可用路径**：脚本别写死 `/root/zach-skills/data-source-router`，用 `_zach_root()` 从脚本 `__file__` 向上定位含 `data-source-router` 的目录（找不到回退 `ZACH_SKILLS` 环境变量），`zach-skills/` 整体搬走即可跑。
 
