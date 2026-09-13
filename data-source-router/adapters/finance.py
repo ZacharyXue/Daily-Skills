@@ -361,3 +361,59 @@ def cn_macro_10y_rate():
                 "delta_60d_bp": round((latest - prev60) * 100, 1), "n": len(series)}
     except Exception as e:
         return {"ok": False, "note": str(e)[:80]}
+
+
+# ============ 机构评级/研报（东财研报中心，免费公开源） ============
+def _research_get(url):
+    """东财 reportapi：短超时+重试。返回 JSON。"""
+    hdr = {"User-Agent": "Mozilla/5.0", "Referer": "https://data.eastmoney.com/report/"}
+    last = None
+    for i in range(3):
+        try:
+            r = SESSION.get(url, headers=hdr, timeout=14)
+            r.raise_for_status()
+            return r.json()
+        except Exception as e:
+            last = e
+            time.sleep(0.8)
+    raise last
+
+
+def cn_research_report(code, years=2):
+    """A股机构研报/评级（东财研报中心）。
+    code: 6位股票代码(如 600585)。years: 往回拉几年（默认2，足够看覆盖趋势）。
+    返回 {ok, reports:[{date, org, rating, rating_value, title, aim_price, eps_this, eps_next}...], count, by_year, by_rating}。
+    用途：以「研报覆盖密度/评级分布/目标价覆盖/机构EPS预测」印证机构态度（卖方评级钝化，覆盖度+目标价是硬信号）。"""
+    import datetime as dt
+    end = dt.date.today().isoformat()
+    begin = (dt.date.today() - dt.timedelta(days=365 * years)).isoformat()
+    out = []
+    page = 1
+    while page <= 8:
+        url = (f"https://reportapi.eastmoney.com/report/list?industryCode=*&pageSize=100&industry=*&rating=*&ratingChange=*"
+               f"&beginTime={begin}&endTime={end}&qType=0&code={code}&pageNo={page}")
+        try:
+            data = (_research_get(url).get("data")) or []
+        except Exception as e:
+            return {"ok": False, "note": "东财研报中心: " + str(e)[:80]}
+        if not data:
+            break
+        for r in data:
+            out.append({
+                "date": (r.get("publishDate") or "")[:10],
+                "org": r.get("orgSName"),
+                "rating": r.get("emRatingName"),
+                "rating_value": r.get("emRatingValue"),
+                "title": (r.get("title") or "")[:80],
+                "aim_price": r.get("indvAimPriceT") or r.get("indvAimPrice") or None,
+                "eps_this": r.get("predictThisYearEps"),
+                "eps_next": r.get("predictNextYearEps"),
+            })
+        page += 1
+        if len(data) < 100:
+            break
+    out.sort(key=lambda r: r["date"])
+    from collections import Counter
+    return {"ok": True, "reports": out, "count": len(out),
+            "by_year": dict(sorted(Counter((r["date"] or "")[:4] for r in out).items())),
+            "by_rating": dict(Counter((r["rating"] or "无评级") for r in out))}

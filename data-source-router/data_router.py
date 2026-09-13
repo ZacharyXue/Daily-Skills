@@ -47,6 +47,8 @@ def _register():
         # ---- 行业指数(中国水泥网, 免费公开源) ----
         "cn_cement_index":  (lambda p: fin.cn_cement_index(p["index_type"]), "ccement", TTL["industry_price"], "T1"),
         "cn_cement_spread": (lambda p: fin.cn_cement_spread(), "ccement", TTL["industry_price"], "T1"),
+        # ---- 机构评级/研报(东财研报中心, 免费公开源; 看板/个股研究印证机构态度) ----
+        "cn_research_report": (lambda p: fin.cn_research_report(p["code"], p.get("years", 2)), "eastmoney_report", TTL["research_report"], "T1"),
         # ---- 指数估值(ETF 看板: 中证官网PE + 天天基金分位) ----
         "cn_csindex_pe":    (lambda p: fin.cn_csindex_pe(p["index_code"], p.get("years", 5)), "csindex", TTL["cn_stock_kline"], "T1"),
         "cn_ttfund_index":  (lambda p: fin.cn_ttfund_index(p["index_id"]), "ttfund", TTL["cn_stock_kline"], "T1"),

@@ -208,6 +208,26 @@ python3 scripts/financial_rigor.py benford --values '[历史财务数据序列..
 - 价值：把「基本面事实」与「思维框架视角」分离——基本功在本 skill 算清楚，视角由 mindset 叠加，不混在一起。
 - 产出：多维度结论 + 每个视角的适用边界。
 
+## Phase 8.5: 机构态度印证（用卖方数据验证观点，A股通用）
+
+> **用户需求（2026-09）**：看股票时（尤其是想抄底/回避时），用机构研报数据**印证自己的观点**——不能做空就观察机构的「动作信号」：覆盖密度、敢不敢给目标价、EPS预测方向、标题措辞。卖方评级本身钝化（永远喊多），真正有效的是这些动作。
+
+```bash
+python3 scripts/institution_attitude.py 600585                      # 只看机构态度的原始证据
+python3 scripts/institution_attitude.py 600585 --view 抄底          # 带观点: 输出"有N项信号支持/背离"
+python3 scripts/institution_attitude.py 600585 --view 看空
+python3 scripts/institution_attitude.py 600519 --years 1           # 只看近1年
+```
+
+**判定逻辑**（脚本已内置）：
+- **看空信号**（强度排序）：①研报覆盖收缩（<年均值60%）②EPS预测下修 ③目标价从有到无（机构不敢定价）④标题负面词>正面词
+- **看多信号**：①覆盖扩张 ②仍在给目标价 ③EPS上修 ④标题正面词>负面词
+- 评级分布只作参考（永远买入/增持）；**覆盖趋势 + 目标价变化是硬信号**
+- 目标价「从未给过」需**对比同业**判断：同业普遍给而它不给=机构回避定价；行业普遍不给=常态（如水泥行业整体无目标价）
+- 观点对照输出：`✅ 有 N 项信号支持` 或 `⚠️ 无机构信号支持（你是少数派/逆势，需更强理由如估值安全边际）`
+
+**数据源**：东财研报中心 `reportapi.eastmoney.com`（免费公开源，已下沉 `data-source-router` kind=`cn_research_report`，1天TTL）。覆盖：研报数/机构数/评级/日期/标题/EPS预测/目标价，近1-3年可配。
+
 ## Phase 9: 报告抽检门禁（准出流程，AI Berkshire 借鉴）
 
 报告定稿后、发布/交付前，**必须**抽检 15% 数据点复核：
@@ -236,6 +256,7 @@ python3 scripts/report_audit.py verdict --results '<填好的JSON>' --report <�
 | `scripts/quote_query.py` | 行情/股价/估值查询 | 任意 A 股 |
 | `scripts/roic.py` | **ROIC/ROE/投入资本/NOPAT**（经济性核心，李录维度）| 任意 A 股 |
 | `scripts/market_position.py` | **52周区间位置/最大回撤/近一年涨跌**（马克斯钟摆+聂夫时机）| 任意 A 股 |
+| `scripts/institution_attitude.py` | **机构态度印证**（研报覆盖趋势/评级/目标价/EPS预测/标题情绪 + 观点对照） | 任意 A 股 |
 | `scripts/financial_rigor.py` | **市值验算/估值验算/多源交叉验证/Benford造假检测/三情景估值/精确计算**（禁止心算） | 任意市场 |
 | `scripts/report_audit.py` | **报告抽检门禁**（抽取数据点→15%抽样→准出/打回判决） | 任意报告 |
 

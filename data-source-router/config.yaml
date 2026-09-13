@@ -19,6 +19,7 @@ cache:
     macro: 2592000             # 宏观 30天
     cn_macro_10y_rate: 86400   # 中国10Y国债收益率 1天
     industry_price: 604800     # 行业现货 7天
+    research_report: 86400     # 机构评级/研报 1天(新研报发布频繁, 日更足够)
     xueqiu_user_posts: 86400   # 雪球大V发言 1天(playwright取数重, 缓存有利)
   stale_while_revalidate: true # 命中旧缓存先返回，后台刷新
   db_path: "~/.hermes/data-cache.db"

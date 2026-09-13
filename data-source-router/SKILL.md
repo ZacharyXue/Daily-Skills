@@ -34,6 +34,7 @@ related_skills: [industry-monitor-dashboard, whale-holdings, stock-analysis, git
 | 宏观 | (预留) | 国家统计局 `data.stats.gov.cn` | ✅ 200 | 月度 |
 | 行业指数(水泥网) | `cn_cement_index` | 中国水泥网 `index.ccement.com` | ✅ 200(丢包重试) | 日频 |
 | 水泥-熟料价差 | `cn_cement_spread` | 中国水泥网(合成) | ✅ | 日频 |
+| 机构评级/研报 | `cn_research_report` | 东财研报中心 `reportapi.eastmoney.com/report/list` | ✅ 200 | 日频 |
 | 指数PE(中证) | `cn_csindex_pe` | 中证官网 `csindex-home/perf/index-perf` 的 `peg` | ✅ 200 | 日频 |
 | 指数估值(天天基金) | `cn_ttfund_index` | 天天基金 `ttskill TTFUND_INDEX_INFO` | ✅ CLI | 日频 |
 | GitHub 仓库元数据 | `github_repo` | GitHub REST v3 | ✅ 200 | 实时 |
