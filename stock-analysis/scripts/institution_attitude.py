@@ -74,6 +74,9 @@ def analyze(code, years=3):
     # ---- 5. 机构数 ----
     orgs = len(set(r.get("org", "") for r in reps))
 
+    # ---- 6. EPS 趋势 vs 股价滞后（领先/同步/跟随判定） ----
+    eps_trend, lead_tag, price_pct = eps_lead_analysis(code, reps)
+
     return {
         "ok": True, "code": code, "years": years,
         "total": total, "by_year": by_year, "by_rating": by_rating,
@@ -82,9 +85,76 @@ def analyze(code, years=3):
         "eps_this_mid": e_this_mid, "eps_next_mid": e_next_mid, "eps_dir": eps_dir,
         "neg_titles": neg_hits, "pos_titles": pos_hits,
         "recent_year": yl[-1] if yl else None, "recent_count": recent,
+        "eps_trend": eps_trend, "lead_tag": lead_tag, "price_pct": price_pct,
         "sample_recent": [{"d": r["date"], "org": r["org"], "rating": r["rating"], "t": r["title"][:36]}
                           for r in reps[-5:]],
     }
+
+
+def eps_lead_analysis(code, reps, lookback_months=6):
+    """EPS 预测变化 vs 同期股价变化 → 机构态度领先/同步/跟随。
+    逻辑(实证自茅台/海尔/美的近3年): EPS大幅下修常见领先股价(信息链: 分析师>市场);
+    研报覆盖/目标价常见跟随股价。这里只看 EPS 预测 vs 股价的先后。
+    返回 (eps_trend_dict, lead_tag, price_pct)。
+    """
+    import datetime as dt
+    from collections import defaultdict
+
+    # --- 按月聚 EPS(今年)中位 ---
+    month_eps = defaultdict(list)
+    for r in reps:
+        ds = (r.get("date") or "")[:7]
+        if ds and r.get("eps_this"):
+            month_eps[ds].append(float(r["eps_this"]))
+    if not month_eps:
+        return None, None, None
+    eps_mid = {m: sorted(v)[len(v)//2] for m, v in month_eps.items()}
+    ms = sorted(eps_mid)
+    recent_m, old_m = ms[-1], ms[0]
+    recent_eps = eps_mid[recent_m]
+    # 找一个距 recent_m 约 lookback_months 的旧月(若无则取最早)
+    old_eps = eps_mid[old_m]
+    for m in reversed(ms):
+        if (dt.date.fromisoformat(recent_m + "-01") - dt.date.fromisoformat(m + "-01")).days >= lookback_months * 30:
+            old_m, old_eps = m, eps_mid[m]
+            break
+    eps_chg = (recent_eps / old_eps - 1) * 100 if old_eps else None
+
+    # --- 拉K线算同期股价变化 ---
+    price_pct = None
+    sym = ("sh" if code.startswith("6") else "sz") + code
+    try:
+        k, _, _, _ = get("cn_stock_kline", symbol=sym, count=800)
+        closes = {str(r["date"])[:10]: float(r["close"]) for r in k}
+        c_dates = sorted(closes)
+        if c_dates:
+            p_now = closes[c_dates[-1]]
+            target = (dt.date.fromisoformat(c_dates[-1]) - dt.timedelta(days=lookback_months * 30)).isoformat()
+            p_old = next((closes[x] for x in reversed(c_dates) if x <= target), closes[c_dates[0]])
+            price_pct = (p_now / p_old - 1) * 100 if p_old else None
+    except Exception:
+        pass
+
+    # --- 三态判定 ---
+    lead_tag = None
+    if eps_chg is not None and price_pct is not None:
+        if eps_chg <= -5:
+            lead_tag = ("⚠️ 领先(机构已下修,股价未跌透,接刀风险)" if price_pct > -3
+                        else "同步确认(机构下修,股价已跟跌)")
+        elif eps_chg >= 5:
+            lead_tag = ("⚠️ 领先(机构在上修,股价还没涨,可关注)" if price_pct < 3
+                        else "同步确认(机构上修,股价已跟涨)")
+        else:
+            lead_tag = "跟随/中性(机构预测横盘,无明确方向)"
+    return {"old_eps": round(old_eps, 2) if old_eps else None,
+            "recent_eps": round(recent_eps, 2) if recent_eps else None,
+            "eps_chg_pct": round(eps_chg, 1) if eps_chg is not None else None,
+            "period": f"{old_m} → {recent_m}"}, lead_tag, (round(price_pct, 1) if price_pct is not None else None)
+
+
+def _kline_close_error(code):
+    """供出错提示用：正面获取失败时的可读信息。"""
+    return f"K线获取失败(代码 {code})"
 
 def verdict(code, view=None, years=3):
     a = analyze(code, years)
@@ -103,6 +173,12 @@ def verdict(code, view=None, years=3):
         L.append("目标价: 从未给过。⚠️ 若同业普遍给目标价而它不给=机构回避定价；若行业普遍不给=常态（需对比同业判断）")
     if a["eps_dir"]:
         L.append(f"EPS预测: 今年中位 {a['eps_this_mid']} → 明年中位 {a['eps_next_mid']} = {a['eps_dir']}")
+    # EPS 趋势 vs 股价滞后（领先/同步/跟随）
+    et, tag, pp = a.get("eps_trend"), a.get("lead_tag"), a.get("price_pct")
+    if et and et.get("eps_chg_pct") is not None:
+        L.append(f"EPS 6月趋势: {et.get('period')} 中位 {et.get('old_eps')}→{et.get('recent_eps')} ({et.get('eps_chg_pct'):+.1f}%) | 同期股价 {pp:+.1f}%")
+        if tag:
+            L.append(f"  领先/滞后判定: {tag}")
     L.append(f"标题情绪: 负面词 {a['neg_titles']} 条 / 正面词 {a['pos_titles']} 条")
     if a["sample_recent"]:
         L.append("最近研报:")
