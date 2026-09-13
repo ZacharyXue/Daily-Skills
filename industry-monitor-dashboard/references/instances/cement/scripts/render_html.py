@@ -27,21 +27,19 @@ def fmt_val(ind):
         return f"收 {v['close']:.2f} · MA20 {v['ma20']} · MA60 {v['ma60']}", "", v.get("latest_date")
     # 特化：MACD/RSI
     if v.get("rsi14") is not None and v.get("macd") is not None:
-        return f"RSI6 {v.get('rsi6')} · RSI14 {v['rsi14']} · MACD {v['macd']}", "", v.get("latest_date")
-    # 特化：KDJ
-    if v.get("K") is not None and v.get("J") is not None:
-        return f"K {v['K']} · D {v['D']} · J {v['J']}", "", v.get("latest_date")
-    # 特化：布林带
-    if v.get("mid") is not None and v.get("up") is not None:
-        return f"收 {v.get('price')} · 中轨 {v['mid']} · 上轨 {v['up']} · 下轨 {v['low']}", "", v.get("latest_date")
-    # 特化：净利类(有 np/np_yoy, 无 latest)——主值显示净利 + 同比
-    if v.get("np") is not None and v.get("latest") is None and v.get("close") is None:
-        extra = f" <span class='sub'>同比 {v.get('np_yoy',0):+.1f}%</span>" if v.get("np_yoy") is not None else ""
-        return f"{v['np']:,.1f} 亿", extra, v.get("report") or v.get("latest_date")
+        return f"RSI {v['rsi14']} · MACD {v['macd']}", "", v.get("latest_date")
     # 通用单值
     val = v.get("latest") if v.get("latest") is not None else v.get("close")
     unit = ind.get("unit", "")
-    valstr = f"{val:,.1f} {unit}" if isinstance(val, (int, float)) else (v.get("note") or "待接入")
+    if isinstance(val, (int, float)):
+        if unit == "篇":
+            valstr = f"{int(val)} {unit}"
+        else:
+            valstr = f"{val:,.1f} {unit}"
+    elif isinstance(val, str):
+        valstr = f"{val} {unit}".strip()
+    else:
+        valstr = v.get("note") or "待接入"
     extra = ""
     if v.get("yoy_1y") is not None:
         extra = f" <span class='sub'>1年{v['yoy_1y']:+.1f}%</span>"
@@ -121,7 +119,7 @@ def build():
     cost_ok = bool(coal_yoy is not None and coal_yoy < 0)
     verdicts.append(("成本", "利好" if cost_ok else "压力", cost_ok))
     # 盈利
-    hnp = find("helluo_np"); np_yoy = hnp.get("value", {}).get("np_yoy") if hnp else None
+    hnp = find("helluo_np_yoy"); np_yoy = hnp.get("value", {}).get("np_yoy") if hnp else None
     prof_ok = bool(np_yoy is not None and np_yoy > 0)
     verdicts.append(("盈利", "修复" if prof_ok else "承压", prof_ok))
     # 财务
@@ -129,18 +127,14 @@ def build():
     fin_ok = bool(dr is not None and dr < 30)
     verdicts.append(("财务", "安全" if fin_ok else "警惕", fin_ok))
     # 技术
-    ma = find("ma"); close = ma.get("value", {}).get("close") if ma else None
+    ma = find("ma_calc"); close = ma.get("value", {}).get("close") if ma else None
     ma20 = ma.get("value", {}).get("ma20") if ma else None
     tech_ok = bool(close and ma20 and close > ma20)
     verdicts.append(("技术", "走强" if tech_ok else "弱势", tech_ok))
     # 量(代理: 混凝土价稳定)
-    con = find("concrete"); cony = con.get("value", {}).get("yoy_1y") if con else None
+    con = find("concrete_price"); cony = con.get("value", {}).get("yoy_1y") if con else None
     vol_ok = bool(cony is not None and cony >= -10)
     verdicts.append(("量", "企稳" if vol_ok else "偏弱", vol_ok))
-    # 供给/出清：CR10 上行(>65%) 或 水泥-熟料价差走扩 = 软出清推进
-    cr = find("cr10"); crv = cr.get("value", {}).get("latest") if cr else None
-    sup_ok = bool(crv is not None and crv >= 65)
-    verdicts.append(("供给/出清", "推进" if sup_ok else "缓慢", sup_ok))
 
     ok_n = sum(1 for _, _, ok in verdicts if ok)
     if ok_n >= 5: verdict_txt = "≥5类达标：接近加仓讨论区"
