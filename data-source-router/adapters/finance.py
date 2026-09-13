@@ -156,6 +156,41 @@ def cn_stock_dividend(secucode, page=12):
     raise last
 
 
+def cn_stock_dividend_annual(secucode, page=24):
+    """A股「全年口径」分红聚合 —— 把中期(+末期)分红按年度合并，返回每股全年派息。
+
+    坑（2026-09 招行实测）：2024 起多家银行/白电实行「中期+末期」两次分红，
+    只取最近一条 RPT_SHAREBONUS_DET 会漏掉半年度派息（招行每股 1.003+1.013=2.016，
+    单取末期误算股息率 2.43% vs 正确 4.88%）。本函数按 REPORT_DATE 年度聚合成 annual。
+    返回 {ok, annuals:[{year, dps_per_share, parts, note}...], latest_year, latest_dps, latest_note}。"""
+    rows = cn_stock_dividend(secucode, page=page)
+    from collections import defaultdict
+    by_year = defaultdict(list)   # 年度 -> [(PROFILE, RMB)]
+    for r in rows:
+        rd = r.get("REPORT_DATE") or ""
+        prof = r.get("IMPL_PLAN_PROFILE") or ""
+        # 每10股派息(元)：PRETAX_BONUS_RMB 单位=每10股
+        rmb = r.get("PRETAX_BONUS_RMB")
+        if not rmb:
+            continue
+        year = str(rd)[:4]
+        by_year[year].append((prof, float(rmb)))
+    annuals = []
+    for year in sorted(by_year, reverse=True):
+        items = by_year[year]
+        dps = sum(v for _, v in items) / 10.0   # 每10股 → 每股
+        notes = " + ".join(p.replace("10派", "").replace("元(含税", "元含税") for p, _ in items)
+        annuals.append({"year": int(year), "dps_per_share": round(dps, 4),
+                        "parts": len(items), "note": f"{year}年度分红: {notes}"})
+    if not annuals:
+        return {"ok": False, "note": "无分红记录"}
+    out = {"ok": True, "annuals": annuals,
+           "latest_year": annuals[0]["year"], "latest_dps": annuals[0]["dps_per_share"],
+           "latest_note": annuals[0]["note"]}
+    # 若传入 price 则算股息率
+    return out
+
+
 def cn_financial_series(secucode, report_name="RPT_F10_FINANCE_MAINFINADATA", page=40):
     """东财完整财务序列(多报告期)，供看板做年度趋势/降本拆解。
 

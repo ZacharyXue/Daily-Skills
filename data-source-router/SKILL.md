@@ -29,6 +29,8 @@ related_skills: [industry-monitor-dashboard, whale-holdings, stock-analysis, git
 | 美股行情 | `us_stock_quote` | 腾讯 `usAAPL` | ✅ 200 | 实时 |
 | A股财报 | `cn_financial` | 东财 `datacenter-web` | ✅ 200 | 季报后1-3天 |
 | A股财报完整序列 | `cn_financial_series` | 东财 `datacenter-web`(多报告期) | ✅ 200 | 季报后1-3天 |
+| A股分红明细 | `cn_stock_dividend` | 东财 `datacenter-web`(RPT_SHAREBONUS_DET) | ✅ 200 | 季报后 |
+| A股全年分红 | `cn_stock_dividend_annual` | 东财(按年度聚合中期+末期) | ✅ 200 | 季报后 |
 | 美股财报(facts) | `us_financial_sec` | SEC EDGAR `companyfacts` | ✅ 200(带UA) | 即时 |
 | 美股营收提取 | `us_revenue_sec` | SEC EDGAR | ✅ 200 | 即时 |
 | 宏观 | (预留) | 国家统计局 `data.stats.gov.cn` | ✅ 200 | 月度 |

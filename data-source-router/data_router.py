@@ -40,6 +40,7 @@ def _register():
         "us_stock_quote":   (lambda p: fin.cn_stock_quote(p["symbol"]), "tencent", TTL["us_stock_quote"], "T1"),
         "cn_financial":     (lambda p: fin.cn_financial(p["code"]), "eastmoney", TTL["cn_financial"], "T1"),
         "cn_stock_dividend": (lambda p: fin.cn_stock_dividend(p["secucode"], p.get("page", 12)), "eastmoney", TTL["cn_financial"], "T1"),
+        "cn_stock_dividend_annual": (lambda p: fin.cn_stock_dividend_annual(p["secucode"], p.get("page", 24)), "eastmoney", TTL["cn_financial"], "T1"),
         "cn_financial_series": (lambda p: fin.cn_financial_series(p["secucode"], p.get("report_name", "RPT_F10_FINANCE_MAINFINADATA"), p.get("page", 40)),
                                 "eastmoney", TTL["cn_financial"], "T1"),
         "us_financial_sec": (lambda p: fin.sec_companyfacts(p["cik"]), "sec_edgar", TTL["us_financial_sec"], "T1"),

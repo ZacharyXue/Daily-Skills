@@ -162,10 +162,10 @@ details p{font-size:12px;color:#475569;margin-top:6px}
     for c in comps:
         div, val = c["div"], c["val"]
         yrs = div.get("years") or []
-        yr_txt = " ".join(f"{y['year']}: {fnum(y['d10'],2)}" for y in yrs)
+        yr_txt = " ".join(f"{y['year']}: {fnum(y['dps_per_share'],2)}" for y in yrs)
         html_doc += f"<details><summary>📌 {esc(c['name'])} — 股息率 <b>{pct(div.get('yield'),2)}</b>｜市场隐含回报 <b>{pct(val.get('implied_r'),2)}</b></summary>"
-        html_doc += f"<p>• 近5年年报每10股派息：{esc(yr_txt) or '—'}<br>"
-        html_doc += f"• 股息率口径：最近年报派息÷现价（白电普遍年度+中期双分红，取年度为准）<br>"
+        html_doc += f"<p>• 近5年每股派息：{esc(yr_txt) or '—'}<br>"
+        html_doc += f"• 股息率口径：最近完整年度(中期+末期)派息÷现价（白电普遍年度+中期双分红，取全年为准）<br>"
         html_doc += f"• 市场隐含回报=ROE÷现PB：越低说明市场愿接受的低回报越高=定价越贵，越高=定价越便宜～" 
         html_doc += "</details>"
     html_doc += "</div>"

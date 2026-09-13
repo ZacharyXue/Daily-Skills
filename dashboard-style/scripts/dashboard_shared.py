@@ -194,19 +194,20 @@ def market_position(symbol, window=400):
             "mdd_date": mdd_date, "ret1y": round((px / y_ago - 1) * 100, 1)}
 
 
-# ---------- 分红年度口径（基于 cn_stock_dividend 的 derivative） ----------
+# ---------- 分红年度口径（基于 cn_stock_dividend_annual 全年聚合，勿用单笔） ----------
 def annual_dividend(secucode, years=("2025", "2024", "2023", "2022", "2021")):
-    """返回 {'years':[{year,d10}], 'latest_year', 'd10'}：取最近年报(12-31期)派息为股息率基准。
-    绝不取最近一期(中报预案)——否则像美的会算错股息率。"""
-    rows = stock_dividend(secucode)
-    annual = [r for r in rows if str(r.get("REPORT_DATE", "")).endswith("12-31 00:00:00") and r.get("PRETAX_BONUS_RMB")]
-    seen = {}
-    for r in annual:
-        yr = str(r.get("REPORT_DATE", ""))[:4]
-        if yr not in seen:
-            seen[yr] = r
-    latest = next((v for v in [seen.get(y) for y in years if y in seen] if v), None)
-    out_years = [{"year": y, "d10": seen[y].get("PRETAX_BONUS_RMB")} for y in years if y in seen]
+    """返回 {'years':[{year,dps_per_share,parts}], 'latest_year', 'dps_per_share'}。
+
+    ⚠️ 2026-09 招行实测教训：2024 起银行/白电普遍「中期+末期」两次分红，
+    旧实现只取 12-31 年报派息漏掉中期（招行误算 2.43% vs 正确 4.88%）。
+    统一走 router `cn_stock_dividend_annual`（按 REPORT_DATE 年度聚合全年）。"""
+    d = _router_get("cn_stock_dividend_annual", secucode=secucode, page=24)
+    if not d.get("ok"):
+        return {"years": [], "latest_year": None, "dps_per_share": None, "note": d.get("note", "")}
+    want = {int(y) for y in years}
+    out_years = [{"year": a["year"], "dps_per_share": a["dps_per_share"], "parts": a["parts"]}
+                 for a in d["annuals"] if a["year"] in want]
     return {"years": out_years,
-            "latest_year": str(latest.get("REPORT_DATE", ""))[:4] if latest else None,
-            "d10": latest.get("PRETAX_BONUS_RMB") if latest else None}
+            "latest_year": d["latest_year"],
+            "dps_per_share": d["latest_dps"],
+            "note": d["latest_note"]}

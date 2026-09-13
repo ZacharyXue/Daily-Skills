@@ -80,8 +80,11 @@ def dividend(c):
     try:
         d = annual_dividend(c["secu"])
         px = stock_quote(c["tq"]).get("price")
-        if d.get("d10") and px:
-            d["yield"] = round(d["d10"] / 10 / px * 100, 2)
+        # 用 years 列表(默认2021-2025=最近完整年度)里的最近一个, 不取 latest(可能=未完成中报年)
+        yrs = d.get("years") or []
+        dps = yrs[0]["dps_per_share"] if (yrs and isinstance(yrs[0], dict)) else d.get("dps_per_share")
+        if dps and px:
+            d["yield"] = round(dps / px * 100, 2)
         else:
             d["yield"] = None
         return d
