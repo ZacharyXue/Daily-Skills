@@ -7,7 +7,7 @@ tags: [dashboard, monitoring, data-source, html-render, a-share-report, commodit
 
 # 行业/公司 监测看板（定期刷新的数据面板）
 
-怎么把一个「行业 + 龙头公司」做成可持续、可刷新的看板，以及这 class 任务的高频坑。参考实现 `references/instances/cement/`（代码并入 skill 自包含；`/root/cement-dashboard` 仅作 git 源）。
+怎么把一个「行业 + 龙头公司」做成可持续、可刷新的看板，以及这 class 任务的高频坑。参考实现 `references/instances/cement/`（代码并入 skill 自包含；线上工程在博客仓 `/root/ZacharyXue.github.io/cement-dashboard/`）。
 
 ## 触发场景
 - 「监控某行业/某龙头是否止跌、盈利见底」

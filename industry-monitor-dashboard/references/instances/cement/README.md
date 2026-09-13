@@ -7,7 +7,7 @@ tags: [dashboard, cement, monitoring, free-source, html, 财报提取]
 
 # 水泥行业 & 海螺水泥 盈利底监测看板
 
-一套**行业/个股盈利底监测看板**的完整可复用范式：注释驱动 + 免费源取数 + 自包含 HTML。当前落地为 `/root/cement-dashboard`，未来挂到用户博客 ZacharyXue.github.io (Astro)。
+一套**行业/个股盈利底监测看板**的完整可复用范式：注释驱动 + 免费源取数 + 自包含 HTML。当前落地为博客仓 `/root/ZacharyXue.github.io/cement-dashboard/`（工程代码）+ `public/exports/cement-dashboard.html`（产物，Astro Pages 公开）。
 
 > 同类看板还有 `etf-dashboard`（ETF 技术温度）。curator 可考虑归并到统一「监测看板」umbrella；本 skill 侧重**股票+行业盈利底**与**财报自动提取**。
 
@@ -19,7 +19,7 @@ tags: [dashboard, cement, monitoring, free-source, html, 财报提取]
 
 ## 项目结构
 ```
-/root/cement-dashboard/
+/root/ZacharyXue.github.io/cement-dashboard/   # 工程代码（博客仓内，见 public/exports/cement-dashboard.html 产物）
   scripts/indicators.py       # 指标元数据(注释驱动): 每指标 id/group/name/unit/ttl/source/meaning/signal/getter
   scripts/fetch.py            # 取数: 远程优先+重试+失败显获败; 读 cache(含 manual.json 人工补录)
   scripts/extract_report.py   # 海螺中报/年报PDF自动提取: 吨毛利/吨成本/销量/股息率
@@ -33,7 +33,7 @@ tags: [dashboard, cement, monitoring, free-source, html, 财报提取]
 
 ## 运行流水线
 ```bash
-cd /root/cement-dashboard
+cd /root/ZacharyXue.github.io/cement-dashboard
 python3 scripts/extract_report.py   # 每新财报跑: 下载公告PDF->提取经营/分红数据->cache/report_helluo.json
 python3 scripts/fetch.py            # 拉价格/成本/财务/估值/技术面 + 合并report/manual -> cache/dashboard_data.json
 python3 scripts/render_html.py      # -> output/cement_dashboard.html
@@ -72,7 +72,7 @@ python3 scripts/render_html.py      # -> output/cement_dashboard.html
 - **迁移可用路径**：脚本别写死 `/root/zach-skills/data-source-router`，用 `_zach_root()` 从脚本 `__file__` 向上定位含 `data-source-router` 的目录（找不到回退 `ZACH_SKILLS` 环境变量），`zach-skills/` 整体搬走即可跑。
 
 ## 工程归属（2026-08 重构后）
-权威自包含副本已并入母纲 → **`industry-monitor-dashboard/references/instances/cement/`**（README + scripts + cache + output 一体，整体可迁移）；`/root/cement-dashboard` 仅作 git 源/开发仓库。更新命令：`cd <skill>/references/instances/cement && python3 scripts/extract_report.py && python3 scripts/fetch.py && python3 scripts/render_html.py`。
+权威自包含副本并入母纲 → **`industry-monitor-dashboard/references/instances/cement/`**（README + scripts + cache + output 一体，整体可迁移）；**线上工程 = 博客仓 `/root/ZacharyXue.github.io/cement-dashboard/`**（产物 `public/exports/cement-dashboard.html`，与 etf-dashboard 同模式，旧 `/root/cement-dashboard` 已删除）。更新命令：`cd /root/ZacharyXue.github.io/cement-dashboard && python3 scripts/extract_report.py && python3 scripts/fetch.py && python3 scripts/render_html.py && cp output/cement_dashboard.html ../public/exports/`。
 
 ## 指标覆盖 & 人工采集闭环（2026-08）
 - **27 指标**：26 自动（价格/成本/量/盈利/财务/估值/技术全齐）+ 1 人工（全国产量同比）。
