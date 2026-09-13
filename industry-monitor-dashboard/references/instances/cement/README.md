@@ -49,7 +49,6 @@ python3 scripts/render_html.py      # -> output/cement_dashboard.html
 | A股前复权/不复权日K | 腾讯 ifzq `fqkline` | ✅ 不复权需末尾逗号 `count,` |
 | 海螺中报/年报PDF | 东财公告 `np-anotice-stock` → pdf.dfcfw.com | ✅ |
 | 全国水泥产量同比 | 国家统计局 | ❌ 服务器IP被拦→人工补录 cache/manual.json |
-| **机构评级/研报(评级/机构/日期/EPS预测/目标价)** | **东财研报中心 `reportapi.eastmoney.com/report/list` (qType=0 个股, code=600585)** | **✅ 免费公开源(2026-09 实测)** |
 
 ## 财报自动提取（海螺等A股，可复用）
 见 `references/cement-financial-extraction.md`：东方财富公告列表→下载PDF→提取自产品销量/收入/成本→倒算吨售价/吨成本/吨毛利，**用披露毛利率做校验**(倒算毛利率≈披露=口径对)；年报→每股派息→股息率。
@@ -76,8 +75,7 @@ python3 scripts/render_html.py      # -> output/cement_dashboard.html
 权威自包含副本并入母纲 → **`industry-monitor-dashboard/references/instances/cement/`**（README + scripts + cache + output 一体，整体可迁移）；**线上工程 = 博客仓 `/root/ZacharyXue.github.io/cement-dashboard/`**（产物 `public/exports/cement-dashboard.html`，与 etf-dashboard 同模式，旧 `/root/cement-dashboard` 已删除）。更新命令：`cd /root/ZacharyXue.github.io/cement-dashboard && python3 scripts/extract_report.py && python3 scripts/fetch.py && python3 scripts/render_html.py && cp output/cement_dashboard.html ../public/exports/`。
 
 ## 指标覆盖 & 人工采集闭环（2026-08）
-- **31 指标**：30 自动（价格/成本/量/盈利/财务/估值/技术/机构态度全齐）+ 1 人工（全国产量同比）。
-- **机构态度组（2026-09 新增，东财研报中心）**：研报覆盖密度(近12月篇数/机构数/3年均值收缩%)、评级分布、目标价覆盖(0篇=机构不敢定价,比评级更真实)、机构一致EPS预测(今年/明年)。免费源 `reportapi.eastmoney.com/report/list?qType=0&code=600585`，全字段含 `emRatingName`/`orgSName`/`publishDate`/`predictThisYearEps`/`predictNextYearEps`/`indvAimPriceT`。
+- **27 指标**：26 自动（价格/成本/量/盈利/财务/估值/技术全齐）+ 1 人工（全国产量同比）。
 - **技术面已补齐**：均线 MA20/60、MACD/RSI6/RSI14、KDJ、布林(20,2)、量比；估值：PB+历史分位。
 - **财务细项**：货币资金/有息负债率/FCF/毛利率/分红率。
 - **人工采集闭环**：`prompts/collect_prompts.md` 列自动源拿不到的 **8 类**（分区域价/提价函/产能利用率/地产新开工/基建/专项债/供给出清组 CR10&市占率&错峰/电价），每项带 JSON 回填模板 + 末尾「一键复制」prompt。用户更新看板时发给别的 agent，拿回贴给我 → 解析写 `cache/manual.json` → 看板标「人工@日期」。

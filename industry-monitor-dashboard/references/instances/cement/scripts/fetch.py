@@ -395,78 +395,6 @@ def get_rep_ton_np():
                 "note": f"归母净利{np}亿 ÷ 销量{sy}亿吨 = {v} 元/吨（含骨料/混凝土口径近似）", "stale": False}
     return {"latest": None, "note": "缺数据", "stale": False}
 
-# ---------- 机构态度组（东财研报中心, 免费公开源） ----------
-_REPORT_UA = {"User-Agent": "Mozilla/5.0", "Referer": "https://data.eastmoney.com/report/"}
-def _report_rows(code="600585", y1="2021-01-01", y2=None):
-    """拉取全部研报行（含评级/机构/日期/EPS预测/目标价）。东财 reportapi 一次最多100条, 翻页到拿完。"""
-    from urllib.parse import quote
-    if y2 is None:
-        y2 = datetime.date.today().isoformat()
-    out = []; page = 1
-    while page <= 5:
-        url = (f"https://reportapi.eastmoney.com/report/list?industryCode=*&pageSize=100&industry=*&rating=*&ratingChange=*"
-               f"&beginTime={y1}&endTime={y2}&qType=0&code={code}&pageNo={page}")
-        rows = _get(url, headers=_REPORT_UA, timeout=20, retry=2).get("data") or []
-        if not rows: break
-        out += rows
-        page += 1
-        if len(rows) < 100: break
-    return out
-
-def _report_12m(rows):
-    """过滤近12个月。"""
-    today = datetime.date.today()
-    y1y = (today - datetime.timedelta(days=365)).isoformat()
-    return [r for r in rows if (r.get("publishDate") or "")[:10] >= y1y]
-
-def _report_year_counts(rows):
-    """按年份统计研报数。"""
-    from collections import Counter
-    return dict(sorted(Counter((r.get("publishDate") or "")[:4] for r in rows).items()))
-
-def get_report_coverage():
-    rows = _report_rows()
-    r12 = _report_12m(rows)
-    yc = _report_year_counts(rows)
-    n12 = len(r12); orgs12 = len(set(r.get("orgSName") for r in r12))
-    # 3年均值(2023-2025)
-    avg3 = (yc.get("2023",0)+yc.get("2024",0)+yc.get("2025",0))/3.0
-    shrink = round((1 - n12/avg3)*100, 1) if avg3 else None
-    d12 = (datetime.date.today()-datetime.timedelta(days=365)).isoformat()[:7]
-    return {"latest": f"{n12}篇·{orgs12}家", "count_12m": n12, "orgs_12m": orgs12,
-            "avg3": round(avg3,1), "shrink_pct": shrink, "year_counts": yc,
-            "latest_date": d12,
-            "note": f"近12月 {n12} 篇 / {orgs12} 家机构；3年均值 {avg3:.1f} 篇/年；收缩 {shrink}%" if avg3 else None,
-            "stale": False}
-
-def get_rating_dist():
-    rows = _report_12m(_report_rows())
-    from collections import Counter
-    dist = dict(Counter(r.get("emRatingName") or "无评级" for r in rows))
-    return {"latest": " + ".join(f"{k}{v}" for k,v in dist.items()) if dist else None,
-            "dist": dist, "latest_date": (datetime.date.today()-datetime.timedelta(days=365)).isoformat()[:7],
-            "note": f"近12月评级分布: {json.dumps(dist, ensure_ascii=False)}", "stale": False}
-
-def get_target_price_coverage():
-    rows = _report_12m(_report_rows())
-    aims = [r for r in rows if (r.get("indvAimPriceT") or r.get("indvAimPrice") or r.get("indvAimPriceL"))]
-    return {"latest": len(aims), "count_12m": len(aims), "reports_12m": len(rows),
-            "latest_date": (datetime.date.today()-datetime.timedelta(days=365)).isoformat()[:7],
-            "note": f"近12月 {len(rows)} 篇研报中仅 {len(aims)} 篇给出目标价（0篇=机构不敢定价，看空信号）",
-            "stale": False}
-
-def get_forecast_eps():
-    rows = _report_12m(_report_rows())
-    ty = sorted({r.get("predictThisYearEps") for r in rows if r.get("predictThisYearEps")})
-    ny = sorted({r.get("predictNextYearEps") for r in rows if r.get("predictNextYearEps")})
-    def f(x): return round(float(x), 2)
-    ty_v = [f(v) for v in ty]; ny_v = [f(v) for v in ny]
-    return {"latest": f"今年{'—'.join(map(str,ty_v))}·明年{'—'.join(map(str,ny_v))}" if ty_v else None,
-            "eps_ty": ty_v, "eps_ny": ny_v,
-            "latest_date": (datetime.date.today()-datetime.timedelta(days=365)).isoformat()[:7],
-            "note": f"近12月机构一致 EPS 预测: 今年 {ty_v} 明年 {ny_v}（维持=现状判断, 下修=恶化确认）",
-            "stale": False}
-
 GETTER_MAP = {
     "po425_price": get_po425, "cempi_index": get_cempi, "clinker_price": get_clinker,
     "concrete_price": get_concrete, "spread_calc": get_spread, "coal_index": get_coal,
@@ -478,8 +406,6 @@ GETTER_MAP = {
     "rep_ton_price": get_rep_ton_price, "rep_ton_np": get_rep_ton_np,
     "kdj_calc": get_kdj, "boll_calc": get_boll, "vol_calc": get_vol,
     "gm_rate": get_gm_rate, "payout_rate": get_payout_rate,
-    "report_coverage": get_report_coverage, "rating_dist": get_rating_dist,
-    "target_price_coverage": get_target_price_coverage, "forecast_eps": get_forecast_eps,
 }
 
 def fetch_all():
