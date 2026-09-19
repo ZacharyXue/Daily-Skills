@@ -61,6 +61,8 @@ d, source, meta, tier = DSR.get("<kind>", **params)   # 返回 (data, source, me
 2. 工程 `fetch.py` 走 `data-source-router.get()`；`render_html.py` 复用 `templates/dashboard_skeleton.html`；指标语义放 `indicators.py` 元数据层。
 3. 注册进 `references/dashboards-index.md`。
 4. 生成产物 → 挂博客 `public/exports/`。
+5. **🔴 注册博客看板索引**：在博客仓 `src/content/projects/investment-dashboard.md` 加一行（看板名 + 盯什么 + `/exports/<name>.html` 链接）——那是**所有看板的统一入口页**（首页 → 项目 → 投资看板）。**只挂产物不注册索引 = 看板未交付完整**。
+6. 构建验证（可选项）：`npm run build` 或页面源检查。
 
 ## 六、坑位（会话沉淀）
 

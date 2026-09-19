@@ -2,6 +2,7 @@
 
 > **总风格/数据规范**：见 `dashboard-style/SKILL.md`（自包含 HTML 骨架 + 数据走 `data-source-router.get()`）。
 > **新增看板**：`zach-skills/<name>-dashboard/SKILL.md`（各自 md）+ 注册到本文件 + 复用骨架模板。
+> **🔴 双索引铁律（2026-09 用户要求）**：每个看板除注册本文件外，**必须同时在博客仓 `src/content/projects/investment-dashboard.md` 注册一行**（`/exports/<name>.html` 链接）——那是所有看板的统一入口页。产物挂 `public/exports/` 而不注册入口 = 看板未交付完整。
 
 | 看板 | 类型 | 实例详情(母纲) | 工程路径 | 数据触发 | 持续更新 | 产物 |
 |---|---|---|---|---|---|---|

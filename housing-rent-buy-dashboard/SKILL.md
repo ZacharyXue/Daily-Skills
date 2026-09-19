@@ -40,6 +40,7 @@ cd /root/zach-skills/housing-rent-buy-dashboard
 python3 scripts/fetch.py      # 走 DSR(force 强制回源) → data/housing_{YYYYMMDD}.json + latest.json；--cache 走缓存(调试)
 python3 scripts/render_html.py  # → output/housing_rent_buy_dashboard.html（自包含，可挂博客 public/exports/）
 cp output/housing_rent_buy_dashboard.html /root/ZacharyXue.github.io/public/exports/housing-rent-buy-dashboard.html
+# 🔴 博客看板索引注册：`src/content/projects/investment-dashboard.md` 里本看板行已存在（新增/改名时同步）
 ```
 
 ## 指标与口径
