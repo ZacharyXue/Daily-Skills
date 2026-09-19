@@ -24,7 +24,7 @@ Phase 0 文件就位 → Phase 1 PDF提取 → Phase 2 商业模式 → Phase 3 
 → Phase 6 同行对比 → Phase 7 估值 → Phase 8 调用investment-mindset多视角评估 → 输出结构化报告
 ```
 
-各 Phase 通用，周期股在 Phase 7 走 `references/cycle-stock.md` 模板。**所有数据接口（东财 datacenter/腾讯行情/研报/K线）见 `references/data-apis.md`**。**具体大师的思维框架（芒格/巴菲特/李录/段永平/聂夫/马克斯/孙宇晨）统一在 `investment-mindset` skill，本 skill 不内置。**
+各 Phase 通用，周期股在 Phase 7 走 `references/cycle-stock.md` 模板。**所有数据接口（东财 datacenter/腾讯行情/研报/K线）见 `references/data-apis.md`**。**具体大师的思维框架（芒格/巴菲特/李录/聂夫/马克斯/孙宇晨）统一在 `investment-mindset` skill，本 skill 不内置。**
 
 A股聚合技巧与 grep 锚点表见 `references/eastmoney-peer-compare.md`（含固定输出维度七步模板）、电解铝成本框架见 `references/aluminum-coal-cost-framework.md`、股息敏感性+行情降级链见 `references/dividend-valuation-and-market-apis.md`、消费白马/ROE稳定股安全边际估值（合理PB=ROE/r + Gordon增长下限）见 `references/growth-valuation-safety-margin.md`、完整实例见 `references/worked-example-shenhuo.md`、红利/高股息选股与择时弹药（股债σ分位替代+9陷阱/7因子+吃息三要素+垄断三层威胁+5点选股法）见 `references/redli-framework.md`。
 
@@ -201,7 +201,7 @@ python3 scripts/financial_rigor.py benford --values '[历史财务数据序列..
 
 ## Phase 8: 调用 investment-mindset 做多视角评估（可选收尾）
 
-> **分工**：本 skill（`stock-analysis`）只做**基本面**（商业模式/财务/风险/估值）。用户若问「从 XX 角度怎么看」「多位大师怎么评估」这类**思维模型分析**，**改由 `investment-mindset` skill 提供**（芒格/巴菲特/李录/段永平/聂夫/马克斯/孙宇晨共 7 维，含芒格完整逆向评估模板 `references/munger-evaluation.md`——那是 investment-mindset 里的文件，非本 skill 所有）。
+> **分工**：本 skill（`stock-analysis`）只做**基本面**（商业模式/财务/风险/估值）。用户若问「从 XX 角度怎么看」「多位大师怎么评估」这类**思维模型分析**，**改由 `investment-mindset` skill 提供**（芒格/巴菲特/李录/聂夫/马克斯/孙宇晨共 6 维，含芒格完整逆向评估模板 `references/munger-evaluation.md`——那是 investment-mindset 里的文件，非本 skill 所有）。
 
 - 触发：用户对标的提出「从大佬/大师角度评估」
 - 动作：读完基本面（前面 Phase 2-7）后，转 `skill_view(name='investment-mindset')`，按它的「通用使用流程」逐维分析，产出多视角结论。
