@@ -77,6 +77,8 @@ Before embedding external HTML (resumes, documents) into public pages, confirm w
 
 The blog supports Mermaid diagrams natively via code fences with `mermaid` language tag. Use them to replace dense prose — state diagrams, flowcharts, and mindmaps all render inline. Build output confirms they're processed without errors.
 
+⚠️ 静态构建产物里**不会**出现 `.mermaid-wrapper` 容器——这是正常机制：BlogLayout 的 `is:inline` 脚本在运行时把 `pre[data-language="mermaid"]` 替换成 `.mermaid-wrapper` 再 `mermaid.run()`。所以 grep `class="mermaid"` 数为 0 不代表图没渲染。校验 mermaid 语法：把代码块源码用 urlsafe base64 拼成 `https://mermaid.ink/svg/<b64>`，HTTP 200 且返回 `<svg` 即语法 OK（有脚本 /tmp/verify_mermaid.py 可复用）。
+
 ### Canonical blog skill
 This is the **唯一 canonical skill** for the ZacharyXue.github.io repo — the former `astro-blog` was merged into it (content consolidated). Both lived under the same external dir `/root/zach-skills`; now only this one remains. Its technical references (mermaid CSS/global.css/astro escaping) are either in this file or in `references/`.
 
