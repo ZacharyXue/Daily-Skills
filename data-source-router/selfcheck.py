@@ -44,6 +44,15 @@ def main():
     check("失败链配置", len(FAILOVER_KINDS) >= 3, str(FAILOVER_KINDS))
     check("未知意图兜底", not achieve("no_such_intent").ok)
 
+    print("[5] 房产适配器(2026-09 下沉; 走缓存不强刷)")
+    from data_router import get as _get
+    d, s, m, t = _get("cn_housing_city", city="sh")
+    check("cn_housing_city", isinstance(d, dict) and d["price"]["meta"].get("avg", 0) > 0, f"src={s} avg={d.get('price',{}).get('meta',{}).get('avg') if isinstance(d,dict) else '?'}")
+    d2, s2, m2, t2 = _get("cn_housing_trend", city="hz")
+    check("cn_housing_trend", isinstance(d2, list) and len(d2) >= 2, f"src={s2} n={len(d2) if isinstance(d2,list) else '?'}")
+    d3, s3, m3, t3 = _get("cn_lpr")
+    check("cn_lpr", isinstance(d3, list) and len(d3) >= 20, f"src={s3} n={len(d3) if isinstance(d3,list) else '?'}")
+
     print("\n=================")
     if all(PASS):
         print(f"✅ 全部 {len(PASS)} 项自检通过（4 个 CodeAct 优化点就绪）")

@@ -37,6 +37,9 @@ related_skills: [industry-monitor-dashboard, whale-holdings, stock-analysis, git
 | 行业指数(水泥网) | `cn_cement_index` | 中国水泥网 `index.ccement.com` | ✅ 200(丢包重试) | 日频 |
 | 水泥-熟料价差 | `cn_cement_spread` | 中国水泥网(合成) | ✅ | 日频 |
 | 机构评级/研报 | `cn_research_report` | 东财研报中心 `reportapi.eastmoney.com/report/list` | ✅ 200 | 日频 |
+| 房产·城市房价/租金/售租比/分区 | `cn_housing_city` | 创房价手机站 `m.creprice.cn/city/{code}.html[?type=lease]` | ✅ 200(⚠️桌面站被验证码墙,手机站+iPhone UA可) | 月度挂牌 |
+| 房产·新房月均价趋势 | `cn_housing_trend` | 房天下 `fangjia.fang.com/fangjia/common/ajaxtrenddatanew/{code}` | ✅ 200(丢包重试) | 月度/近6月窗口 |
+| LPR 历史(2019-08起) | `cn_lpr` | 中国银行官网 HTML 表 | ✅ 200 | 月度(每月20日) |
 | 指数PE(中证) | `cn_csindex_pe` | 中证官网 `csindex-home/perf/index-perf` 的 `peg` | ✅ 200 | 日频 |
 | 指数估值(天天基金) | `cn_ttfund_index` | 天天基金 `ttskill TTFUND_INDEX_INFO` | ✅ CLI | 日频 |
 | GitHub 仓库元数据 | `github_repo` | GitHub REST v3 | ✅ 200 | 实时 |

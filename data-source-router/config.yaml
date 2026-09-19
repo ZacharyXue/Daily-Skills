@@ -21,6 +21,7 @@ cache:
     industry_price: 604800     # 行业现货 7天
     research_report: 86400     # 机构评级/研报 1天(新研报发布频繁, 日更足够)
     xueqiu_user_posts: 86400   # 雪球大V发言 1天(playwright取数重, 缓存有利)
+    housing_web: 86400         # 房产(创房价/房天下/中国银行LPR) 1天(网页源低频, 缓存有利; 月度挂牌口径够了)
   stale_while_revalidate: true # 命中旧缓存先返回，后台刷新
   db_path: "~/.hermes/data-cache.db"
 
@@ -37,6 +38,9 @@ sources:
   csindex:      { enabled: true, note: "中证官网指数历史PE(peg)→5y分位; 非中证系无peg" }
   ttfund:       { enabled: true, note: "天天基金 ttskill CLI(指数10y PE/PB分位+ROE), 需已login" }
   xueqiu:       { enabled: true, note: "雪球大V发言; 需 site-login 登录态(state在~/.cache/data-source-login/), playwright T3 豁免" }
+  creprice:     { enabled: true, note: "中国房价行情手机站(房价/租金/售租比/分区); ⚠️桌面站www被验证码墙拦, 必须用iPhone UA" }
+  fangjia:      { enabled: true, note: "房天下查房价(新房月均价趋势近6月); 苏州代码=suzhou 与创房价不同" }
+  bankofchina:  { enabled: true, note: "中国银行官网(LPR历史表, 2019-08至今85期)" }
 
 # ---------------- 速率限制 ----------------
 rate:

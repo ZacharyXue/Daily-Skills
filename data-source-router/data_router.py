@@ -25,6 +25,7 @@ from config_loader import config
 from adapters import finance as fin
 from adapters import github as gh
 from adapters import xueqiu as xq
+from adapters import housing as hs
 
 log = logging.getLogger("dsr.router")
 CACHE = Cache()
@@ -58,6 +59,10 @@ def _register():
         # ---- 雪球大V发言(需 site-login 登录态; playwright T3 豁免, 见 SKILL.md) ----
         "xueqiu_user_posts": (lambda p: xq.user_posts(p["user_id"], p.get("keywords", ""), p.get("max_pages", 5)),
                               "xueqiu", TTL["xueqiu_user_posts"], "T3"),
+        # ---- 房产(租 vs 买 看板; 创房价手机站/房天下/中国银行 网页源, 低频规范) ----
+        "cn_housing_city":   (lambda p: hs.cn_housing_city(p["city"]), "creprice", TTL["housing_web"], "T1"),
+        "cn_housing_trend":  (lambda p: hs.cn_housing_trend(p["city"]), "fangjia", TTL["housing_web"], "T1"),
+        "cn_lpr":            (lambda p: hs.cn_lpr(), "bankofchina", TTL["housing_web"], "T1"),
         # ---- GitHub 读/搜 ----
         "github_repo":      (lambda p: gh.repo(p["owner"], p["repo"]), "github_api", TTL["github_repo"], "T1"),
         "github_issues":    (lambda p: gh.issues(p["owner"], p["repo"], p.get("state", "all"), p.get("limit", 100)), "github_api", TTL["github_issues"], "T1"),
@@ -110,7 +115,8 @@ def _domain_for(source):
     return {"tencent": "qt.gtimg.cn", "eastmoney": "datacenter-web.eastmoney.com",
             "sec_edgar": "data.sec.gov", "github_api": "api.github.com",
             "ccement": "index.ccement.com", "csindex": "www.csindex.com.cn",
-            "xueqiu": "xueqiu.com"}.get(source)
+            "xueqiu": "xueqiu.com", "creprice": "m.creprice.cn",
+            "fangjia": "fangjia.fang.com", "bankofchina": "www.bankofchina.com"}.get(source)
 
 def sources_status():
     """返回可用数据源开关状态(读config)。"""

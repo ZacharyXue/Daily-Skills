@@ -1,0 +1,4 @@
+# 抓取产物/渲染产物不入库（与其他看板一致）：重新跑 fetch/render 即可生成
+data/
+output/
+__pycache__/
