@@ -26,6 +26,7 @@ from adapters import finance as fin
 from adapters import github as gh
 from adapters import xueqiu as xq
 from adapters import housing as hs
+from adapters import reits as rt
 
 log = logging.getLogger("dsr.router")
 CACHE = Cache()
@@ -63,6 +64,11 @@ def _register():
         "cn_housing_city":   (lambda p: hs.cn_housing_city(p["city"]), "creprice", TTL["housing_web"], "T1"),
         "cn_housing_trend":  (lambda p: hs.cn_housing_trend(p["city"]), "fangjia", TTL["housing_web"], "T1"),
         "cn_lpr":            (lambda p: hs.cn_lpr(), "bankofchina", TTL["housing_web"], "T1"),
+        # ---- 公募 REITs（清单/定期报告清单/报告解析；PDF 解析需 pymupdf，见 adapters/reits.py） ----
+        "cn_reits_list":        (lambda p: rt.list_reits(p.get("force", False)), "tencent", TTL["reits_list"], "T1"),
+        "cn_reits_report_list": (lambda p: rt.report_list(p["code"], p.get("pages", 3)), "eastmoney_fund", TTL["reits_report_list"], "T1"),
+        "cn_reits_report_data": (lambda p: rt.report_data(p["report_id"]), "eastmoney_fund", TTL["reits_report"], "T1"),
+        "cn_reits_dividend":    (lambda p: rt.dividend(p["code"]), "eastmoney_fund", TTL["reits_report_list"], "T1"),
         # ---- GitHub 读/搜 ----
         "github_repo":      (lambda p: gh.repo(p["owner"], p["repo"]), "github_api", TTL["github_repo"], "T1"),
         "github_issues":    (lambda p: gh.issues(p["owner"], p["repo"], p.get("state", "all"), p.get("limit", 100)), "github_api", TTL["github_issues"], "T1"),

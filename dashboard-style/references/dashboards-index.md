@@ -13,6 +13,7 @@
 | **成长vs价值风格轮动&配置比例** | 策略(风格轮动)+配置引擎 | `industry-monitor-dashboard/references/instances/style-rotation/` (自包含) | 同左 | `cn_ttfund_index`(成长100/价值100, 含行业分布)、腾讯ETF K线(159259/159263)、成分净利聚合(growth_precompute) | `cd /root/zach-skills/industry-monitor-dashboard/references/instances/style-rotation && /root/hermes-venv/bin/python scripts/growth_precompute.py && python3 scripts/fetch.py && python3 scripts/render_html.py` | `output/style-rotation-dashboard.html` → 手动 `cp` 到 `public/exports/style-rotation-dashboard.html` |
 | **伊利股份**（等击球点·验证ROE锚） | 个股(基本面+估值+击球点) | `industry-monitor-dashboard/references/instances/yili/` (自包含可迁移) | 同左 | `cn_stock_quote`/`cn_stock_kline`(腾讯)、`cn_financial_series`(`MAINFINADATA`/`GINCOME`/`GBALANCE`)、`cn_csindex_pe` | `cd /root/zach-skills/industry-monitor-dashboard/references/instances/yili && python3 scripts/fetch.py && python3 scripts/render_html.py` | `output/yili_dashboard.html` → 手动 `cp` 到 `public/exports/yili-dashboard.html` |
 | **租 vs 买**（沪杭租售比/房价趋势/LPR） | 房产(租房vs买房决策) | `housing-rent-buy-dashboard/` (自包含脚本+SKILL) | 同左 | `cn_housing_city`/`cn_housing_trend`(创房价手机站+房天下, 已下沉 DSR `adapters/housing.py`)、`cn_lpr`(中国银行) | `cd /root/zach-skills/housing-rent-buy-dashboard && python3 scripts/fetch.py && python3 scripts/render_html.py && cp output/housing_rent_buy_dashboard.html /root/ZacharyXue.github.io/public/exports/` | `output/housing_rent_buy_dashboard.html` + 博客 `public/exports/housing-rent-buy-dashboard.html` |
+| **保租房 REITs**（全量·五项位置·无结论） | REITs(产权类现金流资产) | `reits-dashboard/` (自包含脚本+SKILL) | 同左 | `cn_reits_list`/`cn_reits_report_list`/`cn_reits_report_data`/`cn_reits_dividend`(已下沉 DSR `adapters/reits.py`，PDF 解析需 pymupdf→用 `/root/hermes-venv/bin/python`)、`cn_stock_kline` | `cd /root/zach-skills/reits-dashboard && /root/hermes-venv/bin/python scripts/fetch.py [--force] && python3 scripts/render_html.py && cp output/reits_bt_dashboard.html /root/ZacharyXue.github.io/public/exports/reits-bt-dashboard.html` | `output/reits_bt_dashboard.html` + 博客 `public/exports/reits-bt-dashboard.html` |
 
 ## 各看板要盯什么（简述）
 
@@ -76,6 +77,19 @@
 - ⚠️ 2026中报有息负债率41.6% > 年报33.4%（短借647亿）——杠杆上升，需持续盯
 - 数据源：东财 `cn_financial_series`(MAINFINADATA/GINCOME/GBALANCE) + 腾讯行情 + 研报口径人工补录(3项)
 - 关联 skill：`stock-analysis`(基本面深挖，含 Phase 4.5 增长归因+一次性检验)、`investment-mindset`(大师视角)、`dashboard-style`(骨架)
+
+### reits-dashboard（保租房 REITs · 全量 + 五项位置）
+盯「保租房这一类产权型 REITs，当前各维度处在自身历史的什么位置」——**不给买/不买结论**，把五项打分项的当前位置摊开（用户 2026-09 明确要求）。
+- **① 现金分派率**：自算年化 = 报告期单位可供分配金额 ÷ 报告期天数 × 365 ÷ 报告期末收盘价（与基金披露的「年化现金流分派率」互验，实测一致），历史区间 + 当前位置 + LPR 1 年期参考线
+- **② P/NAV**：现价 ÷ 最新披露基金份额净值，参考线 1.0；⚠️ **净值只有中报/年报披露 → 半年频**（季报不含）
+- **③ 出租率**：报告期末各项目出租率平均，参考线 95%
+- **④ 距近 1 年最高价回撤** + 近 250 日最大回撤
+- **⑤ 租金收缴率**（+ 卡片内附加权平均剩余租期）
+- **覆盖**：每次刷新**自动发现全量保租房 REITs**（行情枚举 sh508xxx/sz180xxx + 名称关键词），新上市自动纳入；无报告的新基金显式标「待披露」
+- **数据**：逐份定期报告 PDF 解析（2022 年起 142 期，三代披露格式兼容：叙述型/表格式/新规格式）→ 见 `data-source-router/adapters/reits.py`
+- ⚠️ **坑**：上市未满一年（报告期<3）年化派息率被首期口径放大（如中航北京昌保 14%+），看板标 `*`；出租率在早期报告是叙述式（「XX项目出租率为97.7%」），新报告是表格式（「报告期末出租率[...]×100%%94.07」），正则要两套
+- ⚠️ **口径提醒**：保租房是产权类（资产永续、无到期日），与特许经营权类 REITs 的分派率不可直接比（后者含本金摊还）
+- 关联 skill：`stock-analysis`(基本面)、`dashboard-style`(骨架)、`data-source-router`(取数)
 
 ## 关于数据下沉
 - 原始抓取一律走 `data-source-router`（统一源/缓存/重试/Tier）。

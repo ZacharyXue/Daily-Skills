@@ -1,0 +1,7353 @@
+{
+ "generated": "2026-09-27 20:12",
+ "lpr1y": 3.0,
+ "universe": 101,
+ "funds": [
+  {
+   "code": "sh508031",
+   "name": "国泰海通城投宽庭保租房REIT",
+   "price": 3.826,
+   "mktcap": "38.26",
+   "series": [
+    {
+     "period_end": "2023-12-31",
+     "rtype": "FY",
+     "pub_date": "2025-03-31",
+     "unit_dist": 0.1307,
+     "unit_paid": 0.065012,
+     "ann_unit_dist": 1.5902,
+     "nav": 3.06673,
+     "occ": 93.25,
+     "occ_src": "project",
+     "collect": 99.99,
+     "lease": null,
+     "dy_official": 3.61,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 180002321.392,
+     "net_profit": 80480226.451,
+     "ocf": 141864833.442,
+     "projects": {
+      "上海城驰房地产有限公司序号指标名称指标含义说明及计算": {
+       "occ": 90.83,
+       "collect": 99.99,
+       "rent": 131.56131,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "上海城业房地产有限公司序号指标名称指标含义说明及计算": {
+       "occ": 95.67,
+       "collect": 99.99,
+       "rent": 134.91135,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2024-03-31",
+     "rtype": "Q1",
+     "pub_date": "2024-04-22",
+     "unit_dist": 0.0328,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1316,
+     "nav": null,
+     "occ": 91.42,
+     "occ_src": "project",
+     "collect": 99.82,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 4.92,
+     "px_at_end": 2.675,
+     "pnav": null,
+     "revenue": 45743349.122,
+     "net_profit": 20496212.663,
+     "ocf": 45479998.61,
+     "projects": {
+      "应付项目": {
+       "occ": null,
+       "collect": 99.82,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 91.02,
+       "collect": 99.82,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 91.02,
+       "collect": 99.82,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "持有的基础设施资产由2个保障性租赁住房项目": {
+       "occ": 91.02,
+       "collect": 99.82,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "上海城驰房地产有限公司持有的江湾社区项目": {
+       "occ": 91.02,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "上海城业房地产有限公司持有的光华社区项目": {
+       "occ": 93.04,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-06-30",
+     "rtype": "H1",
+     "pub_date": "2024-08-31",
+     "unit_dist": 0.0634,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1271,
+     "nav": 3.0905,
+     "occ": 89.96,
+     "occ_src": "project",
+     "collect": 99.95,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 4.24,
+     "px_at_end": 2.997,
+     "pnav": 0.97,
+     "revenue": 89175322.7,
+     "net_profit": 39192917.73,
+     "ocf": 72484754.84,
+     "projects": {
+      "4基础设施项目": {
+       "occ": 89.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 89.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "持有的基础设施资产由2个保障性租赁住房项目": {
+       "occ": 89.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "上海城驰房地产有限公司持有的江湾社区项目": {
+       "occ": 89.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "上海城业房地产有限公司持有的光华社区项目": {
+       "occ": 91.84,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "序号构成金额占该项目": {
+       "occ": null,
+       "collect": 99.95,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "3基础设施项目": {
+       "occ": 89.49,
+       "collect": 99.95,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1基础设施项目": {
+       "occ": 89.49,
+       "collect": 99.95,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "报告期内两家项目": {
+       "occ": 89.49,
+       "collect": 99.95,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "江湾社区": {
+       "occ": 89.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "光华社区": {
+       "occ": 91.84,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-09-30",
+     "rtype": "Q3",
+     "pub_date": "2024-10-25",
+     "unit_dist": 0.0327,
+     "unit_paid": 0.065012,
+     "ann_unit_dist": 0.1297,
+     "nav": null,
+     "occ": 91.95,
+     "occ_src": "project",
+     "collect": 99.69,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 4.22,
+     "px_at_end": 3.075,
+     "pnav": null,
+     "revenue": 44049914.482,
+     "net_profit": 19538694.143,
+     "ocf": 36137591.21,
+     "projects": {
+      "人民币元项目": {
+       "occ": null,
+       "collect": 99.69,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "应付项目": {
+       "occ": 91.29,
+       "collect": 99.69,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 91.29,
+       "collect": 99.69,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 91.29,
+       "collect": 99.69,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "持有的基础设施资产由2个保障性租赁住房项目": {
+       "occ": 91.29,
+       "collect": 99.69,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "上海城驰房地产有限公司持有的江湾社区项目": {
+       "occ": 91.29,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "上海城业房地产有限公司持有的光华社区项目": {
+       "occ": 95.24,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-12-31",
+     "rtype": "Q4",
+     "pub_date": "2025-01-22",
+     "unit_dist": 0.0346,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1373,
+     "nav": null,
+     "occ": 92.62,
+     "occ_src": "project",
+     "collect": 99.97,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 4.09,
+     "px_at_end": 3.358,
+     "pnav": null,
+     "revenue": 46777084.212,
+     "net_profit": 21748614.583,
+     "ocf": 33361899.42,
+     "projects": {
+      "除江湾社区及光华社区": {
+       "occ": 92.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "上显示目前已入市的保障性租赁住房项目": {
+       "occ": 92.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "颐家公寓": {
+       "occ": 92.49,
+       "collect": 99.97,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4个保障性租赁住房项目": {
+       "occ": 92.49,
+       "collect": 99.97,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保租房供应系统新挂网颐家公寓": {
+       "occ": 92.49,
+       "collect": 99.97,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "两家保障性租赁住房项目": {
+       "occ": 92.49,
+       "collect": 99.97,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "整体而言本项目": {
+       "occ": 92.49,
+       "collect": 99.97,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "考虑到本项目": {
+       "occ": 92.49,
+       "collect": 99.97,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "配套设施及良好的社区": {
+       "occ": 92.49,
+       "collect": 99.97,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "两家项目": {
+       "occ": 92.49,
+       "collect": 99.97,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "上海城驰房地产有限公司持有的江湾社区": {
+       "occ": 90.83,
+       "collect": 99.97,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "上海城业房地产有限公司持有的光华社区项目": {
+       "occ": 95.67,
+       "collect": 99.97,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2025-03-31",
+     "rtype": "Q1",
+     "pub_date": "2025-04-22",
+     "unit_dist": 0.0314,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1273,
+     "nav": null,
+     "occ": 92.15,
+     "occ_src": "project",
+     "collect": 99.99,
+     "lease": null,
+     "dy_official": 3.2,
+     "dy_calc": 3.42,
+     "px_at_end": 3.724,
+     "pnav": null,
+     "revenue": 44667354.232,
+     "net_profit": 20218244.483,
+     "ocf": 23232839.244,
+     "projects": {
+      "上海城驰房地产有限公司序号指标名称指标含义说明及计算": {
+       "occ": 88.92,
+       "collect": 99.98,
+       "rent": 131.84131,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "上海城业房地产有限公司序号指标名称指标含义说明及计算": {
+       "occ": 95.37,
+       "collect": 100.0,
+       "rent": 133.51135,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-06-30",
+     "rtype": "H1",
+     "pub_date": "2025-08-29",
+     "unit_dist": 0.0634,
+     "unit_paid": 0.06732,
+     "ann_unit_dist": 0.1279,
+     "nav": 3.04053,
+     "occ": 94.25,
+     "occ_src": "project",
+     "collect": 99.99,
+     "lease": null,
+     "dy_official": 2.99,
+     "dy_calc": 3.14,
+     "px_at_end": 4.079,
+     "pnav": 1.342,
+     "revenue": 90312625.31,
+     "net_profit": 40991871.91,
+     "ocf": 46832603.08,
+     "projects": {
+      "上海城驰房地产有限公司序号指标名称指标含义说明及计算": {
+       "occ": 91.06,
+       "collect": 99.99,
+       "rent": 131.59131,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "上海城业房地产有限公司序号指标名称指标含义说明及计算": {
+       "occ": 97.45,
+       "collect": 99.99,
+       "rent": 133.25135,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-09-30",
+     "rtype": "Q3",
+     "pub_date": "2025-10-28",
+     "unit_dist": 0.0321,
+     "unit_paid": 0.06342,
+     "ann_unit_dist": 0.1274,
+     "nav": null,
+     "occ": 94.53,
+     "occ_src": "project",
+     "collect": 99.9,
+     "lease": null,
+     "dy_official": 3.21,
+     "dy_calc": 3.32,
+     "px_at_end": 3.84,
+     "pnav": null,
+     "revenue": 47307308.612,
+     "net_profit": 22043159.183,
+     "ocf": 34339808.834,
+     "projects": {
+      "上海城驰房地产有限公司序号指标名称指标含义说明及计算": {
+       "occ": 94.05,
+       "collect": 99.91,
+       "rent": 130.59132,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "上海城业房地产有限公司序号指标名称指标含义说明及计算": {
+       "occ": 95.01,
+       "collect": 99.89,
+       "rent": 133.48134,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-12-31",
+     "rtype": "Q4",
+     "pub_date": "2026-01-22",
+     "unit_dist": 0.0325,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1289,
+     "nav": null,
+     "occ": 92.5,
+     "occ_src": "project",
+     "collect": 99.97,
+     "lease": null,
+     "dy_official": 3.29,
+     "dy_calc": 3.43,
+     "px_at_end": 3.76,
+     "pnav": null,
+     "revenue": 46840440.902,
+     "net_profit": 21392034.853,
+     "ocf": 35133183.764,
+     "projects": {
+      "上海城驰房地产有限公司序号指标名称指标含义说明及计算": {
+       "occ": 92.07,
+       "collect": 99.95,
+       "rent": 130.02131,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "上海城业房地产有限公司序号指标名称指标含义说明及计算": {
+       "occ": 92.94,
+       "collect": 99.99,
+       "rent": 134.12133,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2026-03-31",
+     "rtype": "Q1",
+     "pub_date": "2026-04-22",
+     "unit_dist": 0.0316,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1282,
+     "nav": null,
+     "occ": 93.69,
+     "occ_src": "project",
+     "collect": 99.88,
+     "lease": null,
+     "dy_official": 3.42,
+     "dy_calc": 3.54,
+     "px_at_end": 3.619,
+     "pnav": null,
+     "revenue": 45232777.062,
+     "net_profit": 20214436.11,
+     "ocf": 37598789.394,
+     "projects": {
+      "上海城驰房地产有限公司序号指标名称指标含义说明及计算": {
+       "occ": 92.4,
+       "collect": 99.85,
+       "rent": 129.25131,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "上海城业房地产有限公司序号指标名称指标含义说明及计算": {
+       "occ": 94.97,
+       "collect": 99.91,
+       "rent": 134.03133,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2026-06-30",
+     "rtype": "H1",
+     "pub_date": "2026-08-31",
+     "unit_dist": 0.065,
+     "unit_paid": 0.06462,
+     "ann_unit_dist": 0.1311,
+     "nav": 2.99803,
+     "occ": 94.16,
+     "occ_src": "project",
+     "collect": 99.97,
+     "lease": null,
+     "dy_official": 3.45,
+     "dy_calc": 3.51,
+     "px_at_end": 3.737,
+     "pnav": 1.246,
+     "revenue": 91674545.08,
+     "net_profit": 42049173.24,
+     "ocf": 53242114.15,
+     "projects": {
+      "上海城驰房地产有限公司序号指标名称指标含义说明及计算": {
+       "occ": 94.18,
+       "collect": 99.95,
+       "rent": 129.33131,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "上海城业房地产有限公司序号指标名称指标含义说明及计算": {
+       "occ": 94.13,
+       "collect": 99.98,
+       "rent": 134.01133,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    }
+   ],
+   "latest_period": "2026-06-30",
+   "latest_rtype": "H1",
+   "latest_pub": "2026-08-31",
+   "dy_cur": 3.43,
+   "dy_official": 3.45,
+   "dy_ttm": 3.39,
+   "nav_latest": 2.99803,
+   "pnav": 1.276,
+   "occ": 94.16,
+   "occ_src": "project",
+   "collect": 99.97,
+   "lease": null,
+   "dd_1y": -0.0116,
+   "dd_all": -0.0785,
+   "mdd_1y": -0.0914,
+   "vol_1y": 0.1076,
+   "ret_1y": -0.0055,
+   "ytd": 0.0149,
+   "dy_pct": 40.0,
+   "pnav_pct": 66.7,
+   "occ_pct": 81.8,
+   "dy_min": 3.14,
+   "dy_max": 4.92,
+   "pnav_min": 0.97,
+   "pnav_max": 1.342,
+   "occ_min": 89.96,
+   "occ_max": 94.53,
+   "collect_min": 99.69,
+   "collect_max": 99.99,
+   "n_periods": 11,
+   "first_period": "2023-12-31",
+   "new_listing": false
+  },
+  {
+   "code": "sh508068",
+   "name": "华夏北京保障房REIT",
+   "price": 4.028,
+   "mktcap": "29.16",
+   "series": [
+    {
+     "period_end": "2022-12-31",
+     "rtype": "FY",
+     "pub_date": "2023-03-30",
+     "unit_dist": 0.0383,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1059,
+     "nav": 2.5364,
+     "occ": 96.88,
+     "occ_src": "project",
+     "collect": 98.42,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 29969493.36,
+     "net_profit": 13195728.82,
+     "ocf": 29787912.18,
+     "projects": {
+      "基于项目": {
+       "occ": 97.7,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "期本期净利润及可供分配金额均已扣减该基于项目": {
+       "occ": 97.7,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 97.7,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 97.7,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "北京保障房中心": {
+       "occ": 97.7,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "穿透取得项目": {
+       "occ": 97.7,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "报告期内项目": {
+       "occ": 97.7,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "分别为位于北京市海淀区文龙家园一里的文龙家园": {
+       "occ": 97.7,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "公租房项目": {
+       "occ": 97.7,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "文龙家园项目": {
+       "occ": 97.7,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "市朝阳区朝阳北路82号院的熙悦尚郡公租房项目": {
+       "occ": 97.7,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "熙悦尚郡项目": {
+       "occ": 97.7,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "58华夏北京保障房中心": {
+       "occ": 92.0,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "2管理人对基础设施项目": {
+       "occ": 95.87,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基础设施项目": {
+       "occ": 95.87,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "3基础设施项目": {
+       "occ": 95.87,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1基础设施项目": {
+       "occ": 95.87,
+       "collect": 98.42,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "运营相关通用指标信息基础设施项目": {
+       "occ": 95.87,
+       "collect": 98.42,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "文龙家园项目与熙悦尚华夏北京保障房中心": {
+       "occ": null,
+       "collect": 98.42,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "设施证券投资基金2022年年度报告13郡项目": {
+       "occ": null,
+       "collect": 98.42,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2023-03-31",
+     "rtype": "Q1",
+     "pub_date": "2023-04-21",
+     "unit_dist": 0.0274,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1111,
+     "nav": null,
+     "occ": 97.62,
+     "occ_src": "project",
+     "collect": 97.12,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 18036651.302,
+     "net_profit": 7757809.993,
+     "ocf": 21274267.37,
+     "projects": {
+      "4基础设施项目": {
+       "occ": 97.62,
+       "collect": 97.17,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 97.62,
+       "collect": 97.17,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "公司运营情况的整体说明华夏北京保障房中心": {
+       "occ": 97.62,
+       "collect": 97.17,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "设施证券投资基金2023年第1季度报告5项目": {
+       "occ": 97.62,
+       "collect": 97.17,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "报告期内项目": {
+       "occ": 97.62,
+       "collect": 97.17,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "分别为位于北京市海淀区文龙家园一里的文龙家园": {
+       "occ": 97.62,
+       "collect": 97.17,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "公租房项目": {
+       "occ": 97.62,
+       "collect": 97.17,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "文龙家园项目": {
+       "occ": 97.62,
+       "collect": 97.17,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "市朝阳区朝阳北路82号院的熙悦尚郡公租房项目": {
+       "occ": 97.62,
+       "collect": 97.17,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "熙悦尚郡项目": {
+       "occ": 97.62,
+       "collect": 97.17,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "文龙家园": {
+       "occ": 97.62,
+       "collect": 96.57,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2023-06-30",
+     "rtype": "H1",
+     "pub_date": "2023-08-30",
+     "unit_dist": 0.055,
+     "unit_paid": 0.0383,
+     "ann_unit_dist": 0.1109,
+     "nav": 2.5291,
+     "occ": 96.78,
+     "occ_src": "project",
+     "collect": 97.58,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 36311630.5,
+     "net_profit": 15503130.26,
+     "ocf": 27088449.65,
+     "projects": {
+      "期本期净利润及可供分配金额均已扣减该基于项目": {
+       "occ": 96.67,
+       "collect": 97.58,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 96.67,
+       "collect": 97.58,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 96.67,
+       "collect": 97.58,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "公司运营情况的整体说明项目": {
+       "occ": 96.67,
+       "collect": 97.58,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "报告期内项目": {
+       "occ": 96.67,
+       "collect": 97.58,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "分别位于北京市海淀区文龙家园一里的文龙家园": {
+       "occ": 96.67,
+       "collect": 97.58,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "公租房项目": {
+       "occ": 96.67,
+       "collect": 97.58,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "文龙家园项目": {
+       "occ": 96.67,
+       "collect": 97.58,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "市朝阳区朝阳北路82号院的熙悦尚郡公租房项目": {
+       "occ": 96.67,
+       "collect": 97.58,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "熙悦尚郡项目": {
+       "occ": 96.67,
+       "collect": 97.58,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "报告期内基础设施项目": {
+       "occ": 96.67,
+       "collect": 97.58,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "2管理人对基础设施项目": {
+       "occ": 97.03,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基础设施项目": {
+       "occ": 97.03,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "3基础设施项目": {
+       "occ": 97.03,
+       "collect": 97.58,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1基础设施项目": {
+       "occ": 97.03,
+       "collect": 97.58,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "运营相关通用指标信息基础设施项目": {
+       "occ": 97.03,
+       "collect": 97.58,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "文龙家园项目与熙悦尚郡项目": {
+       "occ": null,
+       "collect": 97.58,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2023-09-30",
+     "rtype": "Q3",
+     "pub_date": "2023-10-24",
+     "unit_dist": 0.0275,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1091,
+     "nav": null,
+     "occ": 96.88,
+     "occ_src": "project",
+     "collect": 97.68,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 18405116.572,
+     "net_profit": 7808781.533,
+     "ocf": 12694333.96,
+     "projects": {
+      "华夏北京保障房中心": {
+       "occ": 96.88,
+       "collect": 97.68,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 96.88,
+       "collect": 97.68,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 96.88,
+       "collect": 97.68,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "公司运营情况的整体说明项目": {
+       "occ": 96.88,
+       "collect": 97.68,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "报告期内项目": {
+       "occ": 96.88,
+       "collect": 97.68,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "分别位于北京市海淀区文龙家园一里的文龙家园": {
+       "occ": 96.88,
+       "collect": 97.68,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "公租房项目": {
+       "occ": 96.88,
+       "collect": 97.68,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "文龙家园项目": {
+       "occ": 96.88,
+       "collect": 97.68,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "市朝阳区朝阳北路82号院的熙悦尚郡公租房项目": {
+       "occ": 96.88,
+       "collect": 97.68,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "熙悦尚郡项目": {
+       "occ": 96.88,
+       "collect": 97.68,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2023-12-31",
+     "rtype": "Q4",
+     "pub_date": "2024-01-19",
+     "unit_dist": 0.0276,
+     "unit_paid": 0.055,
+     "ann_unit_dist": 0.1095,
+     "nav": null,
+     "occ": 97.28,
+     "occ_src": "project",
+     "collect": 97.96,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 4.81,
+     "px_at_end": 2.275,
+     "pnav": null,
+     "revenue": 18288434.412,
+     "net_profit": 7762086.743,
+     "ocf": 14393943.92,
+     "projects": {
+      "华夏北京保障房中心": {
+       "occ": 97.28,
+       "collect": 97.96,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 97.28,
+       "collect": 97.96,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 97.28,
+       "collect": 97.96,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "公司运营情况的整体说明项目": {
+       "occ": 97.28,
+       "collect": 97.96,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "报告期内项目": {
+       "occ": 97.28,
+       "collect": 97.96,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "分别位于北京市海淀区文龙家园一里的文龙家园": {
+       "occ": 97.28,
+       "collect": 97.96,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "公租房项目": {
+       "occ": 97.28,
+       "collect": 97.96,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "文龙家园项目": {
+       "occ": 97.28,
+       "collect": 97.96,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "市朝阳区朝阳北路82号院的熙悦尚郡公租房项目": {
+       "occ": 97.28,
+       "collect": 97.96,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "熙悦尚郡项目": {
+       "occ": 97.28,
+       "collect": 97.96,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-03-31",
+     "rtype": "Q1",
+     "pub_date": "2024-04-19",
+     "unit_dist": 0.0269,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1079,
+     "nav": null,
+     "occ": 94.72,
+     "occ_src": "project",
+     "collect": 96.73,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 4.21,
+     "px_at_end": 2.56,
+     "pnav": null,
+     "revenue": 18207753.732,
+     "net_profit": 7832794.223,
+     "ocf": 12965219.42,
+     "projects": {
+      "整项与往期不一致的情况说明华夏北京保障房中心": {
+       "occ": 94.72,
+       "collect": 96.73,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 94.72,
+       "collect": 96.73,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 94.72,
+       "collect": 96.73,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "公司运营情况的整体说明项目": {
+       "occ": 94.72,
+       "collect": 96.73,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "报告期内项目": {
+       "occ": 94.72,
+       "collect": 96.73,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "分别位于北京市海淀区文龙家园一里的文龙家园": {
+       "occ": 94.72,
+       "collect": 96.73,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "公租房项目": {
+       "occ": 94.72,
+       "collect": 96.73,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "文龙家园项目": {
+       "occ": 94.72,
+       "collect": 96.73,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "市朝阳区朝阳北路82号院的熙悦尚郡公租房项目": {
+       "occ": 94.72,
+       "collect": 96.73,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "熙悦尚郡项目": {
+       "occ": 94.72,
+       "collect": 96.73,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-06-30",
+     "rtype": "H1",
+     "pub_date": "2024-08-30",
+     "unit_dist": 0.0537,
+     "unit_paid": 0.0551,
+     "ann_unit_dist": 0.1077,
+     "nav": 2.4825,
+     "occ": 96.84,
+     "occ_src": "project",
+     "collect": 97.75,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 3.92,
+     "px_at_end": 2.746,
+     "pnav": 1.106,
+     "revenue": 36071128.15,
+     "net_profit": 16153144.34,
+     "ocf": 24780375.56,
+     "projects": {
+      "期本期净利润及可供分配金额均已扣减该基于项目": {
+       "occ": 97.05,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 97.05,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 97.05,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "公司运营情况的整体说明项目": {
+       "occ": 97.05,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "报告期内项目": {
+       "occ": 97.05,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "分别位于北京市海淀区文龙家园一里的文龙家园": {
+       "occ": 97.05,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "公租房项目": {
+       "occ": 97.05,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "文龙家园项目": {
+       "occ": 97.05,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "市朝阳区朝阳北路82号院的熙悦尚郡公租房项目": {
+       "occ": 97.05,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "熙悦尚郡项目": {
+       "occ": 97.05,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基础设施项目": {
+       "occ": 96.5,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "3基础设施项目": {
+       "occ": 96.5,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1基础设施项目": {
+       "occ": 96.5,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "2管理人对基础设施项目": {
+       "occ": 96.5,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "华夏北京保障房中心": {
+       "occ": 96.5,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "运营相关通用指标信息基础设施项目": {
+       "occ": 96.5,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "文龙家园项目与熙悦尚郡项目": {
+       "occ": null,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-09-30",
+     "rtype": "Q3",
+     "pub_date": "2024-10-25",
+     "unit_dist": 0.0269,
+     "unit_paid": 0.0537,
+     "ann_unit_dist": 0.1067,
+     "nav": null,
+     "occ": 94.99,
+     "occ_src": "project",
+     "collect": 97.75,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 3.52,
+     "px_at_end": 3.032,
+     "pnav": null,
+     "revenue": 18034482.342,
+     "net_profit": 8383456.063,
+     "ocf": 12266305.76,
+     "projects": {
+      "华夏北京保障房中心": {
+       "occ": 94.99,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 94.99,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 94.99,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "公司运营情况的整体说明项目": {
+       "occ": 94.99,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "报告期内项目": {
+       "occ": 94.99,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "分别位于北京市海淀区文龙家园一里的文龙家园": {
+       "occ": 94.99,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "公租房项目": {
+       "occ": 94.99,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "文龙家园项目": {
+       "occ": 94.99,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "市朝阳区朝阳北路82号院的熙悦尚郡公租房项目": {
+       "occ": 94.99,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "熙悦尚郡项目": {
+       "occ": 94.99,
+       "collect": 97.75,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-12-31",
+     "rtype": "Q4",
+     "pub_date": "2025-01-22",
+     "unit_dist": 0.0271,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1075,
+     "nav": null,
+     "occ": 95.01,
+     "occ_src": "project",
+     "collect": 98.08,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 3.13,
+     "px_at_end": 3.433,
+     "pnav": null,
+     "revenue": 18166721.552,
+     "net_profit": 8990610.793,
+     "ocf": 15390559.26,
+     "projects": {
+      "4基础设施项目": {
+       "occ": null,
+       "collect": 98.08,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": null,
+       "collect": 98.08,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "公司运营情况的整体说明项目": {
+       "occ": null,
+       "collect": 98.08,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "报告期内项目": {
+       "occ": 95.01,
+       "collect": 98.08,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本项目公司两处公租房资产附近无新增与本项目": {
+       "occ": 95.01,
+       "collect": 98.08,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "存在竞争性关系的公租房项目": {
+       "occ": 95.01,
+       "collect": 98.08,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "分别是位于北京市海淀区文龙家园一里的文龙家园": {
+       "occ": 95.01,
+       "collect": 98.08,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "公租房项目": {
+       "occ": 95.01,
+       "collect": 98.08,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "文龙家园项目": {
+       "occ": 95.01,
+       "collect": 98.08,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "市朝阳区朝阳北路82号院的熙悦尚郡公租房项目": {
+       "occ": 95.01,
+       "collect": 98.08,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "熙悦尚郡项目": {
+       "occ": 95.01,
+       "collect": 98.08,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2025-03-31",
+     "rtype": "Q1",
+     "pub_date": "2025-04-22",
+     "unit_dist": 0.0269,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1091,
+     "nav": null,
+     "occ": 94.59,
+     "occ_src": "project",
+     "collect": 97.31,
+     "lease": 1.83,
+     "dy_official": 2.76,
+     "dy_calc": 2.87,
+     "px_at_end": 3.804,
+     "pnav": null,
+     "revenue": 18518719.512,
+     "net_profit": 8609406.193,
+     "ocf": 12963498.944,
+     "projects": {
+      "1文龙家园公租房项目序号指标名称指标含义说明及计算公": {
+       "occ": 96.86,
+       "collect": 97.42,
+       "rent": 56.0056,
+       "area": 76564.7276,
+       "lease": 1.51,
+       "src": "table"
+      },
+      "2熙悦尚郡公租房项目序号指标名称指标含义说明及计算公": {
+       "occ": 92.33,
+       "collect": 97.19,
+       "rent": 65.0065,
+       "area": 36231.5836,
+       "lease": 2.16,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-06-30",
+     "rtype": "H1",
+     "pub_date": "2025-08-30",
+     "unit_dist": 0.0402,
+     "unit_paid": 0.054,
+     "ann_unit_dist": 0.0811,
+     "nav": 2.9952,
+     "occ": 94.0,
+     "occ_src": "project",
+     "collect": 90.43,
+     "lease": 1.39,
+     "dy_official": 1.82,
+     "dy_calc": 1.87,
+     "px_at_end": 4.343,
+     "pnav": 1.45,
+     "revenue": 40028225.75,
+     "net_profit": 18179043.31,
+     "ocf": 27937580.3,
+     "projects": {
+      "文龙家园项目序号指标名称指标含义说明及计算公式指标单": {
+       "occ": 96.78,
+       "collect": 98.99,
+       "rent": 56.0052,
+       "area": null,
+       "lease": 1.57,
+       "src": "table"
+      },
+      "熙悦尚郡项目序号指标名称指标含义说明及计算公式指标单": {
+       "occ": 93.83,
+       "collect": 97.43,
+       "rent": 65.0065,
+       "area": null,
+       "lease": 1.87,
+       "src": "table"
+      },
+      "朗悦嘉园项目序号指标名称指标含义说明及计算公式指标单": {
+       "occ": 96.11,
+       "collect": 80.11,
+       "rent": 35.0,
+       "area": null,
+       "lease": 1.4,
+       "src": "table"
+      },
+      "光机电项目序号指标名称指标含义说明及计算公式指标单位": {
+       "occ": 91.61,
+       "collect": 81.94,
+       "rent": 35.0,
+       "area": null,
+       "lease": 0.79,
+       "src": "table"
+      },
+      "盛悦家园项目序号指标名称指标含义说明及计算公式指标单": {
+       "occ": 88.69,
+       "collect": 90.53,
+       "rent": 44.0,
+       "area": null,
+       "lease": 1.27,
+       "src": "table"
+      },
+      "温泉凯盛家园项目序号指标名称指标含义说明及计算公式指": {
+       "occ": 97.01,
+       "collect": 93.58,
+       "rent": 42.0,
+       "area": null,
+       "lease": 1.44,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-09-30",
+     "rtype": "Q3",
+     "pub_date": "2025-10-28",
+     "unit_dist": 0.0305,
+     "unit_paid": null,
+     "ann_unit_dist": 0.121,
+     "nav": null,
+     "occ": 94.39,
+     "occ_src": "project",
+     "collect": 96.47,
+     "lease": 1.5,
+     "dy_official": 2.31,
+     "dy_calc": 3.03,
+     "px_at_end": 3.987,
+     "pnav": null,
+     "revenue": 32322737.222,
+     "net_profit": 12819847.763,
+     "ocf": 24544736.844,
+     "projects": {
+      "文龙家园公租房项目序号指标名称指标含义说明及计算公式": {
+       "occ": 97.59,
+       "collect": 98.75,
+       "rent": 56.0056,
+       "area": 76564.7276,
+       "lease": 1.42,
+       "src": "table"
+      },
+      "熙悦尚郡公租房项目序号指标名称指标含义说明及计算公式": {
+       "occ": 94.28,
+       "collect": 96.86,
+       "rent": 65.0065,
+       "area": 36231.5836,
+       "lease": 1.88,
+       "src": "table"
+      },
+      "房山区朗悦嘉园项目序号指标名称指标含义说明及计算公式": {
+       "occ": 95.19,
+       "collect": 87.26,
+       "rent": 35.0,
+       "area": 30031.62,
+       "lease": 1.46,
+       "src": "table"
+      },
+      "通州区光机电项目序号指标名称指标含义说明及计算公式指": {
+       "occ": 92.32,
+       "collect": 99.85,
+       "rent": 35.0,
+       "area": 29420.81,
+       "lease": 1.51,
+       "src": "table"
+      },
+      "大兴区盛悦家园项目序号指标名称指标含义说明及计算公式": {
+       "occ": 90.15,
+       "collect": 99.85,
+       "rent": 44.0,
+       "area": 15143.86,
+       "lease": 1.41,
+       "src": "table"
+      },
+      "海淀区温泉凯盛家园项目序号指标名称指标含义说明及计算": {
+       "occ": 96.83,
+       "collect": 96.27,
+       "rent": 42.0,
+       "area": 54117.38,
+       "lease": 1.35,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-12-31",
+     "rtype": "Q4",
+     "pub_date": "2026-01-22",
+     "unit_dist": 0.0326,
+     "unit_paid": 0.04,
+     "ann_unit_dist": 0.1293,
+     "nav": null,
+     "occ": 93.44,
+     "occ_src": "project",
+     "collect": 96.37,
+     "lease": 1.52,
+     "dy_official": 2.53,
+     "dy_calc": 3.21,
+     "px_at_end": 4.027,
+     "pnav": null,
+     "revenue": 32495688.462,
+     "net_profit": 14377279.483,
+     "ocf": 19566726.824,
+     "projects": {
+      "文龙家园公租房项目华夏北京保障房中心租赁住房封闭式基": {
+       "occ": 96.61,
+       "collect": 98.78,
+       "rent": 56.0056,
+       "area": 76564.7276,
+       "lease": 1.52,
+       "src": "table"
+      },
+      "熙悦尚郡公租房项目序号指标名称指标含义说明及计算公式": {
+       "occ": 94.23,
+       "collect": 98.25,
+       "rent": 65.0065,
+       "area": 30031.62,
+       "lease": 1.68,
+       "src": "table"
+      },
+      "房山区朗悦嘉园项目序号指标名称指标含义说明及计算公式": {
+       "occ": 94.79,
+       "collect": 90.34,
+       "rent": 35.0,
+       "area": 30031.62,
+       "lease": 1.34,
+       "src": "table"
+      },
+      "通州区光机电项目序号指标名称指标含义说明及计算公式指": {
+       "occ": 90.72,
+       "collect": 93.15,
+       "rent": 35.0,
+       "area": 29420.81,
+       "lease": 1.48,
+       "src": "table"
+      },
+      "大兴区盛悦家园项目序号指标名称指标含义说明及计算公式": {
+       "occ": 89.57,
+       "collect": 100.0,
+       "rent": 44.0,
+       "area": 15143.86,
+       "lease": 1.59,
+       "src": "table"
+      },
+      "海淀区温泉凯盛家园项目序号指标名称指标含义说明及计算": {
+       "occ": 94.74,
+       "collect": 97.72,
+       "rent": 42.0,
+       "area": 54117.38,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2026-03-31",
+     "rtype": "Q1",
+     "pub_date": "2026-04-22",
+     "unit_dist": 0.031,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1257,
+     "nav": null,
+     "occ": 95.79,
+     "occ_src": "project",
+     "collect": 95.67,
+     "lease": 1.38,
+     "dy_official": 3.12,
+     "dy_calc": 3.17,
+     "px_at_end": 3.96,
+     "pnav": null,
+     "revenue": 32556172.942,
+     "net_profit": 13742424.693,
+     "ocf": 20715542.604,
+     "projects": {
+      "文龙家园公租房项目序号指标名称指标含义说明及计算公式": {
+       "occ": 97.52,
+       "collect": 98.45,
+       "rent": 56.0056,
+       "area": 76564.7276,
+       "lease": 1.49,
+       "src": "table"
+      },
+      "熙悦尚郡公租房项目序号指标名称指标含义说明及计算公式": {
+       "occ": 93.71,
+       "collect": 97.01,
+       "rent": 65.0065,
+       "area": 36231.5836,
+       "lease": 1.6,
+       "src": "table"
+      },
+      "房山区朗悦嘉园项目华夏北京保障房中心租赁住房封闭式基": {
+       "occ": 93.77,
+       "collect": 91.28,
+       "rent": 35.0,
+       "area": 30031.62,
+       "lease": 1.23,
+       "src": "table"
+      },
+      "通州区光机电项目序号指标名称指标含义说明及计算公式指": {
+       "occ": 95.91,
+       "collect": 91.59,
+       "rent": 35.0,
+       "area": 15143.86,
+       "lease": 1.45,
+       "src": "table"
+      },
+      "大兴区盛悦家园项目序号指标名称指标含义说明及计算公式": {
+       "occ": 99.49,
+       "collect": 99.49,
+       "rent": 44.0,
+       "area": 15143.86,
+       "lease": 1.41,
+       "src": "table"
+      },
+      "海淀区温泉凯盛家园项目序号指标名称指标含义说明及计算": {
+       "occ": 94.35,
+       "collect": 96.22,
+       "rent": 42.0,
+       "area": 54117.38,
+       "lease": 1.1,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2026-06-30",
+     "rtype": "H1",
+     "pub_date": "2026-08-31",
+     "unit_dist": 0.0619,
+     "unit_paid": 0.06,
+     "ann_unit_dist": 0.1248,
+     "nav": 2.9706,
+     "occ": 92.15,
+     "occ_src": "project",
+     "collect": 96.62,
+     "lease": 1.3,
+     "dy_official": 3.13,
+     "dy_calc": 3.13,
+     "px_at_end": 3.993,
+     "pnav": 1.344,
+     "revenue": 64848580.16,
+     "net_profit": 27466333.79,
+     "ocf": 45591232.28,
+     "projects": {
+      "文龙家园项目序号指标名称指标含义说明及计算公式指标单": {
+       "occ": 96.5,
+       "collect": 98.75,
+       "rent": 56.0056,
+       "area": 36231.5836,
+       "lease": 1.26,
+       "src": "table"
+      },
+      "熙悦尚郡项目序号指标名称指标含义说明及计算公式指标单": {
+       "occ": 93.49,
+       "collect": 97.78,
+       "rent": 65.0065,
+       "area": 36231.5836,
+       "lease": 1.28,
+       "src": "table"
+      },
+      "朗悦嘉园项目序号指标名称指标含义说明及计算公式指标单": {
+       "occ": 94.32,
+       "collect": 93.09,
+       "rent": 35.0035,
+       "area": 30031.623,
+       "lease": 1.22,
+       "src": "table"
+      },
+      "光机电项目华夏北京保障房中心租赁住房封闭式基础设施证": {
+       "occ": 95.84,
+       "collect": 93.48,
+       "rent": 35.0035,
+       "area": 29420.8129,
+       "lease": 1.4,
+       "src": "table"
+      },
+      "盛悦家园项目序号指标名称指标含义说明及计算公式指标单": {
+       "occ": 78.49,
+       "collect": 98.97,
+       "rent": 44.0044,
+       "area": 15143.8615,
+       "lease": 1.6,
+       "src": "table"
+      },
+      "温泉凯盛家园项目序号指标名称指标含义说明及计算公式指": {
+       "occ": 94.28,
+       "collect": 97.64,
+       "rent": 42.0042,
+       "area": 54117.3854,
+       "lease": 1.05,
+       "src": "table"
+      }
+     }
+    }
+   ],
+   "latest_period": "2026-06-30",
+   "latest_rtype": "H1",
+   "latest_pub": "2026-08-31",
+   "dy_cur": 3.1,
+   "dy_official": 3.13,
+   "dy_ttm": 2.48,
+   "nav_latest": 2.9706,
+   "pnav": 1.356,
+   "occ": 92.15,
+   "occ_src": "project",
+   "collect": 96.62,
+   "lease": 1.3,
+   "dd_1y": -0.0268,
+   "dd_all": -0.0885,
+   "mdd_1y": -0.0858,
+   "vol_1y": 0.1144,
+   "ret_1y": 0.0121,
+   "ytd": -0.0017,
+   "dy_pct": 27.3,
+   "pnav_pct": 66.7,
+   "occ_pct": 6.7,
+   "dy_min": 1.87,
+   "dy_max": 4.81,
+   "pnav_min": 1.106,
+   "pnav_max": 1.45,
+   "occ_min": 92.15,
+   "occ_max": 97.62,
+   "collect_min": 90.43,
+   "collect_max": 98.42,
+   "n_periods": 15,
+   "first_period": "2022-12-31",
+   "new_listing": false
+  },
+  {
+   "code": "sh508058",
+   "name": "中金厦门安居REIT",
+   "price": 3.903,
+   "mktcap": "27.78",
+   "series": [
+    {
+     "period_end": "2022-12-31",
+     "rtype": "FY",
+     "pub_date": "2023-03-31",
+     "unit_dist": 0.0419,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1159,
+     "nav": 2.6254,
+     "occ": 99.15,
+     "occ_src": "project",
+     "collect": null,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 31853801.43,
+     "net_profit": 12722728.39,
+     "ocf": 23395362.44,
+     "projects": {
+      "4基础设施项目": {
+       "occ": 99.15,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 99.15,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基础设施项目": {
+       "occ": 99.15,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "园博公司持有的保障性租赁住房项目园博公寓": {
+       "occ": 99.15,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "及珩琦公司持有的保障性租赁住房项目珩琦公寓": {
+       "occ": 99.15,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "园博公寓及珩琦公寓": {
+       "occ": 99.15,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "923息税折旧摊销前净利率基础设施项目": {
+       "occ": 99.15,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "上述基础设施项目": {
+       "occ": 99.15,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "上表所述基础设施项目": {
+       "occ": 99.15,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "息税折旧摊销前净利润为基础设施项目": {
+       "occ": 99.15,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "2管理人对基础设施项目": {
+       "occ": 99.15,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "运营相关通用指标信息基础设施项目": {
+       "occ": 99.15,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "由2个保障性租赁住房项目": {
+       "occ": 99.15,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "园博公寓": {
+       "occ": 99.37,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "珩琦公寓": {
+       "occ": 98.86,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2023-03-31",
+     "rtype": "Q1",
+     "pub_date": "2023-04-21",
+     "unit_dist": 0.028,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1136,
+     "nav": null,
+     "occ": 99.49,
+     "occ_src": "project",
+     "collect": null,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 18951947.282,
+     "net_profit": 6710880.343,
+     "ocf": 11662052.003,
+     "projects": {
+      "应收和应付项目": {
+       "occ": 99.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "当期购买基础设施项目": {
+       "occ": 99.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 99.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 99.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "持有的基础设施资产由2个保障性租赁住房项目": {
+       "occ": 99.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "穿透取得项目": {
+       "occ": 99.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有的基础设施资产组合由2个保障性租赁住房项目": {
+       "occ": 99.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "园博公寓": {
+       "occ": 99.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "珩琦公寓": {
+       "occ": 99.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基金管理人主动履行基础设施项目": {
+       "occ": 99.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "负责基础设施项目": {
+       "occ": 99.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的2个基础设施项目": {
+       "occ": 99.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2023-06-30",
+     "rtype": "H1",
+     "pub_date": "2023-08-31",
+     "unit_dist": 0.0578,
+     "unit_paid": 0.0419,
+     "ann_unit_dist": 0.1166,
+     "nav": 2.6103,
+     "occ": 99.64,
+     "occ_src": "project",
+     "collect": 100.0,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 38140693.26,
+     "net_profit": 13381933.31,
+     "ocf": 25507851.35,
+     "projects": {
+      "4基础设施项目": {
+       "occ": 99.64,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 99.64,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "持有的基础设施资产由两个保障性租赁住房项目": {
+       "occ": 99.64,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "园博公寓": {
+       "occ": 99.64,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "珩琦公寓": {
+       "occ": 99.64,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "233息税折旧摊销前净利率基础设施项目": {
+       "occ": 99.64,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "上述基础设施项目": {
+       "occ": 99.64,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "上表所述基础设施项目": {
+       "occ": 99.64,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "息税折旧摊销前净利润为基础设施项目": {
+       "occ": 99.64,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "2管理人对基础设施项目": {
+       "occ": 99.64,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "运营相关通用指标信息基础设施项目": {
+       "occ": 99.64,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "由两个保障性租赁住房项目": {
+       "occ": 99.64,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基础设施项目": {
+       "occ": 99.64,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2023-09-30",
+     "rtype": "Q3",
+     "pub_date": "2023-10-25",
+     "unit_dist": 0.0293,
+     "unit_paid": 0.052,
+     "ann_unit_dist": 0.1162,
+     "nav": null,
+     "occ": 99.55,
+     "occ_src": "project",
+     "collect": 100.0,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 19274291.032,
+     "net_profit": 6943632.493,
+     "ocf": 14408342.653,
+     "projects": {
+      "应收和应付项目": {
+       "occ": 99.55,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "当期购买基础设施项目": {
+       "occ": 99.55,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "处置基础设施项目": {
+       "occ": 99.55,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 99.55,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 99.55,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "持有的基础设施资产由2个保障性租赁住房项目": {
+       "occ": 99.55,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "园博公寓": {
+       "occ": 99.36,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "珩琦公寓": {
+       "occ": 99.79,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "穿透取得项目": {
+       "occ": 99.55,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有的基础设施资产组合由2个保障性租赁住房项目": {
+       "occ": 99.55,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基金管理人主动履行基础设施项目": {
+       "occ": 99.55,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "负责基础设施项目": {
+       "occ": 99.55,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的2个基础设施项目": {
+       "occ": 99.55,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2023-12-31",
+     "rtype": "FY",
+     "pub_date": "2024-03-29",
+     "unit_dist": 0.1148,
+     "unit_paid": 0.0939,
+     "ann_unit_dist": 0.1148,
+     "nav": 2.58252,
+     "occ": 99.56,
+     "occ_src": "project",
+     "collect": 100.0,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 5.04,
+     "px_at_end": 2.28,
+     "pnav": 0.883,
+     "revenue": 76870956.3631,
+     "net_profit": 25482601.9912,
+     "ocf": 58530866.2123,
+     "projects": {
+      "基础设施项目": {
+       "occ": 99.83,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "期末基础设施项目": {
+       "occ": 99.83,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "上述基础设施项目": {
+       "occ": 99.41,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "上表所述基础设施项目": {
+       "occ": 99.41,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "息税折旧摊销前净利润为基础设施项目": {
+       "occ": 99.41,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "2管理人对基础设施项目": {
+       "occ": 99.41,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 99.41,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "园博公寓": {
+       "occ": 99.41,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "珩琦公寓": {
+       "occ": 99.91,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-03-31",
+     "rtype": "Q1",
+     "pub_date": "2024-04-20",
+     "unit_dist": 0.0285,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1143,
+     "nav": null,
+     "occ": 99.4,
+     "occ_src": "project",
+     "collect": null,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 4.89,
+     "px_at_end": 2.337,
+     "pnav": null,
+     "revenue": 19540358.782,
+     "net_profit": 7054413.643,
+     "ocf": 15273951.743,
+     "projects": {
+      "4基础设施项目": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "持有的基础设施资产由2个保障性租赁住房项目": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基础设施项目": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "穿透取得项目": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有的基础设施资产组合由2个保障性租赁住房项目": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "园博公寓": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "珩琦公寓": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基金管理人主动履行基础设施项目": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "负责基础设施项目": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的2个基础设施项目": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "园博项目": {
+       "occ": 99.53,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "珩琦项目": {
+       "occ": 99.24,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-06-30",
+     "rtype": "H1",
+     "pub_date": "2024-08-31",
+     "unit_dist": 0.0582,
+     "unit_paid": 0.0628,
+     "ann_unit_dist": 0.1167,
+     "nav": 2.5476,
+     "occ": 99.45,
+     "occ_src": "project",
+     "collect": null,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 4.25,
+     "px_at_end": 2.747,
+     "pnav": 1.078,
+     "revenue": 39190112.19,
+     "net_profit": 13981418.18,
+     "ocf": 25133566.94,
+     "projects": {
+      "4基础设施项目": {
+       "occ": 99.51,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 99.51,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "持有的基础设施资产由2个保障性租赁住房项目": {
+       "occ": 99.51,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基础设施项目": {
+       "occ": 99.51,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "233息税折旧摊销前净利率基础设施项目": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "上述基础设施项目": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "上表所述基础设施项目": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "息税折旧摊销前净利润为基础设施项目": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "2管理人对基础设施项目": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "运营相关通用指标信息基础设施项目": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "由2个保障性租赁住房项目": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "园博项目": {
+       "occ": 99.4,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "珩琦项目": {
+       "occ": 99.65,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-09-30",
+     "rtype": "Q3",
+     "pub_date": "2024-10-25",
+     "unit_dist": 0.0293,
+     "unit_paid": 0.0582,
+     "ann_unit_dist": 0.1162,
+     "nav": null,
+     "occ": 99.67,
+     "occ_src": "project",
+     "collect": null,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 3.88,
+     "px_at_end": 2.997,
+     "pnav": null,
+     "revenue": 20007732.272,
+     "net_profit": 7307922.503,
+     "ocf": 15768909.003,
+     "projects": {
+      "处置基础设施项目": {
+       "occ": 99.67,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 99.67,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 99.67,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "持有的基础设施资产由2个保障性租赁住房项目": {
+       "occ": 99.67,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基础设施项目": {
+       "occ": 99.67,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有的基础设施资产组合由2个保障性租赁住房项目": {
+       "occ": 99.67,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "园博公寓": {
+       "occ": 99.67,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "珩琦公寓": {
+       "occ": 99.67,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基金管理人主动履行基础设施项目": {
+       "occ": 99.67,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "负责基础设施项目": {
+       "occ": 99.67,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "第11页共15页本基金持有的2个基础设施项目": {
+       "occ": 99.67,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "园博项目": {
+       "occ": 99.64,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "珩琦项目": {
+       "occ": 99.71,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-12-31",
+     "rtype": "FY",
+     "pub_date": "2025-03-28",
+     "unit_dist": 0.1163,
+     "unit_paid": 0.121,
+     "ann_unit_dist": 0.116,
+     "nav": 2.51762,
+     "occ": 99.73,
+     "occ_src": "project",
+     "collect": 100.0,
+     "lease": null,
+     "dy_official": 3.16,
+     "dy_calc": 3.35,
+     "px_at_end": 3.459,
+     "pnav": 1.374,
+     "revenue": 79297785.1776,
+     "net_profit": 28076862.8125,
+     "ocf": 59534127.3958,
+     "projects": {
+      "园博公寓序号指标名称指标含义说明及计算方式指标单位本": {
+       "occ": 99.56,
+       "collect": 100.0,
+       "rent": 34.7133,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "珩琦公寓序号指标名称指标含义说明及计算方式指标单位本": {
+       "occ": 99.91,
+       "collect": 100.0,
+       "rent": 33.2631,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-03-31",
+     "rtype": "Q1",
+     "pub_date": "2025-04-22",
+     "unit_dist": 0.0295,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1196,
+     "nav": null,
+     "occ": 99.29,
+     "occ_src": "project",
+     "collect": 100.0,
+     "lease": null,
+     "dy_official": 3.07,
+     "dy_calc": 3.25,
+     "px_at_end": 3.675,
+     "pnav": null,
+     "revenue": 20109519.992,
+     "net_profit": 7599205.473,
+     "ocf": 16251799.034,
+     "projects": {
+      "园博公寓序号指标名称指标含义说明及计算方式指标单位报": {
+       "occ": 99.09,
+       "collect": 100.0,
+       "rent": 34.8733,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "珩琦公寓序号指标名称指标含义说明及计算方式指标单位报": {
+       "occ": 99.49,
+       "collect": 100.0,
+       "rent": 33.4732,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-06-30",
+     "rtype": "H1",
+     "pub_date": "2025-08-29",
+     "unit_dist": 0.0593,
+     "unit_paid": 0.0581,
+     "ann_unit_dist": 0.1196,
+     "nav": 2.4891,
+     "occ": 99.31,
+     "occ_src": "project",
+     "collect": 100.0,
+     "lease": null,
+     "dy_official": 2.47,
+     "dy_calc": 2.56,
+     "px_at_end": 4.676,
+     "pnav": 1.879,
+     "revenue": 40381260.83,
+     "net_profit": 14783120.44,
+     "ocf": 26222679.86,
+     "projects": {
+      "园博公寓序号指标名称指标含义说明及计算方式指标单位本": {
+       "occ": 99.22,
+       "collect": 100.0,
+       "rent": 35.0434,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "珩琦公寓序号指标名称指标含义说明及计算方式指标单位本": {
+       "occ": 99.41,
+       "collect": 100.0,
+       "rent": 33.5832,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-09-30",
+     "rtype": "Q3",
+     "pub_date": "2025-10-28",
+     "unit_dist": 0.0305,
+     "unit_paid": 0.0593,
+     "ann_unit_dist": 0.121,
+     "nav": null,
+     "occ": 99.25,
+     "occ_src": "project",
+     "collect": 100.0,
+     "lease": null,
+     "dy_official": 2.81,
+     "dy_calc": 2.9,
+     "px_at_end": 4.169,
+     "pnav": null,
+     "revenue": 20409716.932,
+     "net_profit": 7592203.723,
+     "ocf": 17084810.274,
+     "projects": {
+      "园博公寓序号指标名称指标含义说明及计算方式指标单位报": {
+       "occ": 99.19,
+       "collect": 100.0,
+       "rent": 35.3434,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "珩琦公寓序号指标名称指标含义说明及计算方式指标单位报": {
+       "occ": 99.32,
+       "collect": 100.0,
+       "rent": 33.9533,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-12-31",
+     "rtype": "FY",
+     "pub_date": "2026-03-31",
+     "unit_dist": 0.119,
+     "unit_paid": 0.1174,
+     "ann_unit_dist": 0.119,
+     "nav": 2.45942,
+     "occ": 99.73,
+     "occ_src": "project",
+     "collect": 100.0,
+     "lease": null,
+     "dy_official": 2.79,
+     "dy_calc": 2.86,
+     "px_at_end": 4.154,
+     "pnav": 1.689,
+     "revenue": 81234134.0279,
+     "net_profit": 29602751.1428,
+     "ocf": 61566551.8059,
+     "projects": {
+      "园博公寓序号指标名称指标含义说明及计算公式指标单位本": {
+       "occ": 99.64,
+       "collect": 100.0,
+       "rent": 35.5034,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "珩琦公寓序号指标名称指标含义说明及计算公式指标单位本": {
+       "occ": 99.82,
+       "collect": 100.0,
+       "rent": 34.0333,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2026-03-31",
+     "rtype": "Q1",
+     "pub_date": "2026-04-22",
+     "unit_dist": 0.0299,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1213,
+     "nav": null,
+     "occ": 99.07,
+     "occ_src": "project",
+     "collect": 100.0,
+     "lease": null,
+     "dy_official": 2.96,
+     "dy_calc": 3.04,
+     "px_at_end": 3.985,
+     "pnav": null,
+     "revenue": 20555111.502,
+     "net_profit": 8367537.79,
+     "ocf": 17351710.654,
+     "projects": {
+      "园博公寓序号指标名称指标含义说明及计算方式指标单位本": {
+       "occ": 99.12,
+       "collect": 100.0,
+       "rent": 35.6934,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "珩琦公寓序号指标名称指标含义说明及计算方式指标单位本": {
+       "occ": 99.02,
+       "collect": 100.0,
+       "rent": 34.1533,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2026-06-30",
+     "rtype": "H1",
+     "pub_date": "2026-08-28",
+     "unit_dist": 0.047,
+     "unit_paid": 0.0597,
+     "ann_unit_dist": 0.0948,
+     "nav": 2.813,
+     "occ": 99.08,
+     "occ_src": "project",
+     "collect": 100.0,
+     "lease": null,
+     "dy_official": 2.43,
+     "dy_calc": 2.46,
+     "px_at_end": 3.85,
+     "pnav": 1.369,
+     "revenue": 46616072.19,
+     "net_profit": 18035929.99,
+     "ocf": 29808720.45,
+     "projects": {
+      "园博公寓序号指标名称指标含义说明及计算方式指标单位本": {
+       "occ": 99.49,
+       "collect": 100.0,
+       "rent": 35.8235,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "珩琦公寓序号指标名称指标含义说明及计算方式指标单位本": {
+       "occ": 99.65,
+       "collect": 100.0,
+       "rent": 34.2633,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "林边公寓序号指标名称指标含义说明及计算方式指标单位本": {
+       "occ": 97.41,
+       "collect": 100.0,
+       "rent": 49.15,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "仁和公寓序号指标名称指标含义说明及计算方式指标单位本": {
+       "occ": 99.78,
+       "collect": 100.0,
+       "rent": 36.28,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    }
+   ],
+   "latest_period": "2026-06-30",
+   "latest_rtype": "H1",
+   "latest_pub": "2026-08-28",
+   "dy_cur": 2.43,
+   "dy_official": 2.43,
+   "dy_ttm": 2.73,
+   "nav_latest": 2.813,
+   "pnav": 1.387,
+   "occ": 99.08,
+   "occ_src": "project",
+   "collect": 100.0,
+   "lease": null,
+   "dd_1y": -0.0795,
+   "dd_all": -0.1939,
+   "mdd_1y": -0.1248,
+   "vol_1y": 0.1216,
+   "ret_1y": -0.0685,
+   "ytd": -0.0556,
+   "dy_pct": 0.0,
+   "pnav_pct": 66.7,
+   "occ_pct": 13.3,
+   "dy_min": 2.46,
+   "dy_max": 5.04,
+   "pnav_min": 0.883,
+   "pnav_max": 1.879,
+   "occ_min": 99.07,
+   "occ_max": 99.73,
+   "collect_min": 100.0,
+   "collect_max": 100.0,
+   "n_periods": 15,
+   "first_period": "2022-12-31",
+   "new_listing": false
+  },
+  {
+   "code": "sh508077",
+   "name": "华夏基金华润有巢REIT",
+   "price": 2.676,
+   "mktcap": "25.36",
+   "series": [
+    {
+     "period_end": "2022-12-31",
+     "rtype": "FY",
+     "pub_date": "2024-03-28",
+     "unit_dist": 0.1215,
+     "unit_paid": 0.0785,
+     "ann_unit_dist": 1.0079,
+     "nav": 2.36222,
+     "occ": 93.53,
+     "occ_src": "project",
+     "collect": 97.76,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 78410725.2515,
+     "net_profit": 4859657.466,
+     "ocf": 53010841.451,
+     "projects": {
+      "差异的主要原因是本报告期内项目": {
+       "occ": 92.88,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 92.88,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 92.88,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "两家基础设施项目": {
+       "occ": 92.88,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有巢泗泾项目公寓": {
+       "occ": 92.88,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有巢东部经开区项目公寓": {
+       "occ": 93.25,
+       "collect": 98.62,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基础设施项目": {
+       "occ": null,
+       "collect": 98.62,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "3基础设施项目": {
+       "occ": 94.51,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1基础设施项目": {
+       "occ": 94.51,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "2管理人对基础设施项目": {
+       "occ": 94.51,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有巢泗泾项目": {
+       "occ": 94.51,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有巢东部经开区项目": {
+       "occ": 93.19,
+       "collect": 96.04,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2023-03-31",
+     "rtype": "Q1",
+     "pub_date": "2023-04-21",
+     "unit_dist": 0.0318,
+     "unit_paid": null,
+     "ann_unit_dist": 0.129,
+     "nav": null,
+     "occ": 96.08,
+     "occ_src": "project",
+     "collect": null,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 19263964.542,
+     "net_profit": 1327041.903,
+     "ocf": 12715844.77,
+     "projects": {
+      "4基础设施项目": {
+       "occ": 96.99,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 96.99,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "两家基础设施项目": {
+       "occ": 96.99,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "海有巢优厦房屋租赁有限公司持有的有巢泗泾项目": {
+       "occ": 96.99,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有限公司持有的有巢东部经开区项目": {
+       "occ": 92.43,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2023-06-30",
+     "rtype": "H1",
+     "pub_date": "2023-08-30",
+     "unit_dist": 0.0641,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1293,
+     "nav": 2.4352,
+     "occ": 96.49,
+     "occ_src": "project",
+     "collect": null,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 38720570.82,
+     "net_profit": 2114022.97,
+     "ocf": 25080245.31,
+     "projects": {
+      "4基础设施项目": {
+       "occ": 96.52,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 96.52,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "两家基础设施项目": {
+       "occ": 96.52,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "海有巢优厦房屋租赁有限公司持有的有巢泗泾项目": {
+       "occ": 96.52,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有限公司持有的有巢东部经开区项目": {
+       "occ": 96.36,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "2管理人对基础设施项目": {
+       "occ": 96.52,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基础设施项目": {
+       "occ": 96.52,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "3基础设施项目": {
+       "occ": 96.52,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1基础设施项目": {
+       "occ": 96.52,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有巢泗泾项目": {
+       "occ": 96.52,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有巢东部经开区项目": {
+       "occ": 96.36,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2023-09-30",
+     "rtype": "Q3",
+     "pub_date": "2023-10-24",
+     "unit_dist": 0.0287,
+     "unit_paid": 0.0785,
+     "ann_unit_dist": 0.1139,
+     "nav": null,
+     "occ": 94.0,
+     "occ_src": "project",
+     "collect": 94.68,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 19797606.352,
+     "net_profit": 1515491.863,
+     "ocf": 16561902.19,
+     "projects": {
+      "4基础设施项目": {
+       "occ": 94.54,
+       "collect": 94.68,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 94.54,
+       "collect": 94.68,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "两家基础设施项目": {
+       "occ": 94.54,
+       "collect": 94.68,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "报告期内基础设施项目": {
+       "occ": 94.54,
+       "collect": 94.68,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "海有巢优厦房屋租赁有限公司持有的有巢泗泾项目": {
+       "occ": 94.54,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有限公司持有的有巢东部经开区项目": {
+       "occ": 91.32,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2023-12-31",
+     "rtype": "Q4",
+     "pub_date": "2024-01-19",
+     "unit_dist": 0.0287,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1139,
+     "nav": null,
+     "occ": 92.94,
+     "occ_src": "project",
+     "collect": 95.99,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 5.5,
+     "px_at_end": 2.071,
+     "pnav": null,
+     "revenue": 19892548.092,
+     "net_profit": 1230142.633,
+     "ocf": 11368693.95,
+     "projects": {
+      "当期购买基础设施项目": {
+       "occ": null,
+       "collect": 95.99,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 92.88,
+       "collect": 95.99,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 92.88,
+       "collect": 95.99,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "两家基础设施项目": {
+       "occ": 92.88,
+       "collect": 95.99,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "报告期内基础设施项目": {
+       "occ": 92.88,
+       "collect": 95.99,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "海有巢优厦房屋租赁有限公司持有的有巢泗泾项目": {
+       "occ": 92.88,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有限公司持有的有巢东部经开区项目": {
+       "occ": 93.25,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-03-31",
+     "rtype": "Q1",
+     "pub_date": "2024-04-19",
+     "unit_dist": 0.0244,
+     "unit_paid": null,
+     "ann_unit_dist": 0.0979,
+     "nav": null,
+     "occ": 94.36,
+     "occ_src": "project",
+     "collect": 95.96,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 4.47,
+     "px_at_end": 2.191,
+     "pnav": null,
+     "revenue": 19617526.662,
+     "net_profit": 1529174.363,
+     "ocf": 12505123.25,
+     "projects": {
+      "4基础设施项目": {
+       "occ": 94.38,
+       "collect": 95.96,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 94.38,
+       "collect": 95.96,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "两家基础设施项目": {
+       "occ": 94.38,
+       "collect": 95.96,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "报告期内基础设施项目": {
+       "occ": 94.38,
+       "collect": 95.96,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "海有巢优厦房屋租赁有限公司持有的有巢泗泾项目": {
+       "occ": 94.38,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有限公司持有的有巢东部经开区项目": {
+       "occ": 94.29,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-06-30",
+     "rtype": "H1",
+     "pub_date": "2024-08-30",
+     "unit_dist": 0.0488,
+     "unit_paid": 0.0818,
+     "ann_unit_dist": 0.0979,
+     "nav": 2.2888,
+     "occ": 93.46,
+     "occ_src": "project",
+     "collect": 98.42,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 4.09,
+     "px_at_end": 2.393,
+     "pnav": 1.046,
+     "revenue": 39314261.48,
+     "net_profit": 4170986.16,
+     "ocf": 21324334.86,
+     "projects": {
+      "基础设施项目": {
+       "occ": 94.07,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "3基础设施项目": {
+       "occ": 94.07,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1基础设施项目": {
+       "occ": 94.07,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "2管理人对基础设施项目": {
+       "occ": 94.07,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 94.07,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有巢泗泾项目公寓": {
+       "occ": 94.07,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有巢泗泾项目": {
+       "occ": 91.52,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有巢东部经开区项目公寓": {
+       "occ": 94.36,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有巢东部经开区项目": {
+       "occ": 90.81,
+       "collect": 98.42,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-09-30",
+     "rtype": "Q3",
+     "pub_date": "2024-10-25",
+     "unit_dist": 0.0246,
+     "unit_paid": 0.0244,
+     "ann_unit_dist": 0.0976,
+     "nav": null,
+     "occ": 91.23,
+     "occ_src": "project",
+     "collect": 98.73,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 3.88,
+     "px_at_end": 2.515,
+     "pnav": null,
+     "revenue": 19979508.822,
+     "net_profit": 3006838.303,
+     "ocf": 12986954.76,
+     "projects": {
+      "4基础设施项目": {
+       "occ": 90.59,
+       "collect": 98.73,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 90.59,
+       "collect": 98.73,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "两家基础设施项目": {
+       "occ": 90.59,
+       "collect": 98.73,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "报告期内基础设施项目": {
+       "occ": 90.59,
+       "collect": 98.73,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "海有巢优厦房屋租赁有限公司持有的有巢泗泾项目": {
+       "occ": 90.59,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有限公司持有的有巢东部经开区项目": {
+       "occ": 94.44,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-12-31",
+     "rtype": "Q4",
+     "pub_date": "2025-01-22",
+     "unit_dist": 0.0246,
+     "unit_paid": 0.0246,
+     "ann_unit_dist": 0.0976,
+     "nav": null,
+     "occ": 94.21,
+     "occ_src": "project",
+     "collect": 99.85,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 3.56,
+     "px_at_end": 2.74,
+     "pnav": null,
+     "revenue": 19783081.832,
+     "net_profit": 2504034.783,
+     "ocf": 13669302.24,
+     "projects": {
+      "4基础设施项目": {
+       "occ": 94.07,
+       "collect": 99.85,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 94.07,
+       "collect": 99.85,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "两家基础设施项目": {
+       "occ": 94.07,
+       "collect": 99.85,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "报告期内基础设施项目": {
+       "occ": 94.07,
+       "collect": 99.85,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "海有巢优厦房屋租赁有限公司持有的有巢泗泾项目": {
+       "occ": 94.07,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有巢泗泾项目公寓": {
+       "occ": 94.07,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有限公司持有的有巢东部经开区项目": {
+       "occ": 94.58,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "有巢东部经开区项目公寓": {
+       "occ": 94.58,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "2个项目公寓": {
+       "occ": 94.33,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2025-03-31",
+     "rtype": "Q1",
+     "pub_date": "2025-04-22",
+     "unit_dist": 0.0242,
+     "unit_paid": 0.0246,
+     "ann_unit_dist": 0.0981,
+     "nav": null,
+     "occ": 94.84,
+     "occ_src": "project",
+     "collect": 99.76,
+     "lease": 0.43,
+     "dy_official": 3.07,
+     "dy_calc": 3.21,
+     "px_at_end": 3.059,
+     "pnav": null,
+     "revenue": 19467451.862,
+     "net_profit": 2757197.083,
+     "ocf": 14995321.724,
+     "projects": {
+      "有巢泗泾项目序号指标名称指标含义说明及计算公式指标单": {
+       "occ": 95.09,
+       "collect": 99.75,
+       "rent": 2.612,
+       "area": null,
+       "lease": 0.45,
+       "src": "table"
+      },
+      "有巢东部经开区项目序号指标名称指标含义说明及计算公式": {
+       "occ": 94.58,
+       "collect": 99.77,
+       "rent": 1.0,
+       "area": null,
+       "lease": 0.4,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-06-30",
+     "rtype": "H1",
+     "pub_date": "2025-08-30",
+     "unit_dist": 0.0487,
+     "unit_paid": 0.0488,
+     "ann_unit_dist": 0.0982,
+     "nav": 2.2135,
+     "occ": 95.88,
+     "occ_src": "project",
+     "collect": 99.79,
+     "lease": 0.42,
+     "dy_official": 2.57,
+     "dy_calc": 2.65,
+     "px_at_end": 3.709,
+     "pnav": 1.676,
+     "revenue": 39288302.43,
+     "net_profit": 5783765.47,
+     "ocf": 23853749.29,
+     "projects": {
+      "有巢泗泾项目序号指标名称指标含义说明及计算公式指标单": {
+       "occ": 96.52,
+       "collect": 99.88,
+       "rent": 1.0,
+       "area": null,
+       "lease": 0.41,
+       "src": "table"
+      },
+      "有巢东部经开区项目华夏基金华润有巢租赁住房封闭式基础": {
+       "occ": 95.25,
+       "collect": 99.71,
+       "rent": 1.821,
+       "area": null,
+       "lease": 0.43,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-09-30",
+     "rtype": "Q3",
+     "pub_date": "2025-10-28",
+     "unit_dist": 0.0247,
+     "unit_paid": 0.0245,
+     "ann_unit_dist": 0.098,
+     "nav": null,
+     "occ": 93.41,
+     "occ_src": "project",
+     "collect": 99.94,
+     "lease": 0.55,
+     "dy_official": 2.88,
+     "dy_calc": 2.96,
+     "px_at_end": 3.316,
+     "pnav": null,
+     "revenue": 19089797.002,
+     "net_profit": 2885569.263,
+     "ocf": 13005181.704,
+     "projects": {
+      "有巢泗泾项目序号指标名称指标含义说明及计算公式指标单": {
+       "occ": 93.12,
+       "collect": 99.97,
+       "rent": 2.572,
+       "area": null,
+       "lease": 0.51,
+       "src": "table"
+      },
+      "有巢东部经开区项目序号指标名称指标含义说明及计算公式": {
+       "occ": 93.69,
+       "collect": 99.9,
+       "rent": 1.0,
+       "area": null,
+       "lease": 0.59,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-12-31",
+     "rtype": "Q4",
+     "pub_date": "2026-01-22",
+     "unit_dist": 0.0146,
+     "unit_paid": 0.0247,
+     "ann_unit_dist": 0.0579,
+     "nav": null,
+     "occ": 95.05,
+     "occ_src": "project",
+     "collect": 99.48,
+     "lease": 0.55,
+     "dy_official": 1.8,
+     "dy_calc": 2.0,
+     "px_at_end": 2.897,
+     "pnav": null,
+     "revenue": 20573993.612,
+     "net_profit": 2810530.053,
+     "ocf": 15973405.944,
+     "projects": {
+      "有巢泗泾项目序号指标名称指标含义说明及计算公式指标单": {
+       "occ": 95.17,
+       "collect": 100.0,
+       "rent": 1.0,
+       "area": null,
+       "lease": 0.54,
+       "src": "table"
+      },
+      "有巢东部经开区项目序号指标名称指标含义说明及计算公式": {
+       "occ": 95.4,
+       "collect": 100.0,
+       "rent": 1.0,
+       "area": null,
+       "lease": 0.56,
+       "src": "table"
+      },
+      "有巢马桥项目序号指标名称指标含义说明及计算公式指标单": {
+       "occ": 94.59,
+       "collect": 98.43,
+       "rent": 1.0,
+       "area": null,
+       "lease": 0.54,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2026-03-31",
+     "rtype": "Q1",
+     "pub_date": "2026-04-22",
+     "unit_dist": 0.0238,
+     "unit_paid": 0.0146,
+     "ann_unit_dist": 0.0965,
+     "nav": null,
+     "occ": 95.59,
+     "occ_src": "project",
+     "collect": 99.99,
+     "lease": 0.48,
+     "dy_official": 3.51,
+     "dy_calc": 3.57,
+     "px_at_end": 2.7,
+     "pnav": null,
+     "revenue": 33980577.442,
+     "net_profit": 2900865.683,
+     "ocf": 24054439.784,
+     "projects": {
+      "有巢泗泾项目序号指标名称指标含义说明及计算公式指标单": {
+       "occ": 95.33,
+       "collect": 100.0,
+       "rent": 2.402,
+       "area": null,
+       "lease": 0.48,
+       "src": "table"
+      },
+      "有巢东部经开区项目序号指标名称指标含义说明及计算公式": {
+       "occ": 96.74,
+       "collect": 99.99,
+       "rent": 1.0,
+       "area": null,
+       "lease": 0.46,
+       "src": "table"
+      },
+      "有巢马桥项目华夏基金华润有巢租赁住房封闭式基础设施证": {
+       "occ": 94.71,
+       "collect": 99.98,
+       "rent": 1.0,
+       "area": null,
+       "lease": 0.51,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2026-06-30",
+     "rtype": "H1",
+     "pub_date": "2026-08-31",
+     "unit_dist": 0.0478,
+     "unit_paid": 0.0384,
+     "ann_unit_dist": 0.0964,
+     "nav": 2.3125,
+     "occ": 95.13,
+     "occ_src": "project",
+     "collect": 99.95,
+     "lease": 0.47,
+     "dy_official": 3.48,
+     "dy_calc": 3.51,
+     "px_at_end": 2.745,
+     "pnav": 1.187,
+     "revenue": 68848119.47,
+     "net_profit": 7364687.77,
+     "ocf": 45202105.96,
+     "projects": {
+      "有巢泗泾项目序号指标名称指标含义说明及计算公式指标单": {
+       "occ": 95.09,
+       "collect": 99.98,
+       "rent": 1.0,
+       "area": null,
+       "lease": 0.41,
+       "src": "table"
+      },
+      "有巢东部经开区项目序号指标名称指标含义说明及计算公式": {
+       "occ": 95.99,
+       "collect": 99.9,
+       "rent": 1.0,
+       "area": null,
+       "lease": 0.44,
+       "src": "table"
+      },
+      "有巢马桥项目华夏基金华润有巢租赁住房封闭式基础设施证": {
+       "occ": 94.3,
+       "collect": 99.98,
+       "rent": 1.0,
+       "area": null,
+       "lease": 0.57,
+       "src": "table"
+      }
+     }
+    }
+   ],
+   "latest_period": "2026-06-30",
+   "latest_rtype": "H1",
+   "latest_pub": "2026-08-31",
+   "dy_cur": 3.6,
+   "dy_official": 3.48,
+   "dy_ttm": 3.26,
+   "nav_latest": 2.3125,
+   "pnav": 1.157,
+   "occ": 95.13,
+   "occ_src": "project",
+   "collect": 99.95,
+   "lease": 0.47,
+   "dd_1y": -0.1945,
+   "dd_all": -0.2889,
+   "mdd_1y": -0.2303,
+   "vol_1y": 0.1833,
+   "ret_1y": -0.1876,
+   "ytd": -0.0798,
+   "dy_pct": 63.6,
+   "pnav_pct": 33.3,
+   "occ_pct": 73.3,
+   "dy_min": 2.0,
+   "dy_max": 5.5,
+   "pnav_min": 1.046,
+   "pnav_max": 1.676,
+   "occ_min": 91.23,
+   "occ_max": 96.49,
+   "collect_min": 94.68,
+   "collect_max": 99.99,
+   "n_periods": 15,
+   "first_period": "2022-12-31",
+   "new_listing": false
+  },
+  {
+   "code": "sz180502",
+   "name": "招商基金蛇口租赁住房REIT",
+   "price": 3.572,
+   "mktcap": "17.86",
+   "series": [
+    {
+     "period_end": "2024-12-31",
+     "rtype": "FY",
+     "pub_date": "2025-03-14",
+     "unit_dist": 0.03432,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1291,
+     "nav": 2.7347,
+     "occ": 77.59,
+     "occ_src": "project",
+     "collect": 98.9,
+     "lease": 0.55,
+     "dy_official": 4.05,
+     "dy_calc": 4.32,
+     "px_at_end": 2.988,
+     "pnav": 1.093,
+     "revenue": 26868679.68,
+     "net_profit": 3845326.57,
+     "ocf": 26531379.19,
+     "projects": {
+      "两个基础设施项目": {
+       "occ": 70.37,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "林下项目": {
+       "occ": 70.37,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "太子湾项目": {
+       "occ": 70.37,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "报告期内基础设施项目": {
+       "occ": 70.37,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "2报告期以及上年同期资产项目": {
+       "occ": 70.37,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "因林下项目": {
+       "occ": 70.37,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "3报告期及上年同期重要资产项目": {
+       "occ": 70.37,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "运营指标基础设施项目": {
+       "occ": 70.37,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4其他运营情况说明2024年12月末林下项目": {
+       "occ": 70.37,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "为基础设施项目": {
+       "occ": 93.83,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "9资产项目": {
+       "occ": 93.83,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内资产项目": {
+       "occ": 93.83,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基础设施项目": {
+       "occ": 93.83,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2025-03-31",
+     "rtype": "Q1",
+     "pub_date": "2025-04-21",
+     "unit_dist": 0.0248,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1006,
+     "nav": null,
+     "occ": 93.3,
+     "occ_src": "project",
+     "collect": 96.99,
+     "lease": 0.59,
+     "dy_official": 2.77,
+     "dy_calc": 2.94,
+     "px_at_end": 3.425,
+     "pnav": null,
+     "revenue": 17910344.07,
+     "net_profit": null,
+     "ocf": 7960568.184,
+     "projects": {
+      "林下项目序号指标名称指标含义说明及计算公式指标单位本": {
+       "occ": 90.79,
+       "collect": 96.32,
+       "rent": 5.0,
+       "area": null,
+       "lease": 0.64,
+       "src": "table"
+      },
+      "太子湾项目序号指标名称指标含义说明及计算公式指标单位": {
+       "occ": 95.8,
+       "collect": 97.66,
+       "rent": 107.6,
+       "area": null,
+       "lease": 0.54,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-06-30",
+     "rtype": "H1",
+     "pub_date": "2025-08-28",
+     "unit_dist": 0.0525,
+     "unit_paid": 0.03432,
+     "ann_unit_dist": 0.1059,
+     "nav": 2.6989,
+     "occ": 95.19,
+     "occ_src": "project",
+     "collect": 98.5,
+     "lease": 0.55,
+     "dy_official": 2.58,
+     "dy_calc": 2.7,
+     "px_at_end": 3.927,
+     "pnav": 1.455,
+     "revenue": 38085751.15,
+     "net_profit": null,
+     "ocf": 20169677.9,
+     "projects": {
+      "林下项目序号指标名称指标含义说明及计算公式指标单位本": {
+       "occ": 97.32,
+       "collect": 98.22,
+       "rent": 98.215,
+       "area": null,
+       "lease": 0.58,
+       "src": "table"
+      },
+      "太子湾项目序号指标名称指标含义说明及计算公式指标单位": {
+       "occ": 93.05,
+       "collect": 98.77,
+       "rent": 107.36,
+       "area": null,
+       "lease": 0.52,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-09-30",
+     "rtype": "Q3",
+     "pub_date": "2025-10-27",
+     "unit_dist": 0.0318,
+     "unit_paid": 0.0525,
+     "ann_unit_dist": 0.1262,
+     "nav": null,
+     "occ": 96.47,
+     "occ_src": "project",
+     "collect": 99.48,
+     "lease": 0.57,
+     "dy_official": 3.04,
+     "dy_calc": 3.52,
+     "px_at_end": 3.588,
+     "pnav": null,
+     "revenue": 21404726.262,
+     "net_profit": 2044595.623,
+     "ocf": 15602994.324,
+     "projects": {
+      "林下项目序号指标名称指标含义说明及计算公式指标单位本": {
+       "occ": 97.55,
+       "collect": 99.32,
+       "rent": 98.245,
+       "area": null,
+       "lease": 0.51,
+       "src": "table"
+      },
+      "太子湾项目序号指标名称指标含义说明及计算公式指标单位": {
+       "occ": 95.4,
+       "collect": 99.64,
+       "rent": 106.826,
+       "area": null,
+       "lease": 0.63,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-12-31",
+     "rtype": "Q4",
+     "pub_date": "2026-01-22",
+     "unit_dist": 0.0291,
+     "unit_paid": 0.0318,
+     "ann_unit_dist": 0.1155,
+     "nav": null,
+     "occ": 67.85,
+     "occ_src": "project",
+     "collect": 99.99,
+     "lease": 0.48,
+     "dy_official": 3.2,
+     "dy_calc": 3.34,
+     "px_at_end": 3.461,
+     "pnav": null,
+     "revenue": 21394871.342,
+     "net_profit": 2284705.58,
+     "ocf": 15121456.404,
+     "projects": {
+      "林下项目序号指标名称指标含义说明及计算公式指标单位本": {
+       "occ": 97.77,
+       "collect": 99.98,
+       "rent": 98.48105,
+       "area": null,
+       "lease": 0.4,
+       "src": "table"
+      },
+      "太子湾项目序号指标名称指标含义说明及计算公式指标单位": {
+       "occ": 37.94,
+       "collect": 100.0,
+       "rent": 106.85107,
+       "area": null,
+       "lease": 0.56,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2026-03-31",
+     "rtype": "Q1",
+     "pub_date": "2026-04-22",
+     "unit_dist": 0.0283,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1148,
+     "nav": null,
+     "occ": 94.78,
+     "occ_src": "project",
+     "collect": 95.75,
+     "lease": 0.54,
+     "dy_official": 3.22,
+     "dy_calc": 3.31,
+     "px_at_end": 3.469,
+     "pnav": null,
+     "revenue": 20190077.672,
+     "net_profit": 1175956.013,
+     "ocf": 16664989.824,
+     "projects": {
+      "林下项目项目公司名称深圳市林下住房租赁有限公司不动产": {
+       "occ": null,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "太子湾项目项目公司名称太子湾乐宜置业（深圳）有限公司": {
+       "occ": null,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "林下项目序号指标名称指标含义说明及计算公式指标单位本": {
+       "occ": 96.15,
+       "collect": 94.52,
+       "rent": 99.7698,
+       "area": null,
+       "lease": 0.54,
+       "src": "table"
+      },
+      "太子湾项目序号指标名称指标含义说明及计算公式指标单位": {
+       "occ": 93.41,
+       "collect": 96.97,
+       "rent": 107.62107,
+       "area": null,
+       "lease": 0.53,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2026-06-30",
+     "rtype": "H1",
+     "pub_date": "2026-08-28",
+     "unit_dist": 0.0595,
+     "unit_paid": 0.0571,
+     "ann_unit_dist": 0.12,
+     "nav": 2.5707,
+     "occ": 95.73,
+     "occ_src": "project",
+     "collect": 99.45,
+     "lease": 0.54,
+     "dy_official": 3.48,
+     "dy_calc": 3.51,
+     "px_at_end": 3.418,
+     "pnav": 1.33,
+     "revenue": 40635136.07,
+     "net_profit": 2274917.77,
+     "ocf": 32776140.59,
+     "projects": {
+      "林下项目序号指标名称指标含义说明及计算公式指标单位本": {
+       "occ": 96.29,
+       "collect": 99.44,
+       "rent": 100.1398,
+       "area": null,
+       "lease": 0.56,
+       "src": "table"
+      },
+      "太子湾项目序号指标名称指标含义说明及计算公式指标单位": {
+       "occ": 95.17,
+       "collect": 99.47,
+       "rent": 107.91107,
+       "area": null,
+       "lease": 0.51,
+       "src": "table"
+      }
+     }
+    }
+   ],
+   "latest_period": "2026-06-30",
+   "latest_rtype": "H1",
+   "latest_pub": "2026-08-28",
+   "dy_cur": 3.36,
+   "dy_official": 3.48,
+   "dy_ttm": 3.37,
+   "nav_latest": 2.5707,
+   "pnav": 1.39,
+   "occ": 95.73,
+   "occ_src": "project",
+   "collect": 99.45,
+   "lease": 0.54,
+   "dd_1y": -0.0372,
+   "dd_all": -0.1121,
+   "mdd_1y": -0.1299,
+   "vol_1y": 0.1588,
+   "ret_1y": -0.0025,
+   "ytd": 0.0214,
+   "dy_pct": 57.1,
+   "pnav_pct": 66.7,
+   "occ_pct": 85.7,
+   "dy_min": 2.7,
+   "dy_max": 4.32,
+   "pnav_min": 1.093,
+   "pnav_max": 1.455,
+   "occ_min": 67.85,
+   "occ_max": 96.47,
+   "collect_min": 95.75,
+   "collect_max": 99.99,
+   "n_periods": 7,
+   "first_period": "2024-12-31",
+   "new_listing": false
+  },
+  {
+   "code": "sh508085",
+   "name": "华泰苏州恒泰租赁住房REIT",
+   "price": 3.425,
+   "mktcap": "17.12",
+   "series": [
+    {
+     "period_end": "2025-09-30",
+     "rtype": "Q3",
+     "pub_date": "2025-10-28",
+     "unit_dist": 0.0192,
+     "unit_paid": null,
+     "ann_unit_dist": 0.0762,
+     "nav": null,
+     "occ": 97.56,
+     "occ_src": "report_level",
+     "collect": 99.39,
+     "lease": null,
+     "dy_official": 3.07,
+     "dy_calc": 2.05,
+     "px_at_end": 3.717,
+     "pnav": null,
+     "revenue": 20254267.922,
+     "net_profit": null,
+     "ocf": 2985316.1923,
+     "projects": {}
+    },
+    {
+     "period_end": "2025-12-31",
+     "rtype": "H1",
+     "pub_date": "2025-08-29",
+     "unit_dist": 0.0324,
+     "unit_paid": null,
+     "ann_unit_dist": 0.0046,
+     "nav": 2.7429,
+     "occ": 95.49,
+     "occ_src": "report_level",
+     "collect": 99.87,
+     "lease": null,
+     "dy_official": 4.21,
+     "dy_calc": 0.13,
+     "px_at_end": 3.551,
+     "pnav": 1.295,
+     "revenue": 20209196.01,
+     "net_profit": 4425669.15,
+     "ocf": 23360357.09,
+     "projects": {}
+    },
+    {
+     "period_end": "2026-03-31",
+     "rtype": "Q1",
+     "pub_date": "2026-04-22",
+     "unit_dist": 0.0289,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1172,
+     "nav": null,
+     "occ": 96.67,
+     "occ_src": "project",
+     "collect": 99.81,
+     "lease": null,
+     "dy_official": 3.3,
+     "dy_calc": 3.38,
+     "px_at_end": 3.468,
+     "pnav": null,
+     "revenue": 20292037.662,
+     "net_profit": 5148239.063,
+     "ocf": 18661025.574,
+     "projects": {
+      "1菁英公寓项目序号指标名称指标含义说明及计算公式指标": {
+       "occ": 96.67,
+       "collect": 99.81,
+       "rent": 12.0,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2026-06-30",
+     "rtype": "H1",
+     "pub_date": "2026-08-31",
+     "unit_dist": 0.0587,
+     "unit_paid": 0.0242,
+     "ann_unit_dist": 0.1184,
+     "nav": 2.6398,
+     "occ": 97.16,
+     "occ_src": "project",
+     "collect": 99.84,
+     "lease": null,
+     "dy_official": 3.38,
+     "dy_calc": 3.43,
+     "px_at_end": 3.447,
+     "pnav": 1.306,
+     "revenue": 40676514.26,
+     "net_profit": 7471361.86,
+     "ocf": 36031928.02,
+     "projects": {
+      "1苏州工业园区菁英公寓管理有限公司序号指标名称指标含": {
+       "occ": 97.16,
+       "collect": 99.84,
+       "rent": 12.0,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    }
+   ],
+   "latest_period": "2026-06-30",
+   "latest_rtype": "H1",
+   "latest_pub": "2026-08-31",
+   "dy_cur": 3.46,
+   "dy_official": 3.38,
+   "dy_ttm": 3.93,
+   "nav_latest": 2.6398,
+   "pnav": 1.297,
+   "occ": 97.16,
+   "occ_src": "project",
+   "collect": 99.84,
+   "lease": null,
+   "dd_1y": -0.0956,
+   "dd_all": -0.1941,
+   "mdd_1y": -0.137,
+   "vol_1y": 0.1291,
+   "ret_1y": -0.0786,
+   "ytd": -0.0422,
+   "dy_pct": 100.0,
+   "pnav_pct": 50.0,
+   "occ_pct": 75.0,
+   "dy_min": 0.13,
+   "dy_max": 3.43,
+   "pnav_min": 1.295,
+   "pnav_max": 1.306,
+   "occ_min": 95.49,
+   "occ_max": 97.56,
+   "collect_min": 99.39,
+   "collect_max": 99.87,
+   "n_periods": 4,
+   "first_period": "2025-09-30",
+   "new_listing": false
+  },
+  {
+   "code": "sh508055",
+   "name": "汇添富上海地产租赁住房REIT",
+   "price": 3.258,
+   "mktcap": "16.29",
+   "series": [
+    {
+     "period_end": "2025-03-18",
+     "rtype": "H1",
+     "pub_date": "2025-08-29",
+     "unit_dist": 0.04972,
+     "unit_paid": null,
+     "ann_unit_dist": 0.6049,
+     "nav": 2.739,
+     "occ": 95.92,
+     "occ_src": "project",
+     "collect": 99.77,
+     "lease": null,
+     "dy_official": 4.32,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 24734932.96,
+     "net_profit": 7496036.87,
+     "ocf": 23538361.16,
+     "projects": {
+      "江月路项目序号指标名称指标含义说明及计算公式指标单位": {
+       "occ": 97.77,
+       "collect": 99.53,
+       "rent": 2.775,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "虹桥项目序号指标名称指标含义说明及计算公式指标单位本": {
+       "occ": 94.07,
+       "collect": 100.0,
+       "rent": 2.875,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-06-30",
+     "rtype": "Q2",
+     "pub_date": "2025-07-21",
+     "unit_dist": 0.0257,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1031,
+     "nav": null,
+     "occ": 95.92,
+     "occ_src": "project",
+     "collect": 99.77,
+     "lease": null,
+     "dy_official": 4.32,
+     "dy_calc": 2.6,
+     "px_at_end": 3.961,
+     "pnav": null,
+     "revenue": 18163409.422,
+     "net_profit": 2279112.003,
+     "ocf": 14010269.354,
+     "projects": {
+      "江月路项目序号指标名称指标含义说明及计算公式指标单位": {
+       "occ": 97.77,
+       "collect": 99.53,
+       "rent": 2.775,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "虹桥项目序号指标名称指标含义说明及计算公式指标单位本": {
+       "occ": 94.07,
+       "collect": 100.0,
+       "rent": 2.865,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-09-30",
+     "rtype": "Q3",
+     "pub_date": "2025-10-28",
+     "unit_dist": 0.0265,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1051,
+     "nav": null,
+     "occ": 95.97,
+     "occ_src": "project",
+     "collect": 99.1,
+     "lease": null,
+     "dy_official": 3.96,
+     "dy_calc": 3.04,
+     "px_at_end": 3.462,
+     "pnav": null,
+     "revenue": 19689738.742,
+     "net_profit": 4246902.613,
+     "ocf": 13710961.534,
+     "projects": {
+      "江月路项目序号指标名称指标含义说明及计算公式指标单位": {
+       "occ": 94.87,
+       "collect": 99.98,
+       "rent": 2.775,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "虹桥项目序号指标名称指标含义说明及计算公式指标单位本": {
+       "occ": 97.06,
+       "collect": 98.22,
+       "rent": 2.875,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-12-31",
+     "rtype": "Q4",
+     "pub_date": "2026-01-22",
+     "unit_dist": 0.0258,
+     "unit_paid": 0.0762,
+     "ann_unit_dist": 0.1024,
+     "nav": null,
+     "occ": 91.55,
+     "occ_src": "project",
+     "collect": 100.0,
+     "lease": null,
+     "dy_official": 3.7,
+     "dy_calc": 2.98,
+     "px_at_end": 3.44,
+     "pnav": null,
+     "revenue": 18698826.982,
+     "net_profit": 4883010.453,
+     "ocf": 13825130.764,
+     "projects": {
+      "江月路项目序号指标名称指标含义说明及计算公式指标单位": {
+       "occ": 92.15,
+       "collect": 100.0,
+       "rent": 2.775,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "虹桥项目汇添富上海地产租赁住房REIT2025年第4": {
+       "occ": 90.95,
+       "collect": 100.0,
+       "rent": 2.875,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2026-03-31",
+     "rtype": "Q1",
+     "pub_date": "2026-04-22",
+     "unit_dist": 0.0257,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1042,
+     "nav": null,
+     "occ": 89.64,
+     "occ_src": "project",
+     "collect": 99.78,
+     "lease": null,
+     "dy_official": 3.0,
+     "dy_calc": 3.06,
+     "px_at_end": 3.403,
+     "pnav": null,
+     "revenue": 17775483.662,
+     "net_profit": 3537866.313,
+     "ocf": 10618836.094,
+     "projects": {
+      "江月路项目序号指标名称指标含义说明及计算公式指标单位": {
+       "occ": 91.18,
+       "collect": 99.57,
+       "rent": 2.752,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "虹桥项目汇添富上海地产租赁住房REIT2026年第1": {
+       "occ": 88.09,
+       "collect": 100.0,
+       "rent": 2.862,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2026-06-30",
+     "rtype": "H1",
+     "pub_date": "2026-08-31",
+     "unit_dist": 0.0535,
+     "unit_paid": 0.0515,
+     "ann_unit_dist": 0.1079,
+     "nav": 2.6413,
+     "occ": 95.42,
+     "occ_src": "project",
+     "collect": 98.92,
+     "lease": null,
+     "dy_official": 3.27,
+     "dy_calc": 3.3,
+     "px_at_end": 3.27,
+     "pnav": 1.238,
+     "revenue": 36023232.33,
+     "net_profit": 5906185.55,
+     "ocf": 23929672.14,
+     "projects": {
+      "江月路项目序号指标名称指标含义说明及计算公式指标单位": {
+       "occ": 97.69,
+       "collect": 99.83,
+       "rent": 2.762,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "虹桥项目序号指标名称指标含义说明及计算公式指标单位本": {
+       "occ": 93.16,
+       "collect": 98.02,
+       "rent": 2.852,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    }
+   ],
+   "latest_period": "2026-06-30",
+   "latest_rtype": "H1",
+   "latest_pub": "2026-08-31",
+   "dy_cur": 3.31,
+   "dy_official": 3.27,
+   "dy_ttm": 4.77,
+   "nav_latest": 2.6413,
+   "pnav": 1.233,
+   "occ": 95.42,
+   "occ_src": "project",
+   "collect": 98.92,
+   "lease": null,
+   "dd_1y": -0.1159,
+   "dd_all": -0.2081,
+   "mdd_1y": -0.168,
+   "vol_1y": 0.1245,
+   "ret_1y": -0.0608,
+   "ytd": -0.0529,
+   "dy_pct": 100.0,
+   "pnav_pct": 0.0,
+   "occ_pct": 50.0,
+   "dy_min": 2.6,
+   "dy_max": 3.3,
+   "pnav_min": 1.238,
+   "pnav_max": 1.238,
+   "occ_min": 89.64,
+   "occ_max": 95.97,
+   "collect_min": 98.92,
+   "collect_max": 100.0,
+   "n_periods": 6,
+   "first_period": "2025-03-18",
+   "new_listing": false
+  },
+  {
+   "code": "sz180501",
+   "name": "红土创新深圳安居REIT",
+   "price": 3.23,
+   "mktcap": "13.36",
+   "series": [
+    {
+     "period_end": "2022-12-31",
+     "rtype": "FY",
+     "pub_date": "2023-03-31",
+     "unit_dist": 0.0422,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1167,
+     "nav": 2.5104,
+     "occ": 98.16,
+     "occ_src": "project",
+     "collect": null,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 24815959.89,
+     "net_profit": 13199054.36,
+     "ocf": 24463985.14,
+     "projects": {
+      "且由项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的基础设施资产为安居百泉阁项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居锦园项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保利香槟苑项目和凤凰公馆项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4个保障性租赁住房项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基金管理人主动履行基础设施项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "计划管理人以及项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "为基础设施项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "第16页共82页本基金持有的4个基础设施项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居百泉阁项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "2管理人对基础设施项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基础设施项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "信息本基金持有的基础设施资产为安居百泉阁项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的4个基础设施项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "凤凰公馆及保利香槟苑项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2023-03-31",
+     "rtype": "Q1",
+     "pub_date": "2023-04-21",
+     "unit_dist": 0.0252,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1022,
+     "nav": null,
+     "occ": 98.72,
+     "occ_src": "project",
+     "collect": null,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 13776232.42,
+     "net_profit": 6343544.093,
+     "ocf": 13409630.153,
+     "projects": {
+      "的全部份额而间接持有基础设施项目": {
+       "occ": 98.69,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "且由项目": {
+       "occ": 98.69,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的基础设施资产为安居百泉阁项目": {
+       "occ": 98.69,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居锦园项目": {
+       "occ": 98.69,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保利香槟苑项目和凤凰公馆项目": {
+       "occ": 98.69,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4个保障性租赁住房项目": {
+       "occ": 98.69,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基金管理人主动履行基础设施项目": {
+       "occ": 98.69,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "计划管理人以及项目": {
+       "occ": 98.69,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "为基础设施项目": {
+       "occ": 98.69,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的4个基础设施项目": {
+       "occ": 98.69,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居百泉阁项目": {
+       "occ": 98.69,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4个项目": {
+       "occ": 99.09,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2023-06-30",
+     "rtype": "Q2",
+     "pub_date": "2023-07-21",
+     "unit_dist": 0.0287,
+     "unit_paid": 0.038,
+     "ann_unit_dist": 0.1151,
+     "nav": null,
+     "occ": 98.21,
+     "occ_src": "project",
+     "collect": 99.77,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 13762766.29,
+     "net_profit": 6497951.063,
+     "ocf": 12686971.773,
+     "projects": {
+      "的全部份额而间接持有基础设施项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "且由项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的基础设施资产为安居百泉阁项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居锦园项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保利香槟苑项目和凤凰公馆项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4个保障性租赁住房项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基金管理人主动履行基础设施项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "计划管理人以及项目": {
+       "occ": 98.16,
+       "collect": 99.77,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "为基础设施项目": {
+       "occ": 98.16,
+       "collect": 99.77,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的4个基础设施项目": {
+       "occ": 98.16,
+       "collect": 99.77,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居百泉阁项目": {
+       "occ": 98.16,
+       "collect": 99.77,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4个项目": {
+       "occ": 98.82,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2023-09-30",
+     "rtype": "Q3",
+     "pub_date": "2023-10-25",
+     "unit_dist": 0.0267,
+     "unit_paid": 0.0539,
+     "ann_unit_dist": 0.1059,
+     "nav": null,
+     "occ": 98.25,
+     "occ_src": "project",
+     "collect": 99.99,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": null,
+     "px_at_end": null,
+     "pnav": null,
+     "revenue": 13738494.74,
+     "net_profit": 6291592.463,
+     "ocf": 13214189.783,
+     "projects": {
+      "的全部份额而间接持有基础设施项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "且由项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的基础设施资产为安居百泉阁项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居锦园项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保利香槟苑项目和凤凰公馆项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4个保障性租赁住房项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基金管理人主动履行基础设施项目": {
+       "occ": 98.16,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "计划管理人以及项目": {
+       "occ": 98.16,
+       "collect": 99.99,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "为基础设施项目": {
+       "occ": 98.16,
+       "collect": 99.99,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的4个基础设施项目": {
+       "occ": 98.16,
+       "collect": 99.99,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居百泉阁项目": {
+       "occ": 98.16,
+       "collect": 99.99,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4个项目": {
+       "occ": 99.22,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2023-12-31",
+     "rtype": "Q4",
+     "pub_date": "2024-01-20",
+     "unit_dist": 0.0216,
+     "unit_paid": null,
+     "ann_unit_dist": 0.0857,
+     "nav": null,
+     "occ": 97.33,
+     "occ_src": "project",
+     "collect": 99.42,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 3.9,
+     "px_at_end": 2.2,
+     "pnav": null,
+     "revenue": 13629723.34,
+     "net_profit": 5833045.773,
+     "ocf": 12460609.553,
+     "projects": {
+      "且由项目": {
+       "occ": 97.33,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的基础设施资产为安居百泉阁项目": {
+       "occ": 97.33,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居锦园项目": {
+       "occ": 97.33,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保利香槟苑项目和凤凰公馆项目": {
+       "occ": 97.33,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4个保障性租赁住房项目": {
+       "occ": 97.33,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基金管理人主动履行基础设施项目": {
+       "occ": 97.33,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "计划管理人以及项目": {
+       "occ": 97.33,
+       "collect": 99.42,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "为基础设施项目": {
+       "occ": 97.33,
+       "collect": 99.42,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的4个基础设施项目": {
+       "occ": 97.33,
+       "collect": 99.42,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居百泉阁项目": {
+       "occ": 97.33,
+       "collect": 99.42,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-03-31",
+     "rtype": "Q1",
+     "pub_date": "2024-04-20",
+     "unit_dist": 0.0268,
+     "unit_paid": null,
+     "ann_unit_dist": 0.1075,
+     "nav": null,
+     "occ": 98.28,
+     "occ_src": "project",
+     "collect": 99.89,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 4.84,
+     "px_at_end": 2.219,
+     "pnav": null,
+     "revenue": 13627385.732,
+     "net_profit": 6088496.52,
+     "ocf": 14072304.273,
+     "projects": {
+      "1对报告期内基础设施项目": {
+       "occ": 98.28,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的基础设施资产为项目": {
+       "occ": 98.28,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "圳市安居百泉阁管理有限公司持有安居百泉阁项目": {
+       "occ": 98.28,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "深圳市安居锦园管理有限公司持有安居锦园项目": {
+       "occ": 98.28,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "深圳市安居鼎吉管理有限公司持有保利香槟苑项目": {
+       "occ": 98.28,
+       "collect": 99.89,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "210套保障性租赁住房以及凤凰公馆项目": {
+       "occ": 98.28,
+       "collect": 99.89,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居百泉阁项目": {
+       "occ": 98.28,
+       "collect": 99.89,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居锦园项目": {
+       "occ": 98.28,
+       "collect": 99.89,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保利香槟苑项目": {
+       "occ": 98.28,
+       "collect": 99.89,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "凤凰公馆项目": {
+       "occ": 98.28,
+       "collect": 99.89,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保利香槟苑及凤凰公馆项目": {
+       "occ": 98.28,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "并争取在存续期内提升基础设施项目": {
+       "occ": 98.28,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "对基础设施项目": {
+       "occ": 98.28,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基础设施项目": {
+       "occ": 98.28,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的基础设施资产为安居百泉阁项目": {
+       "occ": 98.28,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保利香槟苑项目和凤凰公馆项目": {
+       "occ": 98.28,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4个保障性租赁住房项目": {
+       "occ": 98.28,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-06-30",
+     "rtype": "H1",
+     "pub_date": "2024-08-30",
+     "unit_dist": 0.0509,
+     "unit_paid": 0.0483,
+     "ann_unit_dist": 0.1021,
+     "nav": 2.4449,
+     "occ": 98.0,
+     "occ_src": "project",
+     "collect": 100.0,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 3.96,
+     "px_at_end": 2.576,
+     "pnav": 1.054,
+     "revenue": 27387608.98,
+     "net_profit": 12355034.42,
+     "ocf": 25497487.05,
+     "projects": {
+      "6页共73页鼎吉管理有限公司持有保利香槟苑": {
+       "occ": 98.07,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "项目210套保障性租赁住房以及凤凰公馆项目": {
+       "occ": 98.07,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居百泉阁项目": {
+       "occ": 98.07,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居锦园项目": {
+       "occ": 98.07,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保利香槟苑项目和凤凰公馆项目": {
+       "occ": 98.07,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基金管理人主动履行基础设施项目": {
+       "occ": 98.07,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "计划管理人以及项目": {
+       "occ": 98.07,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "为基础设施项目": {
+       "occ": 98.07,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保利香槟苑项目": {
+       "occ": 95.55,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "凤凰公馆项目": {
+       "occ": 99.3,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "2管理人对基础设施项目": {
+       "occ": 98.07,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基础设施项目": {
+       "occ": 98.07,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4基础设施项目": {
+       "occ": 98.07,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "信息本基金持有的基础设施资产为安居百泉阁项目": {
+       "occ": 98.07,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4个保障性租赁住房项目": {
+       "occ": 98.07,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保利香槟苑和凤凰公馆项目": {
+       "occ": 98.07,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "并争取在存续期内提升基础设施项目": {
+       "occ": 98.07,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "对基础设施项目": {
+       "occ": 98.07,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的基础设施资产为安居百泉阁项目": {
+       "occ": 98.07,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-09-30",
+     "rtype": "Q3",
+     "pub_date": "2024-10-25",
+     "unit_dist": 0.0238,
+     "unit_paid": 0.0509,
+     "ann_unit_dist": 0.0944,
+     "nav": null,
+     "occ": 96.28,
+     "occ_src": "project",
+     "collect": 100.0,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 3.48,
+     "px_at_end": 2.709,
+     "pnav": null,
+     "revenue": 13670640.55,
+     "net_profit": 6081155.623,
+     "ocf": 11250881.443,
+     "projects": {
+      "4基础设施项目": {
+       "occ": 96.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "1对报告期内基础设施项目": {
+       "occ": 96.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的基础设施资产项目": {
+       "occ": 96.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "圳市安居百泉阁管理有限公司持有安居百泉阁项目": {
+       "occ": 96.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "深圳市安居锦园管理有限公司持有安居锦园项目": {
+       "occ": 96.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "深圳市安居鼎吉管理有限公司持有保利香槟苑项目": {
+       "occ": 96.49,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "210套保障性租赁住房以及凤凰公馆项目": {
+       "occ": 96.49,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居百泉阁项目": {
+       "occ": 96.49,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居锦园项目": {
+       "occ": 96.49,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保利香槟苑项目和凤凰公馆项目": {
+       "occ": 96.49,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保利香槟苑项目": {
+       "occ": 90.3,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "凤凰公馆项目": {
+       "occ": 98.89,
+       "collect": 100.0,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保利香槟苑和凤凰公馆项目": {
+       "occ": 96.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "并争取在存续期内提升基础设施项目": {
+       "occ": 96.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "对基础设施项目": {
+       "occ": 96.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基础设施项目": {
+       "occ": 96.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的基础设施资产为安居百泉阁项目": {
+       "occ": 96.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "4个保障性租赁住房项目": {
+       "occ": 96.49,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2024-12-31",
+     "rtype": "Q4",
+     "pub_date": "2025-01-22",
+     "unit_dist": 0.024,
+     "unit_paid": 0.0238,
+     "ann_unit_dist": 0.0952,
+     "nav": null,
+     "occ": 95.68,
+     "occ_src": "project",
+     "collect": 100.0,
+     "lease": null,
+     "dy_official": null,
+     "dy_calc": 3.03,
+     "px_at_end": 3.143,
+     "pnav": null,
+     "revenue": 13328325.012,
+     "net_profit": 5607903.113,
+     "ocf": 12343592.243,
+     "projects": {
+      "4个保障性租赁住房项目": {
+       "occ": 95.82,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基础设施资产项目": {
+       "occ": 95.82,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "圳市安居百泉阁管理有限公司持有安居百泉阁项目": {
+       "occ": 95.82,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "深圳市安居锦园管理有限公司持有安居锦园项目": {
+       "occ": 95.82,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "深圳市安居鼎吉管理有限公司持有保利香槟苑项目": {
+       "occ": 95.82,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "210套保障性租赁住房以及凤凰公馆项目": {
+       "occ": 95.82,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居百泉阁项目": {
+       "occ": 95.82,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "安居锦园项目": {
+       "occ": 95.88,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保利香槟苑项目": {
+       "occ": 90.79,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "凤凰公馆项目": {
+       "occ": 98.63,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保利香槟苑和凤凰公馆项目": {
+       "occ": 95.82,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "并争取在存续期内提升基础设施项目": {
+       "occ": 95.82,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "对基础设施项目": {
+       "occ": 95.82,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "基础设施项目": {
+       "occ": 95.82,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "本基金持有的基础设施资产为安居百泉阁项目": {
+       "occ": 95.82,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      },
+      "保利香槟苑项目和凤凰公馆项目": {
+       "occ": 95.82,
+       "collect": null,
+       "rent": null,
+       "area": null,
+       "lease": null,
+       "src": "text"
+      }
+     }
+    },
+    {
+     "period_end": "2025-03-31",
+     "rtype": "Q1",
+     "pub_date": "2025-04-22",
+     "unit_dist": 0.0231,
+     "unit_paid": null,
+     "ann_unit_dist": 0.0937,
+     "nav": null,
+     "occ": 95.02,
+     "occ_src": "project",
+     "collect": 97.01,
+     "lease": null,
+     "dy_official": 2.68,
+     "dy_calc": 2.82,
+     "px_at_end": 3.321,
+     "pnav": null,
+     "revenue": 13462136.432,
+     "net_profit": 4988309.833,
+     "ocf": null,
+     "projects": {
+      "序号：1公司名称：深圳市安居百泉阁管理有限公司-保障": {
+       "occ": 97.78,
+       "collect": 99.52,
+       "rent": 61.496,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：2公司名称：深圳市安居百泉阁管理有限公司-商铺": {
+       "occ": 81.81,
+       "collect": 91.18,
+       "rent": 367.68366,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：3公司名称：深圳市安居百泉阁管理有限公司-停车": {
+       "occ": 100.0,
+       "collect": 100.0,
+       "rent": 180.0018,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：4公司名称：深圳市安居锦园管理有限公司-保障性": {
+       "occ": 94.88,
+       "collect": 89.56,
+       "rent": 46.6645,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：5公司名称：深圳市安居锦园管理有限公司-停车场": {
+       "occ": 100.0,
+       "collect": 100.0,
+       "rent": 180.0018,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：6公司名称：深圳市安居鼎吉管理有限公司-保利香": {
+       "occ": 91.11,
+       "collect": 98.85,
+       "rent": 17.0816,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：7公司名称：深圳市安居鼎吉管理有限公司-凤凰公": {
+       "occ": 99.53,
+       "collect": 99.94,
+       "rent": 17.3417,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-06-30",
+     "rtype": "H1",
+     "pub_date": "2025-08-29",
+     "unit_dist": 0.0471,
+     "unit_paid": 0.0241,
+     "ann_unit_dist": 0.095,
+     "nav": 2.3907,
+     "occ": 96.14,
+     "occ_src": "project",
+     "collect": 99.35,
+     "lease": null,
+     "dy_official": 2.4,
+     "dy_calc": 2.5,
+     "px_at_end": 3.805,
+     "pnav": 1.592,
+     "revenue": 27224005.83,
+     "net_profit": 10613388.52,
+     "ocf": null,
+     "projects": {
+      "序号：1项目名称：深圳市安居百泉阁管理有限公司-保障": {
+       "occ": 95.65,
+       "collect": 99.7,
+       "rent": 61.096,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：2项目名称：深圳市安居百泉阁管理有限公司-商铺": {
+       "occ": 87.68,
+       "collect": 97.98,
+       "rent": 339.99366,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：3项目名称：深圳市安居百泉阁管理有限公司-停车": {
+       "occ": 100.0,
+       "collect": 100.0,
+       "rent": 180.0018,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：4项目名称：深圳市安居锦园管理有限公司-保障性": {
+       "occ": 97.32,
+       "collect": 98.89,
+       "rent": 46.6945,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：5项目名称：深圳市安居锦园管理有限公司-停车场": {
+       "occ": 100.0,
+       "collect": 100.0,
+       "rent": 180.0018,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：6项目名称：深圳市安居鼎吉管理有限公司-保利香": {
+       "occ": 92.68,
+       "collect": 99.52,
+       "rent": 17.2116,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：7项目名称：深圳市安居鼎吉管理有限公司-凤凰公": {
+       "occ": 99.68,
+       "collect": null,
+       "rent": 17.2817,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-09-30",
+     "rtype": "FY",
+     "pub_date": "2026-03-31",
+     "unit_dist": 0.0953,
+     "unit_paid": 0.0954,
+     "ann_unit_dist": 0.0953,
+     "nav": 2.34332,
+     "occ": 95.09,
+     "occ_src": "project",
+     "collect": 99.59,
+     "lease": null,
+     "dy_official": 2.7,
+     "dy_calc": 2.78,
+     "px_at_end": 3.424,
+     "pnav": 1.461,
+     "revenue": 55501919.2854,
+     "net_profit": 22557320.8724,
+     "ocf": 22225912.1249,
+     "projects": {
+      "序号：1项目名称：深圳市安居百泉阁管理有限公司-保障": {
+       "occ": 95.96,
+       "collect": 99.99,
+       "rent": 61.096,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：2项目名称：深圳市安居百泉阁管理有限公司-商铺": {
+       "occ": 76.96,
+       "collect": 97.27,
+       "rent": 391.48366,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：3项目名称：深圳市安居百泉阁管理有限公司-停车": {
+       "occ": 100.0,
+       "collect": 100.0,
+       "rent": 180.0018,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：4项目名称：深圳市安居锦园管理有限公司-保障性": {
+       "occ": 99.25,
+       "collect": 99.9,
+       "rent": 46.6545,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：5项目名称：深圳市安居锦园管理有限公司-停车场": {
+       "occ": 100.0,
+       "collect": 100.0,
+       "rent": 180.0018,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：6项目名称：深圳市安居鼎吉管理有限公司-保利香": {
+       "occ": 94.65,
+       "collect": 99.95,
+       "rent": 17.7616,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：7项目名称：深圳市安居鼎吉管理有限公司-凤凰公": {
+       "occ": 98.82,
+       "collect": 99.99,
+       "rent": 17.1917,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2025-12-31",
+     "rtype": "Q4",
+     "pub_date": "2026-01-22",
+     "unit_dist": 0.024,
+     "unit_paid": 0.0243,
+     "ann_unit_dist": 0.0952,
+     "nav": null,
+     "occ": 95.09,
+     "occ_src": "project",
+     "collect": 99.59,
+     "lease": null,
+     "dy_official": 2.7,
+     "dy_calc": 2.75,
+     "px_at_end": 3.458,
+     "pnav": null,
+     "revenue": 14240471.022,
+     "net_profit": 6017795.133,
+     "ocf": 11839672.244,
+     "projects": {
+      "序号：1项目名称：深圳市安居百泉阁管理有限公司-保障": {
+       "occ": 95.96,
+       "collect": 99.99,
+       "rent": 61.096,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：2项目名称：深圳市安居百泉阁管理有限公司-商铺": {
+       "occ": 76.96,
+       "collect": 97.27,
+       "rent": 391.48366,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：3项目名称：深圳市安居百泉阁管理有限公司-停车": {
+       "occ": 100.0,
+       "collect": 100.0,
+       "rent": 180.0018,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：4项目名称：深圳市安居锦园管理有限公司-保障性": {
+       "occ": 99.25,
+       "collect": 99.9,
+       "rent": 46.6545,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：5项目名称：深圳市安居锦园管理有限公司-停车场": {
+       "occ": 100.0,
+       "collect": 100.0,
+       "rent": 180.0018,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：6项目名称：深圳市安居鼎吉管理有限公司-保利香": {
+       "occ": 94.65,
+       "collect": 99.95,
+       "rent": 17.7616,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：7项目名称：深圳市安居鼎吉管理有限公司-凤凰公": {
+       "occ": 98.82,
+       "collect": 99.99,
+       "rent": 17.1917,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2026-03-31",
+     "rtype": "Q1",
+     "pub_date": "2026-04-21",
+     "unit_dist": 0.0236,
+     "unit_paid": null,
+     "ann_unit_dist": 0.0957,
+     "nav": null,
+     "occ": 94.08,
+     "occ_src": "project",
+     "collect": 97.85,
+     "lease": null,
+     "dy_official": 2.84,
+     "dy_calc": 2.9,
+     "px_at_end": 3.299,
+     "pnav": null,
+     "revenue": 13956576.172,
+     "net_profit": 5763123.663,
+     "ocf": 13504777.724,
+     "projects": {
+      "序号：1项目名称：深圳市安居百泉阁管理有限公司-保障": {
+       "occ": 94.57,
+       "collect": 93.27,
+       "rent": 61.0961,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：2项目名称：深圳市安居百泉阁管理有限公司-商铺": {
+       "occ": 76.96,
+       "collect": 93.27,
+       "rent": 391.48367,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：3项目名称：深圳市安居百泉阁管理有限公司-停车": {
+       "occ": 98.88,
+       "collect": 99.38,
+       "rent": 1801800.005,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：4项目名称：深圳市安居锦园管理有限公司-保障性": {
+       "occ": 98.88,
+       "collect": 99.38,
+       "rent": 46.6746,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：5项目名称：深圳市安居锦园管理有限公司-停车场": {
+       "occ": 95.64,
+       "collect": 99.88,
+       "rent": 1801800.005,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：6项目名称：深圳市安居鼎吉管理有限公司-保利香": {
+       "occ": 95.64,
+       "collect": 99.88,
+       "rent": 17.8617,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：7项目名称：深圳市安居鼎吉管理有限公司-凤凰公": {
+       "occ": 98.0,
+       "collect": 99.88,
+       "rent": 17.2317,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    },
+    {
+     "period_end": "2026-06-30",
+     "rtype": "H1",
+     "pub_date": "2026-08-31",
+     "unit_dist": 0.0475,
+     "unit_paid": 0.0476,
+     "ann_unit_dist": 0.0958,
+     "nav": 2.3189,
+     "occ": 90.42,
+     "occ_src": "project",
+     "collect": 95.39,
+     "lease": null,
+     "dy_official": 2.82,
+     "dy_calc": 2.85,
+     "px_at_end": 3.366,
+     "pnav": 1.452,
+     "revenue": 28017767.65,
+     "net_profit": 11574762.2,
+     "ocf": 25537841.78,
+     "projects": {
+      "序号：1项目名称：深圳市安居百泉阁管理有限公司-租赁": {
+       "occ": 97.1,
+       "collect": 92.43,
+       "rent": 61.561,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：2项目名称：深圳市安居百泉阁管理有限公司-商铺": {
+       "occ": 61.35,
+       "collect": 92.43,
+       "rent": 389.20339,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：3项目名称：深圳市安居百泉阁管理有限公司-停车": {
+       "occ": 99.75,
+       "collect": 99.83,
+       "rent": 1801800.005,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：4项目名称：深圳市安居锦园管理有限公司-租赁住": {
+       "occ": 99.75,
+       "collect": 99.83,
+       "rent": 46.6646,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：5项目名称：深圳市安居锦园管理有限公司-停车场": {
+       "occ": 83.33,
+       "collect": 83.33,
+       "rent": 1801800.005,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：6项目名称：深圳市安居鼎吉管理有限公司-保利香": {
+       "occ": 94.66,
+       "collect": 99.95,
+       "rent": 17.9017,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：7项目名称：深圳市安居鼎吉管理有限公司-凤凰公": {
+       "occ": 96.98,
+       "collect": 99.95,
+       "rent": 17.2517,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    }
+   ],
+   "latest_period": "2026-06-30",
+   "latest_rtype": "H1",
+   "latest_pub": "2026-08-31",
+   "dy_cur": 2.97,
+   "dy_official": 2.82,
+   "dy_ttm": 2.96,
+   "nav_latest": 2.3189,
+   "pnav": 1.393,
+   "occ": 90.42,
+   "occ_src": "project",
+   "collect": 95.39,
+   "lease": null,
+   "dd_1y": -0.08,
+   "dd_all": -0.1957,
+   "mdd_1y": -0.0988,
+   "vol_1y": 0.1287,
+   "ret_1y": -0.0569,
+   "ytd": -0.0632,
+   "dy_pct": 54.5,
+   "pnav_pct": 25.0,
+   "occ_pct": 6.7,
+   "dy_min": 2.5,
+   "dy_max": 4.84,
+   "pnav_min": 1.054,
+   "pnav_max": 1.592,
+   "occ_min": 90.42,
+   "occ_max": 98.72,
+   "collect_min": 95.39,
+   "collect_max": 100.0,
+   "n_periods": 15,
+   "first_period": "2022-12-31",
+   "new_listing": false
+  },
+  {
+   "code": "sz180503",
+   "name": "中航北京昌保租赁住房REIT",
+   "price": 2.865,
+   "mktcap": "11.46",
+   "series": [
+    {
+     "period_end": "2026-06-30",
+     "rtype": "H1",
+     "pub_date": "2026-08-29",
+     "unit_dist": 0.08582,
+     "unit_paid": null,
+     "ann_unit_dist": 0.4122,
+     "nav": 2.3435,
+     "occ": 96.06,
+     "occ_src": "project",
+     "collect": 97.27,
+     "lease": null,
+     "dy_official": 15.49,
+     "dy_calc": 15.49,
+     "px_at_end": 2.661,
+     "pnav": 1.135,
+     "revenue": 18039055.58,
+     "net_profit": 10601684.91,
+     "ocf": 20526244.6,
+     "projects": {
+      "序号：1项目名称：滟澜新宸项目序号指标名称指标含义说": {
+       "occ": 95.36,
+       "collect": 98.14,
+       "rent": 37.005,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：2项目名称：国瑞熙院项目序号指标名称指标含义说": {
+       "occ": 96.42,
+       "collect": 96.4,
+       "rent": 41.005,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      },
+      "序号：3项目名称：未来融尚家园项目中航北京昌保租赁住": {
+       "occ": 96.4,
+       "collect": null,
+       "rent": 41.005,
+       "area": null,
+       "lease": null,
+       "src": "table"
+      }
+     }
+    }
+   ],
+   "latest_period": "2026-06-30",
+   "latest_rtype": "H1",
+   "latest_pub": "2026-08-29",
+   "dy_cur": 14.39,
+   "dy_official": 15.49,
+   "dy_ttm": 0.0,
+   "nav_latest": 2.3435,
+   "pnav": 1.223,
+   "occ": 96.06,
+   "occ_src": "project",
+   "collect": 97.27,
+   "lease": null,
+   "dd_1y": -0.0354,
+   "dd_all": -0.0354,
+   "mdd_1y": -0.0863,
+   "vol_1y": 0.1505,
+   "ret_1y": 0.0306,
+   "ytd": 0.0306,
+   "dy_pct": 0.0,
+   "pnav_pct": 100.0,
+   "occ_pct": 100.0,
+   "dy_min": 15.49,
+   "dy_max": 15.49,
+   "pnav_min": 1.135,
+   "pnav_max": 1.135,
+   "occ_min": 96.06,
+   "occ_max": 96.06,
+   "collect_min": 97.27,
+   "collect_max": 97.27,
+   "n_periods": 1,
+   "first_period": "2026-06-30",
+   "new_listing": true
+  },
+  {
+   "code": "sh508095",
+   "name": "国泰海通中建租赁住房REIT",
+   "price": 0.0,
+   "mktcap": "",
+   "series": [],
+   "latest_period": null,
+   "latest_rtype": null,
+   "latest_pub": null,
+   "dy_cur": null,
+   "dy_official": null,
+   "dy_ttm": null,
+   "nav_latest": null,
+   "pnav": null,
+   "occ": null,
+   "occ_src": null,
+   "collect": null,
+   "lease": null,
+   "dd_1y": null,
+   "dd_all": null,
+   "mdd_1y": null,
+   "vol_1y": null,
+   "ret_1y": null,
+   "ytd": null,
+   "dy_pct": null,
+   "pnav_pct": null,
+   "occ_pct": null,
+   "dy_min": null,
+   "dy_max": null,
+   "pnav_min": null,
+   "pnav_max": null,
+   "occ_min": null,
+   "occ_max": null,
+   "collect_min": null,
+   "collect_max": null,
+   "n_periods": 0,
+   "first_period": null,
+   "new_listing": true
+  },
+  {
+   "code": "sz180505",
+   "name": "中金杭州安居宁巢REIT",
+   "price": 0.0,
+   "mktcap": "",
+   "series": [],
+   "latest_period": null,
+   "latest_rtype": null,
+   "latest_pub": null,
+   "dy_cur": null,
+   "dy_official": null,
+   "dy_ttm": null,
+   "nav_latest": null,
+   "pnav": null,
+   "occ": null,
+   "occ_src": null,
+   "collect": null,
+   "lease": null,
+   "dd_1y": null,
+   "dd_all": null,
+   "mdd_1y": null,
+   "vol_1y": null,
+   "ret_1y": null,
+   "ytd": null,
+   "dy_pct": null,
+   "pnav_pct": null,
+   "occ_pct": null,
+   "dy_min": null,
+   "dy_max": null,
+   "pnav_min": null,
+   "pnav_max": null,
+   "occ_min": null,
+   "occ_max": null,
+   "collect_min": null,
+   "collect_max": null,
+   "n_periods": 0,
+   "first_period": null,
+   "new_listing": true
+  }
+ ]
+}

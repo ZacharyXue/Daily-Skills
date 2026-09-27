@@ -22,6 +22,9 @@ cache:
     research_report: 86400     # 机构评级/研报 1天(新研报发布频繁, 日更足够)
     xueqiu_user_posts: 86400   # 雪球大V发言 1天(playwright取数重, 缓存有利)
     housing_web: 86400         # 房产(创房价/房天下/中国银行LPR) 1天(网页源低频, 缓存有利; 月度挂牌口径够了)
+    reits_list: 43200          # 公募REITs 清单 12h(新上市需及时发现)
+    reits_report_list: 86400   # REITs 定期报告清单 1天(季报周期才变)
+    reits_report: 2592000      # REITs 单份报告解析结果 30天(已披露报告内容不再变)
   stale_while_revalidate: true # 命中旧缓存先返回，后台刷新
   db_path: "~/.hermes/data-cache.db"
 
