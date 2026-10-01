@@ -79,8 +79,11 @@ YAHOO_SYM = {"%5EGSPC": "标普500", "%5ENDX": "纳斯达克100", "GC=F": "黄�
 
 def yahoo_kline(symbol, start_ts=946684800):  # 2000-01-01
     """雅虎 chart API -> [(date, close, high, vol)], date为YYYY-MM-DD"""
+    # ⚠️ period2 必须用「当前时间」，不能硬编码：曾硬编码 1768000000(=2026-01-09) 导致外盘K线
+    #    被静默截断 9 个月，看板把 1 月的价格当"当前"显示（违反数据正确性铁律）
+    end_ts = int(time.time()) + 86400
     url = (f"https://query1.finance.yahoo.com/v8/finance/chart/{urllib.parse.quote(symbol, safe='%')}"
-           f"?period1={start_ts}&period2=1768000000&interval=1d")
+           f"?period1={start_ts}&period2={end_ts}&interval=1d")
     d = http_json(url, timeout=20)
     res = (d.get("chart") or {}).get("result") or []
     if not res:
