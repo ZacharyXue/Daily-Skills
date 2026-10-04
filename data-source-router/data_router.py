@@ -54,6 +54,7 @@ def _register():
         "cn_research_report": (lambda p: fin.cn_research_report(p["code"], p.get("years", 2)), "eastmoney_report", TTL["research_report"], "T1"),
         # ---- 指数估值(ETF 看板: 中证官网PE + 天天基金分位) ----
         "cn_csindex_pe":    (lambda p: fin.cn_csindex_pe(p["index_code"], p.get("years", 5)), "csindex", TTL["cn_stock_kline"], "T1"),
+        "cn_csindex_pe_series": (lambda p: fin.cn_csindex_pe_series(p["index_code"], p.get("years", 6)), "csindex", TTL["cn_stock_kline"], "T1"),
         "cn_ttfund_index":  (lambda p: fin.cn_ttfund_index(p["index_id"]), "ttfund", TTL["cn_stock_kline"], "T1"),
         # ---- 宏观(中国10Y国债, 风格方向闸门) ----
         "cn_macro_10y_rate": (lambda p: fin.cn_macro_10y_rate(), "akshare", TTL["cn_macro_10y_rate"], "T1"),

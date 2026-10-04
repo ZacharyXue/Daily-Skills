@@ -14,7 +14,7 @@ ETF 红利 · 技术温度看板 生成脚本
 标的池: 编辑同目录 watchlist.json 的 watchlist 数组, 加/换品种即可.
 """
 import json, subprocess, urllib.request, urllib.parse, time, sys, os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 UA = {"User-Agent": "Mozilla/5.0"}
 API = "/root/.local/bin"
@@ -42,17 +42,36 @@ def http_json(url, timeout=15, retry=3):
     raise last
 
 def csindex_pe_pct(index_code):
-    """中证官网历史PE(peg) -> 5年分位 (走 data-source-router 统一取数)"""
+    """中证官网历史PE(peg) -> 5年分位 + PE区间(lo/hi) (走 data-source-router 统一取数)
+
+    主锚数据源：中证官网，**不依赖 ttskill 登录**。用 `indexCsiDsPe` 拿全序列，
+    自己算 5 年分位与区间（比 index-perf 更全、更稳，且能给出 PE 波动区间供渲染）。
+    """
     try:
-        d = DSR.get('cn_csindex_pe', index_code=index_code)[0]
-        if not (d and d.get("ok")): return None
-        return {"cur_pe": d.get("pe_ttm"), "pct": d.get("pe_pct_5y"),
-                "lo": None, "hi": None, "n": d.get("n")}
+        d = DSR.get('cn_csindex_pe_series', index_code=index_code, years=6)[0]
+        if not (d and d.get("ok")):
+            return None
+        series = d.get("series") or []
+        if not series:
+            return None
+        cut = (datetime.now() - timedelta(days=365 * 5)).strftime("%Y%m%d")
+        pe5 = [v for dt_, v in series if dt_ >= cut]
+        if not pe5:
+            pe5 = [v for _, v in series]
+        cur = pe5[-1]
+        pct = sum(1 for x in pe5 if x <= cur) / len(pe5) * 100
+        return {"cur_pe": round(cur, 2), "pct": round(pct, 1),
+                "lo": round(min(pe5), 2), "hi": round(max(pe5), 2), "n": len(pe5)}
     except Exception:
         return None
 
 def ttskill_index_info(index_id):
-    """天天基金 TTFUND_INDEX_INFO -> PE/PB 10年分位+ROE (走 router)"""
+    """天天基金 TTFUND_INDEX_INFO -> PE/PB 10年分位+ROE (走 router)
+
+    ⚠️ 可选增强源：ttskill token 30 天过期，失效时返回 {}（**不报错、不阻断**）。
+    看板主锚是中证官网 PE5y 分位（见 csindex_pe_pct），本函数的 PB10y 只是独立增量口径；
+    缺失时看板显示「—」并在页脚标注来源状态，绝不拿旧值冒充。
+    """
     try:
         d = DSR.get('cn_ttfund_index', index_id=index_id)[0]
         if not (d and d.get("ok")): return {}
@@ -254,9 +273,27 @@ def main():
     # 保持 watchlist 原始顺序 (as_completed 无序)
     order = {w.get("etf_code") or w.get("yahoo_symbol", ""): i for i, w in enumerate(cfg["watchlist"])}
     rows.sort(key=lambda r: order.get(r["etf_code"], 99))
-    return cfg, rows, errs
+    # 数据源状态（可选源 ttskill 是否可用 → 渲染层明示，不静默）
+    tt_ok = any(r.get("pb10y") is not None for r in rows)
+    try:
+        st = json.loads(subprocess.check_output(
+            ["ttskill", "status", "--json"], timeout=20, text=True,
+            env={"PATH": f"{API}:/usr/local/bin:/usr/bin:/bin"}))
+        auth = st.get("auth") or {}
+        if auth.get("is_expired"):
+            tt_note = "登录已过期（30 天需重扫）"
+        elif not auth.get("has_token"):
+            tt_note = "未登录"
+        elif not tt_ok:
+            tt_note = "已登录但本次全组指数均未取到 PB"
+        else:
+            tt_note = ""
+    except Exception:
+        tt_note = "ttskill 不可用" if not tt_ok else ""
+    src_status = {"ttfund_ok": tt_ok, "ttfund_note": tt_note}
+    return cfg, rows, errs, src_status
 
 if __name__ == "__main__":
-    # 只测试数据层, HTML生成在 generate_part2 里(单独文件避免超大)
-    cfg, rows, errs = main()
-    print(json.dumps({"rows": rows, "errs": errs}, ensure_ascii=False, indent=1))
+    # 只测试数据层, HTML生成在 generate_html.py 里(单独文件避免超大)
+    cfg, rows, errs, src_status = main()
+    print(json.dumps({"rows": rows, "errs": errs, "src_status": src_status}, ensure_ascii=False, indent=1))

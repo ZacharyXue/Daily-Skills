@@ -40,8 +40,13 @@ related_skills: [industry-monitor-dashboard, whale-holdings, stock-analysis, git
 | 房产·城市房价/租金/售租比/分区 | `cn_housing_city` | 创房价手机站 `m.creprice.cn/city/{code}.html[?type=lease]` | ✅ 200(⚠️桌面站被验证码墙,手机站+iPhone UA可) | 月度挂牌 |
 | 房产·新房月均价趋势 | `cn_housing_trend` | 房天下 `fangjia.fang.com/fangjia/common/ajaxtrenddatanew/{code}` | ✅ 200(丢包重试) | 月度/近6月窗口 |
 | LPR 历史(2019-08起) | `cn_lpr` | 中国银行官网 HTML 表 | ✅ 200 | 月度(每月20日) |
-| 指数PE(中证) | `cn_csindex_pe` | 中证官网 `csindex-home/perf/index-perf` 的 `peg` | ✅ 200 | 日频 |
-| 指数估值(天天基金) | `cn_ttfund_index` | 天天基金 `ttskill TTFUND_INDEX_INFO` | ✅ CLI | 日频 |
+| 指数估值(中证) | `cn_csindex_pe` | 中证官网 `csindex-home/perf/index-perf` 的 `peg` | ✅ 200 | 日频 |
+| 指数估值·全历史序列(中证) | `cn_csindex_pe_series` | 中证官网 `csindex-home/perf/indexCsiDsPe`（2011年至今，支持 startDate/endDate） | ✅ 200 | 日频 |
+| 指数估值(天天基金, 可选) | `cn_ttfund_index` | 天天基金 `ttskill TTFUND_INDEX_INFO` | ⚠️ 需登录(30天过期) | 日频 |
+| 公募 REITs 清单 | `cn_reits_list` | 腾讯行情枚举 sh508xxx/sz180xxx | ✅ 200 | 实时 |
+| REITs 定期报告清单 | `cn_reits_report_list` | 东财基金公告 `api.fund.eastmoney.com/f10/JJGG` | ✅ 200 | 季报周期 |
+| REITs 报告解析 | `cn_reits_report_data` | 东财 PDF `pdf.dfcfw.com` + pymupdf（需 `/root/hermes-venv/bin/python`） | ✅ 143份实测 | 季报周期 |
+| REITs 分红记录 | `cn_reits_dividend` | 天天基金 F10 `fhsp_{code}.html` | ✅ 200 | 分红公告后 |
 | GitHub 仓库元数据 | `github_repo` | GitHub REST v3 | ✅ 200 | 实时 |
 | GitHub Issues | `github_issues` | GitHub REST v3 | ✅ 200 | 实时 |
 | GitHub PR | `github_pulls` | GitHub REST v3 | ✅ 200 | 实时 |

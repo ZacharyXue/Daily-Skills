@@ -342,6 +342,28 @@ def cn_csindex_pe(index_code, years=5):
     pct = sum(1 for x in pe if x <= cur) / len(pe) * 100
     return {"ok": True, "pe_pct_5y": round(pct, 1), "pe_ttm": round(cur, 2), "n": len(pe)}
 
+def cn_csindex_pe_series(index_code, years=6):
+    """中证官网 `/perf/indexCsiDsPe` 的完整历史 PE(peg) 日频序列（2011 年至今）。
+    比 `index-perf`（走 cn_csindex_pe）更全、更稳，且支持日期区间参数。
+    返回 {ok, series:[(date, pe)], latest, latest_date, n}。非中证系指数 → ok=False。"""
+    import datetime as dt
+    end = dt.datetime.now().strftime("%Y%m%d")
+    start = str(int(end[:4]) - years) + "0101"
+    url = (f"https://www.csindex.com.cn/csindex-home/perf/indexCsiDsPe"
+           f"?indexCode={index_code}&startDate={start}&endDate={end}")
+    try:
+        r = _req(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.csindex.com.cn/"}, timeout=25)
+        data = r.json().get("data") or []
+        series = [(str(x.get("tradeDate")), float(x["peg"])) for x in data
+                  if isinstance(x, dict) and x.get("peg") is not None]
+    except Exception as e:
+        return {"ok": False, "note": "indexCsiDsPe 异常: " + str(e)[:60]}
+    if not series:
+        return {"ok": False, "note": "无peg(非中证系指数)"}
+    return {"ok": True, "series": series, "latest": series[-1][1], "latest_date": series[-1][0],
+            "n": len(series)}
+
+
 def cn_ttfund_index(index_id):
     """天天基金 TTFUND_INDEX_INFO → PE/PB 10年分位 + ROE + 行业分布 + 多期收益。
     走本地 ttskill CLI(需已login)。国证/成长/价值100 也支持(如"成长100"/"价值100").

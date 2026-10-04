@@ -73,7 +73,6 @@ def render_row(r):
                    f'<span style="font-size:12px;color:var(--sub)">(PB{pbval})</span></div></div>')
     else:
         pb_html = '<div class="met"><div class="lab">PB10y 分位</div><div class="val">—</div></div>'
-    roe_html = m("ROE", f"{r['roe']:.1f}%" if r.get('roe') is not None else "—")
     # 历史最大回撤/当前回撤/回撤进度（核心，全资产显示）
     def dd_color(progress):
         # 回撤进度: <25% 安全, 25-50% 中, 50-75% 深, >=75% 极深(接近历史大底)
@@ -101,9 +100,7 @@ def render_row(r):
         m("20日BIAS", f"{r['bias20']:+.2f}%" if r["bias20"] is not None else "—") +
         m("距1年高", fmt_pct(r["dd_hi"])) +
         m("MA20", f"{r['ma20']:.3f}") +
-        m("5日均额", f"{r['daily_yi']:.2f}亿" if r.get("daily_yi") is not None else "—") +
-        m("目标10%/15%", f"{r['target10']:.2f}/{r['target15']:.2f}") +
-        roe_html
+        m("目标10%/15%", f"{r['target10']:.2f}/{r['target15']:.2f}")
     )
     return f"""
 <div class="card">
@@ -120,10 +117,20 @@ def render_row(r):
   <div class="action"><b>现在该怎么做：</b>{ACTIONS.get(sig, "暂观望")}</div>
 </div>"""
 
-def build_html(cfg, rows, errs, kline_date):
+def build_html(cfg, rows, errs, kline_date, src_status=None):
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     cards = "\n".join(render_row(r) for r in rows)
     err_html = f'<div class="err">⚠ 部分标的数据异常：{"；".join(errs)}</div>' if errs else ""
+    # 数据源状态行（正确性铁律：可选源失效要明示，不静默）
+    if src_status is None:
+        src_status = {}
+    tt_ok = src_status.get("ttfund_ok")
+    tt_note = src_status.get("ttfund_note") or ""
+    if tt_ok:
+        src_line = "中证官网(PE5y 主锚) + 天天基金(PE/PB 10y 增强) + 腾讯行情/K线"
+    else:
+        src_line = ("中证官网(PE5y 主锚) + 腾讯行情/K线 "
+                    f"<b style=\"color:#d97706\">｜PB10y 未取到：{tt_note or '天天基金源不可用'}（主锚 PE5y 不受影响）</b>")
     return f"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -131,7 +138,7 @@ def build_html(cfg, rows, errs, kline_date):
 <body>
   <div class="header">
     <h1>{cfg['title']}</h1>
-    <div class="meta">更新: {now} &nbsp;·&nbsp; K线截止: {kline_date or '—'} &nbsp;·&nbsp; 数据源: 中证官网(5年PE) + 天天基金(分位) + 腾讯行情/K线</div>
+    <div class="meta">更新: {now} &nbsp;·&nbsp; K线截止: {kline_date or '—'} &nbsp;·&nbsp; 数据源: {src_line}</div>
     <div class="note"><b>信号 = 技术面(回撤/MA/BIAS) × 估值面(PE 5年分位)</b> 双视角交叉。<br>「现在该怎么做」给的是可执行动作，判断前请结合估值分位(高位>90%别追高，<50%相对便宜)。本页不构成投资建议。</div>
   </div>
   <div class="grid">{cards}</div>
@@ -140,11 +147,12 @@ def build_html(cfg, rows, errs, kline_date):
     <h3>指标速查</h3>
     <b>MA20</b> = 20日均线，现价在其上=趋势偏多，之下=转弱。<br>
     <b>BIAS(乖离率)</b> = (现价−MA20)/MA20，衡量涨跌是否过度：>10%过热，负值=超跌。<br>
-    <b>PE5y 分位</b> = 当前PE在近5年所处百分位（用中证官网历史PE自算），判断贵贱的主锚。<br>
-    <b>PB10y 分位</b> = 当前PB在近10年百分位（天天基金口径；中证官网无PB历史、暂无5y PB数据源）。<br>
-    <b>PE5y 显示"—"</b> = 该指数非中证官网编制（如国证/恒生系，如港股通红利低波 159545），无5y PE分位，此时信号回退到 BIAS/回撤判断。<br>
+    <b>PE5y 分位</b> = 当前PE在近5年所处百分位（用中证官网 <code>indexCsiDsPe</code> 全历史PE自算），判断贵贱的主锚，<b>不依赖登录</b>。<br>
+    <b>PE5y 区间</b> = 近5年 PE 的最低~最高，用于定位「当前 PE 离历史底部/顶部还有多远」。<br>
+    <b>PB10y 分位</b> = 当前PB在近10年百分位（天天基金口径，可选增强源——该源 token 30 天过期，失效时显示「—」并在此行上方标注；中证官网无 PB 历史，全网免费源暂无 5y PB）。<br>
+    <b>PE5y 显示"—"</b> = 该指数非中证官网编制（如国证成长100 980080、恒生系 987016），无历史PE，此时信号回退到 BIAS/回撤判断。<br>
     <b>目标价</b> = MA20 抬到 BIAS 达 10%/15% 的挂单价。<br>
-    标的池可编辑 <code>etf-dashboard/watchlist.json</code> 增删品种后重跑 <code>python3 generate.py</code> 更新。
+    标的池可编辑 <code>etf-dashboard/watchlist.json</code> 增删品种后重跑 <code>python3 update.py</code> 更新。
   </div>
 </body></html>"""
 
