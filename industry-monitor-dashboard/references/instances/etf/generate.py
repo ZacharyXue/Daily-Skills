@@ -65,16 +65,59 @@ def csindex_pe_pct(index_code):
     except Exception:
         return None
 
+_TT = {"tried": 0, "ok": 0, "note": "", "available": None}
+
+
+def _tt_probe():
+    """开跑前探测一次 ttskill 是否真能用（ttskill status 不看 stderr 会误判，
+    必须用一次真实 invoke 的 rc/stderr 判断；失败原因原样带回给看板标注）。
+
+    ⚠️ "fetch failed" 是 ttskill 访问服务端的偶发网络失败（≠ 源坏）→ 按用户铁律重试 2 次。
+    """
+    why = ""
+    for attempt in range(3):
+        try:
+            r = subprocess.run(["ttskill", "invoke", "TTFUND_INDEX_INFO", "--action", "query",
+                                "--body", '{"index_id":"000922"}'],
+                               capture_output=True, text=True, timeout=45,
+                               env={"PATH": f"{API}:/usr/local/bin:/usr/bin:/bin"})
+            if r.returncode == 0 and (r.stdout or "").strip():
+                return True, ""
+            why = (r.stderr or "").strip()[:60] or "ttskill 无输出"
+        except Exception as e:
+            why = repr(e)[:60]
+        if attempt < 2:
+            time.sleep(2.5)
+    if "登录" in why or "login" in why.lower():
+        return False, "ttskill 登录已过期（token 30 天，需重扫）"
+    if "fetch failed" in why.lower():
+        return False, "ttskill 服务端请求失败（网络异常，非登录问题）"
+    return False, why
+
+
 def ttskill_index_info(index_id):
     """天天基金 TTFUND_INDEX_INFO -> PE/PB 10年分位+ROE (走 router)
 
     ⚠️ 可选增强源：ttskill token 30 天过期，失效时返回 {}（**不报错、不阻断**）。
     看板主锚是中证官网 PE5y 分位（见 csindex_pe_pct），本函数的 PB10y 只是独立增量口径；
-    缺失时看板显示「—」并在页脚标注来源状态，绝不拿旧值冒充。
+    缺失时看板显示「—」并在页头标注来源状态，绝不拿旧值冒充。
     """
+    global _TT
+    if _TT["available"] is False:
+        return {}
+    _TT["tried"] += 1
     try:
-        d = DSR.get('cn_ttfund_index', index_id=index_id)[0]
-        if not (d and d.get("ok")): return {}
+        d = DSR.get('cn_ttfund_index', index_id=index_id, force=True)[0]
+        if not (d and d.get("ok")):
+            note = str((d or {}).get("note") or "")
+            if "登录已过期" in note or "expired" in note.lower():
+                _TT["note"] = "ttskill 登录已过期（token 30 天，需重扫）"
+            elif "登录" in note or "login" in note.lower():
+                _TT["note"] = "ttskill 未登录"
+            elif not _TT["note"]:
+                _TT["note"] = note[:60] or "天天基金源暂不可用"
+            return {}
+        _TT["ok"] += 1
         return {"name": None, "pe10y": d.get("pe_pct_10y"), "pb10y": d.get("pb_pct_10y"),
                 "pb": None, "roe": d.get("roe"), "pe_ttm": d.get("pe_ttm")}
     except Exception:
@@ -263,6 +306,11 @@ def main():
             return r, None
         except Exception as e:
             return None, f"{w['name']}: {repr(e)[:80]}"
+    # 先探测可选源 ttskill 是否可用（不可用则整体跳过，避免 10 次无效子进程）
+    avail, why = _tt_probe()
+    _TT["available"] = avail
+    if not avail:
+        _TT["note"] = why
     rows, errs = [], []
     with ThreadPoolExecutor(max_workers=6) as ex:
         futs = [ex.submit(work, w) for w in cfg["watchlist"]]
@@ -274,23 +322,17 @@ def main():
     order = {w.get("etf_code") or w.get("yahoo_symbol", ""): i for i, w in enumerate(cfg["watchlist"])}
     rows.sort(key=lambda r: order.get(r["etf_code"], 99))
     # 数据源状态（可选源 ttskill 是否可用 → 渲染层明示，不静默）
-    tt_ok = any(r.get("pb10y") is not None for r in rows)
-    try:
-        st = json.loads(subprocess.check_output(
-            ["ttskill", "status", "--json"], timeout=20, text=True,
-            env={"PATH": f"{API}:/usr/local/bin:/usr/bin:/bin"}))
-        auth = st.get("auth") or {}
-        if auth.get("is_expired"):
-            tt_note = "登录已过期（30 天需重扫）"
-        elif not auth.get("has_token"):
-            tt_note = "未登录"
-        elif not tt_ok:
-            tt_note = "已登录但本次全组指数均未取到 PB"
-        else:
-            tt_note = ""
-    except Exception:
-        tt_note = "ttskill 不可用" if not tt_ok else ""
-    src_status = {"ttfund_ok": tt_ok, "ttfund_note": tt_note}
+    tt_ok = _TT["tried"] > 0 and _TT["ok"] > 0
+    if tt_ok:
+        tt_note = ""
+    elif _TT["available"] is False:
+        tt_note = _TT["note"] or "天天基金源不可用"   # 探测阶段已知的失败原因优先
+    elif _TT["tried"] == 0:
+        tt_note = "本次未调用（无中证系标的）"
+    else:
+        tt_note = _TT["note"] or "本次全部指数未取到 PB"
+    src_status = {"ttfund_ok": tt_ok, "ttfund_note": tt_note,
+                  "ttfund_tried": _TT["tried"], "ttfund_ok_n": _TT["ok"]}
     return cfg, rows, errs, src_status
 
 if __name__ == "__main__":

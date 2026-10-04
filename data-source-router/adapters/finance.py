@@ -376,6 +376,11 @@ def cn_ttfund_index(index_id):
                             "--body", json.dumps({"index_id": index_id}, ensure_ascii=False)],
             capture_output=True, text=True, timeout=60,
             env={"PATH": f"{api}:/usr/local/bin:/usr/bin:/bin"})
+        # ⚠️ ttskill 失败时 stdout 为空、原因在 stderr（rc!=0）→ 必须先看 rc，
+        #    否则 json.loads 报 "Expecting value" 把真正的「登录已过期」覆盖掉（踩过）
+        if r.returncode != 0 or not (r.stdout or "").strip():
+            err = (r.stderr or "").strip()[:80] or "ttskill 无输出"
+            return {"ok": False, "note": err}
         d = json.loads(r.stdout)["data"]["raw_result"]["body"]["data"]
     except Exception as e:
         return {"ok": False, "note": "ttskill解析失败: " + str(e)[:60]}
