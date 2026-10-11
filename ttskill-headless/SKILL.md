@@ -1,6 +1,6 @@
 ---
 name: ttskill-headless
-description: 无桌面服务器（ECS/云主机）上安装天天基金 ttskill CLI 并远程扫码登录 — 解决 secret-tool D-Bus 不可用、凭证存储 patch 成文件模式、SSH 隧道打通 127.0.0.1 回调端口。触发时机：在无桌面 Linux 服务器上装 ttskill、`ttskill login` 报 "Linux Secret Service 写入失败"、需要远程扫码登录天天基金。
+description: 无桌面服务器（ECS/云主机）上安装天天基金 ttskill CLI 并远程扫码登录 — 解决 secret-tool D-Bus 不可用、凭证存储 patch 成文件模式，以及把 127.0.0.1:8765 回调打通（首选 cloudflared 隧道，用户只需点链接+扫码；备选 SSH -L 转发）。触发时机：在无桌面 Linux 服务器上装 ttskill、`ttskill login` 报 "Linux Secret Service 写入失败"、需要远程扫码登录天天基金、token 30 天过期需重扫。
 version: 1.0.0
 tags: [ttfund, ttskill, headless, ecs, login, credential]
 ---
@@ -10,7 +10,7 @@ tags: [ttfund, ttskill, headless, ecs, login, credential]
 天天基金 `ttskill` CLI 在**无桌面环境**（阿里云 ECS 等）的完整部署流程，含两个核心坑的解法：
 
 1. **凭证存储**：ttskill 在 Linux 强制走 Secret Service（`secret-tool`），无 D-Bus/X11 的服务器无法写入 → **patch 源码改为文件存储**
-2. **扫码回调**：登录 URL 的回调地址是 `http://127.0.0.1:8765/callback`，指向打开浏览器的机器，扫码后浏览器 POST 到本地 127.0.0.1 → 用户本机扫码时回调到不了服务器 → **SSH 端口转发**打通
+2. **扫码回调**：登录 URL 的回调地址是 `http://127.0.0.1:8765/callback`，回调是**浏览器发起的 POST**（不是 GET 重定向），且地址指向打开浏览器的机器 → 用户本机扫码时回调到不了服务器 → **隧道打通**：首选 cloudflared（把本机 8765 暴露成公网 HTTPS，用户零配置），备选 SSH `-L` 端口转发
 
 ## 适用场景
 
@@ -202,7 +202,7 @@ ttskill login --env prod
 |------|-----|
 | 有效期 | 30 天（`expires_in: 2592000`） |
 | 续期 | ❌ ttskill 0.1.2 **存了 refresh_token 但代码不用它刷新**，续期无意义，过期必须重扫 |
-| 过期表现 | `ttskill invoke` 报登录失效 / `status` 里 `is_expired: true` |
+| 过期表现 | `ttskill invoke` 报「登录已过期」（**以真实 invoke 的 stderr 为准**：`status` 的 `is_expired` 字段在过期后可能直接消失，只靠它会误判） |
 | 重扫流程 | 重复 Step 5 即可（凭据文件还在，无需重装/patch） |
 
 > 建议在 token 过期前 3-5 天设 cron 提醒用户重新扫码（登录日期 ±30 天）。
@@ -214,7 +214,9 @@ ttskill login --env prod
 - **`secret-tool: Cannot autolaunch D-Bus without X11 $DISPLAY`**：无桌面服务器标配，别尝试装桌面/起 D-Bus，直接 patch 文件存储。
 - **patch 后 token 反复消失**：多半是 `removeLegacyFile` 没拦截（patch 第 4 项）。验证：登录后立即 `ls auth/token.json`。
 - **login 进程不退出**：CLI 在等回调，属于正常。5 分钟超时后自动失败退出。
-- **登录 URL 回调到用户自己电脑**：用户本机的 127.0.0.1:8765 是自己的机器，**必须**先开 SSH 隧道再扫码，否则扫码后 token 换不到。
+- **登录 URL 回调到用户自己电脑**：用户本机的 127.0.0.1:8765 是**他自己的机器**，必须先打通隧道再扫码，否则扫码后 token 换不到。首选 **cloudflared 方案 A**（用户零配置）；SSH `-L` 是备选。
+- **「让用户复制浏览器地址栏 URL 发回来」行不通**：回调是 JS 发起的 POST，地址栏里只有 GET，复制回来喂给服务只会得到 `not_found`。别再试这条捷径。
+- **凭证文件的实际位置**：patch 后 token 落在 **`~/.local/share/ttfund-skills/auth/token.json`**（device-key 同目录），**不是** `ttskill-base/` 下的 auth/。排查「登录成功但 token 消失」时直接看这个路径。
 - **Hermes 用 background=true 跑 login**：不要用 nohup/disown（Hermes 会拒绝 shell 后台包装），用 `terminal(background=true)`，然后 `process(action='poll')` 抓 URL。
 
 ## 复用命令速查
