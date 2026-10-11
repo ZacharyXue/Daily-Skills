@@ -32,7 +32,7 @@ A股聚合技巧与 grep 锚点表见 `references/eastmoney-peer-compare.md`（�
 
 ## Phase 0: 文件就位
 
-- PDF 从飞书消息来 → 检查 Hermes 文档缓存 `~/.hermes/cache/documents/`，若无则提示用户放 `/tmp/<公司名>/`（参考 ttskill-headless skill 的落盘模式）
+- PDF 从飞书消息来 → 检查 Hermes 文档缓存 `~/.hermes/cache/documents/`，若无则提示用户放 `/tmp/<公司名>/`（参考 ttskill-cli 的 `references/headless-deploy.md` 落盘模式）
 - 确认文件存在、可读、页数合理（年报 200+ 页正常）
 
 ## Phase 1: PDF 文本提取

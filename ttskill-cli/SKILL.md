@@ -1,6 +1,6 @@
 ---
 name: ttskill-cli
-description: Install, configure, and use the TianTian Fund ttskill CLI — base package installation, business skill sync, agent entry distribution (Hermes + OpenCode), and login.
+description: Install, configure and use the TianTian Fund ttskill CLI (天天基金) — base package install, business skill sync, agent entry (Hermes/OpenCode), scan-code login, and headless ECS deployment (credential patch + cloudflared tunnel login). Use when the user mentions 天天基金, ttskill, 基金持仓/净值/季报, 基金经理, 指数估值, or needs ttskill deployed/logged in on a server.
 ---
 
 # 天天基金 ttskill CLI
@@ -106,16 +106,20 @@ ttskill login --env prod --force  # token 过期时**必须加 --force**，否�
 - `ttskill status --json` 看 `auth.expires_at` / `is_expired`；⚠️ **过期后 `is_expired` 字段可能直接消失**，只靠它会误判
 - 最可靠：跑一次真实 `invoke`，看 **returncode 与 stderr**（失败原因在 stderr，stdout 为空；直接 `json.loads(stdout)` 会把真因盖成 "Expecting value"）
 
-**前置依赖**：Linux 需要 `libsecret-tools`（用于 Secret Service 安全凭证存储）。
+**桌面环境**：登录时自动打开浏览器（或终端显示二维码），用户扫码授权即可。
+
+**无桌面服务器（ECS / 云主机）**：走**隧道 + 飞书发链接** —— 把回调端口经 cloudflared 暴露成公网 HTTPS，再把改好回调地址的登录链接**用飞书消息发给用户**，用户点开链接 + 天天基金 App 扫码即可（用户不需要 SSH、不需要复制任何东西）。完整步骤（含凭证 patch、隧道连通性自检、5 分钟时效处理）见 **`references/headless-deploy.md`**。
+
+**前置依赖**：Linux 需要 `libsecret-tools`；但**无桌面服务器上 patch 成文件存储后不需要它**（见 headless-deploy）。
 
 ```bash
-sudo apt-get install -y libsecret-tools   # Debian/Ubuntu
+sudo apt-get install -y libsecret-tools   # Debian/Ubuntu，仅桌面环境需要
 ```
 
-登录后会打开浏览器或终端显示二维码，用户扫码授权后即可使用。验证：
+验证登录（凭证落在 `~/.local/share/ttfund-skills/auth/token.json`）：
 
 ```bash
-ttskill status --json   # 检查 has_token 是否为 true
+ttskill status --json   # 看 auth.has_token / auth.expires_at
 ```
 
 ## 业务 Skill 包一览
@@ -206,7 +210,7 @@ ttskill skill update <skill_id> --env prod   # 业务包版本落后（HTTP 409 
 - **BASE_INFOS 的 `asset_scale_history`/`share_scale_history` 是 list 且可能滞后**：规模用 `NETNAV`(元)/`CHANGE`(同比%)、份额用 `QMZFE`(期末份额)/`NETFLOW`(净申购)，**最新在前**；但该列表可能是早期快照（如富国稳健 2021-22 那是成立初期），**最新规模要看 `data[0].ENDNAV`（最新报告期）**。规模短期趋势用 `share_scale_history` 近 6 期（QE 净申连续为负 = 份额赎回）。
 - **`holding_ai_summary` 是天基金 AI 对持仓的解读摘要（聚焦赛道+重仓股）**，非基金经理逐字叙述。要看经理**亲述的季报市场观点/仓位操作**（"本季回顾+后市展望"），BASE_INFOS 拿不到——需去基金定期报告（中报/季报 PDF 或天天基金季报页）提取。分析时区分：持仓增减=硬数据，AI 摘要=二手观点，基金原文=一手观点。
 - **读持仓基金清单用 `ACCOUNT_HOLDING --action holding_list --body '{}'`**：返回全部持仓（含基金/投顾/活期宝），字段 `pType`(fund/tg/hqb)，过滤投顾(tg, 名如"星际穿越")和 hqb 才能得到纯基金清单。`--action query` 或传 `fund_id` 都不是正确姿势。
-- **无桌面服务器（ECS）部署/登录**：本 skill 假设桌面环境；headless 场景见 **`ttskill-headless`** skill，含：凭证文件化 patch、**cloudflared 隧道扫码登录（用户只需点链接 + 扫码，无需 SSH 隧道）**、token 过期重扫。
+- **无桌面服务器（ECS）部署/登录**：见本 skill 的 **`references/headless-deploy.md`**（凭证文件化 patch、cloudflared 隧道 + 飞书发链接、token 过期重扫）。
   ⚠️ 关键机制：`ttskill login` 的回调是**浏览器发起的 POST**（不是 GET 重定向），所以「让用户复制地址栏 URL」不可行——必须让浏览器能连通到服务器上的 8765 回调服务。
 - **`skill_version_required` 报错**：invoke 返回 `HTTP 409 {"code":"skill_version_required"}` = 该业务的 Skill 包版本落后于服务端。先重试一次（常是偶发），仍失败再 `ttskill skill update <SKILL_ID> --env prod`。
 
@@ -255,7 +259,7 @@ ttskill skill update <skill_id> --env prod   # 业务包版本落后（HTTP 409 
 - **季报原文用东财 JJGG 接口拿，别靠 web_search 碰运气**：`https://api.fund.eastmoney.com/f10/JJGG?fundcode=<code>&pageIndex=1&pageSize=30&type=3`（带 `Referer: https://fundf10.eastmoney.com/`）→ `Data[]` 含 `TITLE/PUBLISHDATEDesc/ID(artcode)`；PDF 直链 `https://pdf.dfcfw.com/pdf/H2_<artcode>_1.pdf`；提取 §4.4「投资策略和运作分析」。❌ `np-anotice-stock/fund.eastmoney.com` 返回空、`FundArchivesDatas.aspx?type=jjbg` 返回空、天天基金公告页是 JS 渲染——都不要用。
 - **TTFUND_SEARCH 的候选在 `body.data.candidates`**（不是 BASE_INFOS 的 `data` list）：`ttskill invoke TTFUND_SEARCH --action query --body '{"query":"<code>","search_type":"fund"}'` → `d['data']['raw_result']['body']['data']['candidates']`，字段 `code/name/category_name/is_buyable`。**7 位代码照搜也能防错**：用户把 017589 打成 0017589（7 位），逐候选拆解验证后确认是 017589，别替他猜。
 
-## 业务 Skill 包一览
+## 关键业务包参数速查
 
 | Skill | body 参数 | 要点 |
 |-------|-----------|------|
@@ -265,7 +269,7 @@ ttskill skill update <skill_id> --env prod   # 业务包版本落后（HTTP 409 
 | TTFUND_BOND_MARKET | `{}` | 债市晴雨表（利率债/信用债 BP 变动 + AI 观点 markdown） |
 | TTFUND_STOCK_PRICE_QUERY | `{"query":"06869"}` | A/港股行情 |
 | TTFUND_SEARCH | `{"query":"港股通红利低波","search_type":"index"}` | search_type 必填: fund/index/manager/strategy。**按名称找指数 code**：只知 ETF/指数名时用它搜 code(如"港股通红利低波"→987016)，再进 TTFUND_INDEX_INFO；基金用 search_type=fund 先验身份(见铁律) |
-| TTFUND_INDEX_INFO | `{"index_id":"931722"}` | 字段是 index_id 不是 query！**index_id 可传名称**让服务端解析(如"沪深300"/"恒生红利低波")；返回 index_profile(编制逻辑)/valuation(pe_ttm + pe_percentile_10y + pb_percentile_10y，**只有10y分位、无5y、无历史序列**)/composition.top_industries(行业权重)/composition.component_details(前十大成分股) |
+| TTFUND_INDEX_INFO | `{"index_id":"931722"}` | 字段是 index_id 不是 query！**index_id 可传名称**让服务端解析(如"沪深300"/"恒生红利低波")；返回 index_profile(编制逻辑)/valuation(pe_ttm + pb + roe + pe_percentile_10y + pb_percentile_10y，**分位只有 10y、无历史序列；5y PE 可自算，见 Pitfalls**)/composition.top_industries(行业权重)/composition.component_details(前十大成分股) |
 
 ## 业绩归因分析（外部基金，快速版）
 
