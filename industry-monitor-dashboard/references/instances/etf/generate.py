@@ -15,6 +15,7 @@ ETF 红利 · 技术温度看板 生成脚本
 """
 import json, subprocess, urllib.request, urllib.parse, time, sys, os
 from datetime import datetime, timedelta
+from indices_meta import META
 
 UA = {"User-Agent": "Mozilla/5.0"}
 API = "/root/.local/bin"
@@ -119,7 +120,7 @@ def ttskill_index_info(index_id):
             return {}
         _TT["ok"] += 1
         return {"name": None, "pe10y": d.get("pe_pct_10y"), "pb10y": d.get("pb_pct_10y"),
-                "pb": None, "roe": d.get("roe"), "pe_ttm": d.get("pe_ttm")}
+                "pb": d.get("pb"), "roe": d.get("roe"), "pe_ttm": d.get("pe_ttm")}
     except Exception:
         return {}
 
@@ -287,6 +288,65 @@ def signal(r):
         if r["bias20"] < -10: return "超跌", "dip"
     return "观望", "watch"
 
+def view(r):
+    """按当前数据生成「位置解读」三段（估值面 / 价格面 / 综合）——动态，行情变了自动跟着变，
+    绝不写死观点；无数据时如实说明是「数据限制」而不是「它便宜」。"""
+    o = {"valuation": "", "price": "", "take": ""}
+    p, cur, lo, hi = r.get("pe5_pct"), r.get("pe5_cur"), r.get("pe5_lo"), r.get("pe5_hi")
+    if p is None:
+        o["valuation"] = ("该指数非中证编制，公开渠道拿不到历史 PE 序列 → 估值面不参与判断。"
+                          "这是**数据限制，不等于它便宜**，只能用价格位置（回撤/BIAS）替代。")
+    else:
+        band = ("已到近 5 年最贵的十分之一区间，此时买入等于为「稳定」付溢价" if p >= 90 else
+                "处近 5 年偏高位置，安全边际不厚" if p >= 70 else
+                "处近 5 年中位，估值上没有明显倾向" if p >= 40 else
+                "处近 5 年偏低位置，估值端有安全垫" if p >= 10 else
+                "趴在近 5 年最低区间，估值端赔率最好")
+        posr = ""
+        if lo and hi and hi > lo:
+            posr = "（区间位置 %.0f%%）" % ((cur - lo) / (hi - lo) * 100)
+        o["valuation"] = "PE %s 处近 5 年区间 %s~%s%s，分位 %.0f%%——%s。" % (cur, lo, hi, posr, p, band)
+        # PE/PB 背离检测（用户要求两个估值都有后新增：单看 PE 会漏掉「盈利被压缩出来的便宜」）
+        pb10 = r.get("pb10y")
+        if pb10 is not None:
+            gap = p - pb10
+            pbs = ("%.2f" % r["pb"]) if r.get("pb") is not None else "—"
+            if gap >= 25:
+                o["valuation"] += ("　PB 分位 %.0f%%（PB %s），PE 比 PB 高 %.0f 个百分点——"
+                                   "盈利端比资产端贵，通常对应高 ROE/轻资产，也可能是盈利正处在周期高位。"
+                                   % (pb10, pbs, gap))
+            elif gap <= -25:
+                o["valuation"] += ("　⚠ PB 分位 %.0f%%（PB %s），**PE 比 PB 低 %.0f 个百分点**——"
+                                   "资产端并不便宜，PE 低更可能是「盈利被压缩」压出来的（分母效应），"
+                                   "不能只看 PE 就判定便宜。"
+                                   % (pb10, pbs, abs(gap)))
+            else:
+                o["valuation"] += "　PB 分位 %.0f%%（PB %s），与 PE 口径一致，两者不矛盾。" % (pb10, pbs)
+    dd, mx, prog = r.get("cur_dd"), r.get("max_dd"), r.get("dd_progress")
+    if dd is not None:
+        depth = ("已深于历史最大回撤的一半，属于周期性机会区" if (prog or 0) >= 0.5 else
+                 "回撤走完不到历史最大回撤的一半" if (prog or 0) < 0.3 else
+                 "回撤进度过半，接近历史级别的调整")
+        o["price"] = ("现价距历史高点 %.1f%%，历史最大回撤 %.1f%%（%s），回撤进度 %.0f%%——%s。"
+                      % (dd, mx or 0, r.get("max_dd_date") or "—", (prog or 0) * 100, depth))
+    # 综合（估值 × 价格，两个维度交叉，不给单一结论）
+    sig = r.get("sig_key")
+    if p is None:
+        o["take"] = ("估值数据缺失，只能按价格与均线判断：当前 %s。建议把这只的仓位决策权重降低，"
+                     "或先补齐估值口径再动手。" % (r.get("signal") or "—"))
+    elif p >= 90 and (prog or 0) < 0.4:
+        o["take"] = "**高位 + 浅回撤**：估值接近 5 年顶部、价格又没跌下来，此刻买入拿不到风险补偿。"
+    elif p >= 90 and (prog or 0) >= 0.4:
+        o["take"] = "**高位 + 已回调**：估值仍贵但价格已经跌了一截，属于「跌了但没跌够」，可继续等分位回落。"
+    elif p < 20 and (prog or 0) >= 0.5:
+        o["take"] = "**低位 + 深回撤**：估值接近 5 年最低、价格也跌透，是赔率与胜率都占优的位置。"
+    elif p < 20 and (prog or 0) < 0.5:
+        o["take"] = "**低位 + 浅回撤**：估值便宜但价格没怎么跌，说明基本面预期还没被完全定价。"
+    else:
+        o["take"] = "**中位区间**：估值与价格都在中间地带，没有极端值得下重手的理由，按计划分批即可。"
+    return o
+
+
 ACTIONS = {
     "add":   "深回撤+低估值双重买点：可一次性买入计划的 1/2，剩余按季分批，拿住等估值修复。",
     "dca":   "进入买点区：可分 3 批布局，每批 1/3，跌破 MA20 或回撤加深再加，跌破 -20% 停手。",
@@ -303,6 +363,8 @@ def main():
     def work(w):
         try:
             r = build_row(w); r["signal"], r["sig_key"] = signal(r)
+            r["views"] = view(r)                  # 动态位置解读（估值面/价格面/综合）
+            r["meta"] = META.get(w["name"], {})   # 静态指数说明（不占运行上下文）
             return r, None
         except Exception as e:
             return None, f"{w['name']}: {repr(e)[:80]}"

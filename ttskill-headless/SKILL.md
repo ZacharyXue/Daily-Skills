@@ -127,7 +127,50 @@ EOF
 ttskill agent-entry refresh --env prod
 ```
 
-### Step 5: 远程扫码登录（SSH 隧道）
+### Step 5: 远程扫码登录
+
+#### 方案 A（推荐，2026-10 实测跑通）：cloudflared 隧道 —— 用户只需「点链接 + 扫码」
+**原理**：`ttskill login` 会在**服务器本机**起一个监听 `127.0.0.1:8765` 的回调服务。但它要求的回调是**浏览器发起的 POST**（不是 GET 重定向 —— 所以「让用户复制地址栏 URL」没用，地址栏只有 GET）。只要浏览器能连通到那个服务即可，于是用 cloudflared 反向隧道把本机 8765 暴露成公网 HTTPS，再**把登录 URL 里的 callback_url 换成隧道地址**：
+
+```bash
+# ① 下载 cloudflared（43MB，ECS 直连 GitHub 200）
+curl -sL -o /tmp/cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+chmod +x /tmp/cloudflared
+
+# ② 起隧道（出站长连接，不开任何入站端口、不用改安全组）
+/tmp/cloudflared tunnel --url http://127.0.0.1:8765 --no-autoupdate > /tmp/cf_tunnel.log 2>&1 &
+grep -o "https://[a-z0-9-]*\.trycloudflare\.com" /tmp/cf_tunnel.log | head -1
+
+# ③ 起 ttskill login 拿登录 URL（5 分钟有效）
+ttskill login --env prod --force > /tmp/tt_login.log 2>&1 &
+
+# ④ 把 URL 里的 callback_url 换成隧道地址（保留 state！）——见 /tmp/mk_login_link.py
+#    callback_url=http%3A%2F%2F127.0.0.1%3A8765%2Fcallback
+#    → callback_url=https%3A%2F%2F<TUN>.trycloudflare.com%2Fcallback
+```
+
+用户侧只需：**浏览器点开链接 → 天天基金 App 扫码 → 完成**（无需 SSH 隧道、无需复制任何东西）。
+
+自检（确认隧道真的通到本机服务）：
+```bash
+curl -s -X POST -H "Content-Type: application/json" -d '{"state":"probe"}' \
+  "https://<TUN>.trycloudflare.com/callback?state=probe"
+# 返回 {"ok":false,"error":"invalid_state"} = 请求已到达 ttskill 服务 ✓
+# 返回 Cloudflare 错误页 = 隧道没通
+```
+
+登录完成的判据（看 login 进程输出）：
+```json
+{"status":"ok","current_user":{"expires_at":"2026-11-10T15:59:01.000Z","is_expired":false}}
+```
+
+⚠️ 注意：
+- quick tunnel 每次重启 URL 会变；登录完成后**记得 kill 掉 cloudflared**（用完即弃，减少暴露面）
+- 隧道背后只挂着回调服务，未知路径返回 404 / `invalid_state`
+- 登录后若 invoke 报 `skill_version_required`（skill 包版本落后），重试一次通常即恢复；仍失败再 `ttskill skill update <SKILL_ID> --env prod`
+
+#### 方案 B（旧）：SSH 隧道 —— 用户需在本地开 `ssh -L`
+
 
 **原理**：`ttskill login` 生成的 URL 带 `callback_url=http://127.0.0.1:8765/callback?state=xxx`，浏览器扫码后 POST 到这个地址，该地址必须落在**服务器**上。所以用户在本地开 SSH 隧道，把本地的 8765 端口转发到服务器：
 
