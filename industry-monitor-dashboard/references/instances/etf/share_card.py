@@ -22,6 +22,7 @@ ETF 看板 · 分享图生成器（小红书竖版 3:4，每只标的一张）
 """
 import os
 import sys
+import json
 import html
 import subprocess
 
@@ -31,8 +32,32 @@ import generate  # noqa: E402
 import indices_meta as IM  # noqa: E402
 
 OUT_DIR = os.path.normpath(os.path.join(HERE, "../public/exports/share"))
+ISSUE_FILE = os.path.join(HERE, "share_issue.json")
 CHROME = "/root/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell"
 W, H = 1240, 1653
+
+
+def next_issue():
+    """期号（EXP.NNN）：跨天首次生成时 +1，同一天重跑保持同期（改文案后重出图不跳号）。
+
+    期号与标的序号是两回事：
+      · 期号 EXP.NNN  —— 这批分享图属于第几期，随发布时间递增，建「追更」预期
+      · 第 i/total 只 —— 标的在本期里的位置，编号始终绑定同一只标的
+    状态落在 share_issue.json，随工程一起 commit，换机器也能接上。
+    """
+    today = generate.datetime.now().strftime("%Y-%m-%d")
+    state = {"issue": 0, "date": None}
+    if os.path.exists(ISSUE_FILE):
+        try:
+            with open(ISSUE_FILE, encoding="utf-8") as f:
+                state = json.load(f)
+        except Exception:
+            pass
+    if state.get("date") != today:
+        state = {"issue": int(state.get("issue") or 0) + 1, "date": today}
+        with open(ISSUE_FILE, "w", encoding="utf-8") as f:
+            json.dump(state, f, ensure_ascii=False, indent=2)
+    return state["issue"]
 
 
 def esc(s):
@@ -125,7 +150,7 @@ def make_hook(kind, p, pb, dd, prog):
     return "不上不下，最费耐心"
 
 
-def build_card(r, idx=1):
+def build_card(r, idx=1, total=1, issue=1):
     name = r["name"]
     code = r.get("etf_code") or ""
     mt = r.get("meta") or {}
@@ -287,7 +312,7 @@ background:linear-gradient(180deg,#f5b942,#d97706)}}
 font-size:22px;color:#b6bec9}}
 .foot b{{color:#6b7280}}
 </style></head><body><div class="wrap">
-  <div class="series">ETF 观察 <b>NO.{idx:02d}</b> ｜ 一图看懂一只标的</div>
+  <div class="series">ETF 观察 <b>EXP.{issue:03d}</b> ｜ 本期第 {idx}/{total} 只 ｜ 一图看懂一只标的</div>
   <div class="tags">{tags_html}</div>
   <h1>{esc(name)}</h1>
   <div class="code">{esc(mt.get('full_name') or name)}{('　' + esc(code)) if code else ''}</div>
@@ -336,13 +361,15 @@ def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     cfg, rows, errs, src_status = generate.main()
     want = sys.argv[1:]
+    issue = next_issue()
+    total = len(rows)
     for i, r in enumerate(rows, 1):
         if want and r["name"] not in want:
             continue
         code = (r.get("meta") or {}).get("share_slug") or r.get("etf_code") or r["name"]
         code = "".join(ch if (ch.isalnum() or ch in "-_") else "" for ch in str(code)) or "idx"
         p = os.path.join(OUT_DIR, "%s.png" % code)
-        render(build_card(r, idx=i), p)
+        render(build_card(r, idx=i, total=total, issue=issue), p)
         print("✓", r["name"], "->", p, os.path.getsize(p) if os.path.exists(p) else "FAIL")
 
 

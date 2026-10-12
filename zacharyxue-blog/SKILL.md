@@ -103,6 +103,24 @@ Pitfalls:
 - The scroll-highlight `<script>` should be non-inline (Astro-processed); the mermaid loader must stay `is:inline` (CDN-side effects).
 - Verify after build: `grep -o 'toc-item' dist/blog/<slug>/index.html | wc -l` (counts compressed HTML) and confirm heading `id="..."` anchors exist.
 
+### frontmatter tags 不能含 `/`（构建会挂）
+
+`tags: [K8s, CI/CD, GitLab]` → 生成 `/tags/CI/CD/` 被解析成两级路由 → 构建报：
+```
+/tags/CI/CD/index.html  Missing parameter: tag
+```
+**对策**：tag 值不要带 `/`，用 `DevOps`、`GitLab CI` 这类写法替代。
+（grep 自查：`grep -rn "tags:.*\/" src/content/`）
+
+### 增量构建的 `Duplicate id` 警告多为缓存残留
+
+改完文章再 `npm run build`，可能看到：
+```
+[glob-loader] Duplicate id "<slug>" found in ... Later items with the same id will overwrite earlier ones.
+```
+源目录里只有一个同名文件时，这是增量缓存残留，**不是真的重复**。
+验证：`rm -rf dist && npm run build`，警告消失即确认。
+
 ### Shiki syntax highlighting — unsupported languages
 
 Astro's Shiki highlighter doesn't recognize every language identifier. If you get a warning like `The language "gitignore" doesn't exist, falling back to "plaintext"`, either:
