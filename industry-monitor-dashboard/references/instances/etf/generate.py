@@ -294,8 +294,19 @@ def view(r):
     o = {"valuation": "", "price": "", "take": ""}
     p, cur, lo, hi = r.get("pe5_pct"), r.get("pe5_cur"), r.get("pe5_lo"), r.get("pe5_hi")
     if p is None:
-        o["valuation"] = ("该指数非中证编制，公开渠道拿不到历史 PE 序列 → 估值面不参与判断。"
-                          "这是**数据限制，不等于它便宜**，只能用价格位置（回撤/BIAS）替代。")
+        pb10 = r.get("pb10y")
+        if pb10 is not None:
+            pbs = ("%.2f" % r["pb"]) if r.get("pb") is not None else "—"
+            roes = ("，ROE %.1f%%" % r["roe"]) if r.get("roe") is not None else ""
+            pbband = ("处近 10 年偏高位，资产端不便宜" if pb10 >= 70 else
+                      "处近 10 年中位，资产端没有明显倾向" if pb10 >= 40 else
+                      "处近 10 年偏低位置，资产端有安全垫")
+            o["valuation"] = ("该指数无公开历史 PE 序列（非中证编制）→ **PE 口径不参与判断**。"
+                              "改用资产端（PB）口径：PB 分位 %.0f%%（PB %s%s）——%s。"
+                              % (pb10, pbs, roes, pbband))
+        else:
+            o["valuation"] = ("该指数非中证编制，公开渠道拿不到历史 PE 序列 → 估值面不参与判断。"
+                              "这是**数据限制，不等于它便宜**，只能用价格位置（回撤/BIAS）替代。")
     else:
         band = ("已到近 5 年最贵的十分之一区间，此时买入等于为「稳定」付溢价" if p >= 90 else
                 "处近 5 年偏高位置，安全边际不厚" if p >= 70 else
@@ -332,8 +343,27 @@ def view(r):
     # 综合（估值 × 价格，两个维度交叉，不给单一结论）
     sig = r.get("sig_key")
     if p is None:
-        o["take"] = ("估值数据缺失，只能按价格与均线判断：当前 %s。建议把这只的仓位决策权重降低，"
-                     "或先补齐估值口径再动手。" % (r.get("signal") or "—"))
+        pb10 = r.get("pb10y")
+        if pb10 is not None:
+            if pb10 >= 70 and (prog or 0) >= 0.5:
+                o["take"] = ("**资产端偏贵 + 价格已回调**：无 PE 口径，PB 处近 10 年 %.0f%% 分位——"
+                             "资产端并不便宜，价格已先跌一段，位置由 PB 能否回落确认。" % pb10)
+            elif pb10 >= 70:
+                o["take"] = ("**资产端偏贵 + 价格仍高**：无 PE 口径，PB 处近 10 年 %.0f%% 分位——"
+                             "资产端不便宜，价格也没跌下来，两个维度都没给安全垫。" % pb10)
+            elif pb10 <= 35 and (prog or 0) >= 0.5:
+                o["take"] = ("**资产端偏便宜 + 价格也跌透**：无 PE 口径，PB 处近 10 年 %.0f%% 分位——"
+                             "资产端有安全垫，价格端也释出空间。" % pb10)
+            elif pb10 <= 35:
+                o["take"] = ("**资产端偏便宜 + 价格仍高**：无 PE 口径，PB 处近 10 年 %.0f%% 分位——"
+                             "资产端便宜，但价格还没反映出来。" % pb10)
+            else:
+                o["take"] = ("**资产端不贵不便宜**：无 PE 口径，PB 处近 10 年 %.0f%% 分位，"
+                             "资产端没有明显倾向，位置主要看价格端。" % pb10)
+        else:
+            o["take"] = ("PE 与 PB 两个估值口径都缺失，只能按价格与均线判断：当前 %s。"
+                         "价格判断的依据强度低于估值口径，位置结论的权重应相应下调。"
+                         % (r.get("signal") or "—"))
     elif p >= 90 and (prog or 0) < 0.4:
         o["take"] = "**高位 + 浅回撤**：估值接近 5 年顶部、价格又没跌下来，此刻买入拿不到风险补偿。"
     elif p >= 90 and (prog or 0) >= 0.4:
