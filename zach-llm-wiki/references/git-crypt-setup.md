@@ -57,3 +57,75 @@ head -5 SCHEMA.md                                       # 明文即成功
 - 密钥丢失 = 云端密文永久无法解密（数据等效丢失）→ 必须 ≥2 处备份
 - 用用户现有的 SSH 私钥做终极恢复钥匙 = 零新增密钥管理,人不会丢自己在天天用的东西
 - GitHub 私有仓库本身是「围墙」,git-crypt 是「保险柜」:防账号被盗 / 误转公开 / 平台侧明文
+
+---
+
+## 把已有明文历史的仓库改造成加密仓库（2026-10-13 实测）
+
+场景：`career-data` / `social-data` 原本是明文历史的独立仓，要用**同一把 wiki 密钥**加密后备份到 `zach-wiki` 的其他分支。
+
+### ❌ 不要用 filter-branch 重写历史
+`git filter-branch --tree-filter '...写 .gitattributes...'` **会漏加密**：git 会复用 index 里已有的 blob，部分历史版本不会重新过 filter。
+实测：174 个 blob 只加密了 70 个，**104 个仍是明文**。
+
+### ✅ 逐提交重建（可靠做法）
+
+```bash
+# 0. 备份 + 保底分支
+tar czf /root/backup-$(date +%s).tar.gz -C /root/zach-skills career-data
+git branch -f backup-orig-history HEAD
+
+# 1. 复用同一把 key（不要 init 出新的）
+git-crypt unlock /path/to/wiki-gitcrypt-key
+
+# 2. 收集原历史（旧→新）：sha|author|email|date|subject
+git log --reverse --format='%H|%an|%ae|%aI|%s' master
+
+# 3. 切 orphan 分支，逐个提交重建
+git checkout --orphan encrypted-history
+git rm -r --cached . -q
+#   对每个 sha 循环：
+#     git read-tree --reset -u $sha          # 检出该版本到工作区+index
+#     git rm -r --cached . -q                # ★ 清空 index，强制后续 add 重新过 filter
+#     printf '* filter=git-crypt diff=git-crypt\n.gitattributes !filter !diff\n' > .gitattributes
+#     git add -A                             # 走 clean filter → 加密
+#     git commit --allow-empty -q -m "$msg" --author="$an <$ae>" --date="$ad"
+
+# 4. 验证内容一致后，让 master 指向新历史
+git checkout -f encrypted-history
+git branch -f master encrypted-history
+git push origin master:career-data
+```
+
+耗时参考：56 个提交约 12 秒。
+
+### ⚠️ 清理明文历史：光删分支没用
+
+`filter-branch` 会留下 **`refs/original/refs/heads/master`** 备份引用 —— 它让旧（明文）对象**仍然可达**，`git gc` 清不掉。
+实测：删掉保底分支后，对象库里仍有 **76 个明文 blob** 可达。
+
+彻底清理三步：
+
+```bash
+git for-each-ref --format='%(refname)' refs/original/ | xargs -n1 git update-ref -d
+git reflog expire --expire=now --expire-unreachable=now --all
+git gc --prune=now --quiet
+```
+实测对象数 607 → 409，明文 blob 归零。
+
+### 验证清单
+
+- [ ] 新历史与原历史的工作区内容一致（逐文件 md5 比对）
+- [ ] 对象库全量扫描：`git cat-file --batch-all-objects --batch-check='%(objectname) %(objecttype)'`，逐个 blob 检查前缀是否 `\0GITCRYPT\0`
+- [ ] 只允许 `.gitattributes` / `README.md` 明文；**tree/commit 对象本就不加密，别误判为泄露**
+- [ ] 远端验证：不带 key 克隆，读出来必须是密文
+
+## 一个仓库多分支备份多个数据集
+
+`zach-wiki` 用三个分支存三类数据：`main`（wiki）/ `career-data`（职业）/ `social-data`（社交），**共用同一把密钥**。
+
+- 各数据目录仍是**独立 git 仓**（各自有 .git 历史），只是 remote 都指向同一个仓库
+- 推送：`git push origin master:career-data`（本地分支名 → 远端目标分支）
+- 设置 upstream 后可直接 `git push`：`git branch --set-upstream-to=origin/career-data master`
+- 每个分支都放一份明文 `README.md`（加密/解密说明），`.gitattributes` 里加 `README.md !filter !diff`
+- ⚠️ **密钥保护范围扩大 = 备份重要性提升**：一把 key 丢了，三份数据全部无法解密
