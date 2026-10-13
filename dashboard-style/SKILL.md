@@ -53,6 +53,9 @@ d, source, meta, tier = DSR.get("<kind>", **params)   # 返回 (data, source, me
 
 ## 四、已有看板索引
 
+> **看板的对外传播出口**：把单只标的的当前位置做成一张可截图传播的图 —— 见 `share-card-design` skill
+> （封面五层框架 / 矛盾标题生成规则 / 配色语义 / 排版压缩顺序）。两者共享同一套数据源与配色语义。
+
 见 `references/dashboards-index.md`（水泥、ETF，各自的 skill/工程路径/更新命令/产物位置）。
 
 ## 五、新增一个看板的流程

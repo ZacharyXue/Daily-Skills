@@ -32,6 +32,7 @@ ln -sfn $(pwd)/<skill-name> ~/.hermes/skills/<skill-name>
 | [data-source-router](data-source-router/) | **统一数据源层**：数据源地图 + SQLite缓存 + Tier路由 + 合规红线。其他 skill 及未来 skill 一律通过本层取数，杜绝重复探索/拿错数据/烧token。覆盖 A股/港股/美股行情与K线(腾讯)、A股财报(东财datacenter)、美股财报(SEC)、宏观(统计局)、GitHub 仓库/Issues/PR/Release/搜索/健康度(REST) | 任何需要拉金融或 IT 数据的任务 |
 | [opencode-go-model-selection](opencode-go-model-selection/) | **opencode-go 模型选择 + 429 排错**：配额机制($12/5h+$30/周+$60/月)、模型性价比(便宜→请求多)、多模态判定、切换主模型、GoUsageLimitError(周配额用尽)排查 | 对话报「iteration/retry backoff」「429配额用尽」、问「哪个模型省钱/有多模态」、切换主模型 |
 | [zacharyxue-blog](zacharyxue-blog/) | 维护 ZacharyXue.github.io Astro 博客：写作偏好（图标多文字少/先提纲）、技术细节、部署 | 写博客、修渲染、发文章 |
+| [share-card-design](share-card-design/) | 数据分享图设计（小红书竖版）：封面五层框架、矛盾标题生成规则、配色语义、排版压缩顺序、文案套路 | 做小红书/朋友圈数据图、给单只标的出「一图看懂」 |
 | [ttskill-cli](ttskill-cli/) | 天天基金 ttskill CLI 全流程：安装、33 个业务包、取数口径与坑、扫码登录（含 ECS 凭证 patch + cloudflared 隧道登录，见 `references/headless-deploy.md`） | 天天基金/ttskill、基金持仓净值季报、指数估值、服务器上部署登录 |
 | [site-login](site-login/) | 网页数据源登录管理：headless 守护式扫码登录、登录态持久化与复用（适配器：雪球） | 数据源要登录、扫码登录、登录态失效 |
 | [social-coach](social-coach/) | 社会分寸教练：该说什么/该做什么，底线三条（不刻薄/不说人坏话/不起争执），三大模式 | 社交场景问答、复盘社交失误、拿捏分寸 |
