@@ -107,7 +107,8 @@ r = achieve("kline", symbol="600519", count=250)   # 行情返回摘要，全量
 d = fetch_detail(r.data_ref)                        # 需要全量K线才二次加载
 r = achieve("financial", code="600519")
 r = achieve("financial_series", code="600519", report_name="RPT_F10_FINANCE_GINCOME")
-r = achieve("dividend", code="000333")              # 分红
+r = achieve("dividend", code="000333")              # 分红：全年口径(中期+末期聚合)，算股息率用这个
+r = achieve("dividend_detail", code="000333")       # 分红明细(单笔 rows，勿直接拿它算股息率)
 r = achieve("us_finance", cik="0000320193");  r = achieve("us_revenue", cik="0000320193")
 r = achieve("gh_repo", owner="volcano-sh", repo="volcano")
 r = achieve("gh_issues", owner="volcano-sh", repo="volcano", state="open")
@@ -217,6 +218,7 @@ sys.path.insert(0, '/root/zach-skills/data-source-router')
 4. **单位坑**（沿用之前踩过的）：
    - 腾讯K线 `vol` 单位=**手**(100股)，算成交额 ×100。
    - 东财 datacenter 金额单位是**元**（显示除1e8）；`MAINOP` 毛利率是**小数**（×100）。
+   - **分红/股息率（2026-10-18 修复）**：`achieve('dividend', code=...)` 现在走**全年口径**（`cn_stock_dividend_annual`，按 REPORT_DATE 年度聚合中期+末期）；只取明细最近一条会漏中期分红（招行实测 2.43% vs 正确 4.88%）。底层 `get('cn_stock_dividend'/'cn_stock_dividend_annual')` 的参数名是 **`secucode`（带后缀，如 `600887.SH`）**，传 `code=` 会报 `KeyError: 'secucode'`；achieve 层可传裸 `code=`（自动补后缀）。验证：伊利 2025 年度 1.38 元/股（中期 0.90＋末期 0.48）。
 
 ## Tier 降级链（规范）
 

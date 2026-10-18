@@ -104,7 +104,10 @@ INTENT_MAP = {
     "kline":            ("cn_stock_kline", _resolve_kline, ["symbol"]),
     "financial":        ("cn_financial", _resolve_financial, ["code"]),
     "financial_series": ("cn_financial_series", _resolve_financial_series, ["code"]),
-    "dividend":         ("cn_stock_dividend", _resolve_dividend, ["code"]),
+    # 股息率一律用「全年口径」（中期+末期聚合）；明细用 dividend_detail。
+    # 坑：只取明细最近一条会漏中期分红（招行实测 2.43% vs 正确 4.88%）。
+    "dividend":         ("cn_stock_dividend_annual", _resolve_dividend, ["code"]),
+    "dividend_detail":  ("cn_stock_dividend", _resolve_dividend, ["code"]),
     "us_finance":       ("us_financial_sec", _resolve_us_finance, ["cik"]),
     "us_revenue":       ("us_revenue_sec", _resolve_us_revenue, ["cik"]),
     # ---- GitHub 读/搜 ----
@@ -196,6 +199,18 @@ def _v_xueqiu(d):
     return True, f"命中 {len(hits)} 条，扫描 {d.get('total_scanned', 0)} 条"
 
 
+def _v_dividend_annual(d):
+    """全年口径分红校验：annuals 非空且含每股派息。"""
+    if not isinstance(d, dict):
+        return False, "分红 annual 非 dict"
+    if not d.get("ok"):
+        return False, str(d.get("error", "ok=False"))
+    ann = d.get("annuals") or []
+    if not ann:
+        return False, "annuals 为空"
+    return True, f"{len(ann)} 个年度，最新 {ann[0].get('year')} 每股 {ann[0].get('dps_per_share')}"
+
+
 VALIDATORS = {
     # 行情/财务
     "cn_stock_quote": _v_quote,
@@ -206,6 +221,7 @@ VALIDATORS = {
     "cn_financial": _v_financial,
     "cn_financial_series": _v_series,
     "cn_stock_dividend": _v_series,
+    "cn_stock_dividend_annual": _v_dividend_annual,
     "us_revenue_sec": _v_revenue,
     # 指数/行业
     "cn_cement_index": _v_md,
@@ -298,11 +314,23 @@ def _summarize_xueqiu(d):
         "recent": [{"date": h.get("date"), "text": h.get("text", "")[:80]} for h in hits[:3]],
     }
 
+def _summarize_dividend_annual(d):
+    """全年分派摘要：最新年度每股派息 + 近 6 年历史（算股息率只需这两个）。"""
+    if not isinstance(d, dict):
+        return {"ok": False}
+    ann = d.get("annuals") or []
+    return {
+        "ok": d.get("ok"), "latest_year": d.get("latest_year"), "latest_dps": d.get("latest_dps"),
+        "history": [{"year": a.get("year"), "dps_per_share": a.get("dps_per_share")} for a in ann[:6]],
+    }
+
+
 _SUMMARIZERS = {
     "cn_stock_quote": _summarize_quote, "hk_stock_quote": _summarize_quote, "us_stock_quote": _summarize_quote,
     "cn_stock_kline": _summarize_kline, "hk_stock_kline": _summarize_kline,
     "cn_financial": _summarize_financial,
     "cn_financial_series": _summarize_series, "cn_stock_dividend": _summarize_series,
+    "cn_stock_dividend_annual": _summarize_dividend_annual,
     "us_revenue_sec": _summarize_revenue,
     "github_repo": _summarize_gh, "github_release": _summarize_gh, "github_issues": _summarize_gh,
     "github_pulls": _summarize_gh, "github_search": _summarize_gh, "github_file": _summarize_gh,
@@ -367,6 +395,8 @@ FAILOVER_KINDS = {
     "us_revenue_sec": ["us_financial_sec"],
     # 集成/估值：天天基金失败 → 中证官网PE（不同源, 语义等价）
     "cn_ttfund_index": ["cn_csindex_pe"],
+    # 分红：全年聚合成交失败 → 退明细（自己按年度聚合，别退成"最近一条"就用）
+    "cn_stock_dividend_annual": ["cn_stock_dividend"],
     # 行情/A股：无语义等价备选（同一源不同接口属基建层，由 get 内部重试）
 }
 
@@ -444,7 +474,7 @@ def achieve(intent_or_kind, force_full=False, **params):
         if candidate != kind:
             alt_params = {k: v for k, v in resolved.items()
                           if k in ROUTES.get(candidate, (lambda p: {}))(params)} if False else {
-                              k: v for k, v in resolved.items() if k not in ("code", "secucode") or candidate in ("cn_financial_series", "cn_stock_dividend")}
+                              k: v for k, v in resolved.items() if k not in ("code", "secucode") or candidate in ("cn_financial_series", "cn_stock_dividend", "cn_stock_dividend_annual")}
             use_params = alt_params
         try:
             d, s, m, t = get(candidate, **use_params)
