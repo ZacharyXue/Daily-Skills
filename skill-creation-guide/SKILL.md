@@ -1,7 +1,7 @@
 ---
 name: skill-creation-guide
-description: 创建/管理**重要** Hermes skill 的完整引导 — 判断哪些 skill 值得入库、目录结构、SKILL.md 规范、软链接入 Hermes、README 维护。触发时机：用户说「新建一个 skill」「把这个流程存成 skill」「怎么创建自己的 skill」、zach-skills 仓库维护。
-version: 1.1.0
+description: 创建/管理**重要** Hermes skill 的完整引导 — 判断哪些 skill 值得入库、目录结构、SKILL.md 规范（含认知契约/改稿边界/输出协议/触发边界必填段）、external_dirs 加载、README 维护。触发时机：用户说「新建一个 skill」「把这个流程存成 skill」「怎么创建自己的 skill」、zach-skills 仓库维护。
+version: 1.1.1
 tags: [hermes, skill, meta, workflow, zach-skills]
 ---
 
@@ -81,12 +81,18 @@ tags: [相关主题标签]
 
 **description 规范**：必须包含「做什么」+「触发时机」（用户说哪些话会触发），e.g. `触发时机：用户说"看下 XX 的持仓"。` 这决定 Hermes 能否在正确时机自动加载 skill。
 
-### Step 3: 软链接入 Hermes
+### Step 3: 确认 Hermes 能加载（**无需软链**）
+
+zach-skills 通过 `external_dirs` 被 Hermes 直接扫描，新建目录自动生效：
 
 ```bash
-ln -sfn /root/zach-skills/<skill-name> /root/.hermes/skills/<skill-name>
-# 验证：ls -la /root/.hermes/skills/ | grep <skill-name>
+# 确认加载配置里有 /root/zach-skills（一次即可，不需要每个 skill 都做）
+grep -A3 "^skills:" /root/.hermes/config.yaml
+# 期望看到：skills: / external_dirs: / - /root/zach-skills
 ```
+
+- **不要建软链**：2026-10 实测 `~/.hermes/skills/` 下与 zach-skills 相关的软链为 0，旧的 `ln -sfn` 做法已废弃
+- 只有把 skill 放在 `/root/zach-skills/` 之外时，才需要软链或额外配置目录
 
 ### Step 4: 更新 README.md 索引表
 
@@ -128,14 +134,14 @@ zach-skills 推送到公开仓库 `Daily-Skills`，**私密数据绝不能随公
 
 ## 修改已有自建 skill
 
-- **直接改仓库文件**（`/root/zach-skills/<name>/...`），**不要用 skill_manage 操作**——skill 是软链，skill_manage 写 symlink 会失败。
+- **直接改仓库文件**（`/root/zach-skills/<name>/...`），**不要用 skill_manage 操作**——skill_manage 写入的是 `~/.hermes/skills/`，会脱离 zach-skills 的 git 版本管理（zach-skills 是靠 `external_dirs` 加载的，不是靠软链）。
 - 改完 commit。
 - 内容重大变化时 bump `version`。
 
 ## 陷阱
 
-1. **软链必须指向 /root/zach-skills/ 内的目录**，不要拷贝文件副本——否则更新不同步。
-2. **skill_manage 对软链 skill 的修改会失败**（curl 到 symlink 报错），直接改文件。
+1. **skill 放在 /root/zach-skills/ 内，不要拷贝副本到别处**——靠 `external_dirs` 加载，副本会造成"改了不生效"。
+2. **不要用 skill_manage 改 zach-skills 里的 skill**：它写 `~/.hermes/skills/`，改动会脱离 git 管理（不是软链报错的问题，是位置问题）。
 3. **description 别写废话**：触发时机必须具体（用户原话级别的关键词），否则 skill 永远不被加载。
 4. **README 索引是「事实来源」**：新增/删除 skill 忘记更新，下次审计会缺条目。
 5. **不要在知识型 skill 里混合环境细节**：全局环境信息放记忆，skill 只存可复用的流程/知识。
