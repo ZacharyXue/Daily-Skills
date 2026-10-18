@@ -1,6 +1,6 @@
 {
-  "title": "红利 / 长牛资产最大回撤看板",
-  "refresh_note": "手动触发更新：cd etf-dashboard && python3 generate.py",
+  "title": "ETF 技术温度看板",
+  "refresh_note": "手动触发更新：cd etf-dashboard && python3 update.py",
   "watchlist": [
     {
       "name": "标普500",
@@ -58,6 +58,42 @@
       "etf_code": "159545",
       "kind": "tencent",
       "note": "ETF存续2024起"
+    },
+    {
+      "name": "成长ETF易方达",
+      "csindex": "980080",
+      "ttfund_index": "980080",
+      "etf_symbol": "sz159259",
+      "etf_code": "159259",
+      "kind": "tencent",
+      "note": "国证成长100(非中证,无PE5y); 2025-08上市"
+    },
+    {
+      "name": "游戏ETF华夏",
+      "csindex": "930901",
+      "ttfund_index": "930901",
+      "etf_symbol": "sz159869",
+      "etf_code": "159869",
+      "kind": "tencent",
+      "note": "中证动漫游戏"
+    },
+    {
+      "name": "电池ETF汇添富",
+      "csindex": "931719",
+      "ttfund_index": "931719",
+      "etf_symbol": "sz159796",
+      "etf_code": "159796",
+      "kind": "tencent",
+      "note": "中证电池主题"
+    },
+    {
+      "name": "港股通汽车ETF广发",
+      "csindex": "931239",
+      "ttfund_index": "931239",
+      "etf_symbol": "sh520600",
+      "etf_code": "520600",
+      "kind": "tencent",
+      "note": "中证港股通汽车产业主题(931239, 港元计价); ETF 2024-12 上市"
     }
   ]
 }
