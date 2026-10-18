@@ -244,6 +244,13 @@ def build_row(w):
         return row
 
     q = tencent_quote(w["etf_symbol"])
+    # 除息/除权日腾讯行情名会带 XD/XR/DR 前缀（如「XD红利ETF易方达」）→ 剥掉，
+    # 否则卡片名随除息日漂移，同一只标的一天一个名字（2026-10-18 踩到）
+    disp = (q.get("name") or "").strip()
+    for _tag in ("XD", "XR", "DR"):
+        if disp.startswith(_tag) and len(disp) > len(_tag) + 1:
+            disp = disp[len(_tag):]
+            break
     # 指数(如中证红利 000922)腾讯K线可拉 2000 根(2018起)；ETF 只到上市存续
     kl = tencent_kline(w["etf_symbol"], days=int(w.get("kline_days", 2000)))
     closes = [c for _, c, _, _ in kl]
@@ -256,7 +263,7 @@ def build_row(w):
     val = ttskill_index_info(w["ttfund_index"])
     pe5 = csindex_pe_pct(w["csindex"])
     row = {
-        "name": q["name"], "etf_code": w["etf_code"], "price": price,
+        "name": disp, "etf_code": w["etf_code"], "price": price,
         "chg_pct": q["chg_pct"], "kind": "tencent",
         "chg5": vi_change(closes, price, 5), "chg20": vi_change(closes, price, 20),
         "bias20": vbias(closes, price, 20), "dd_hi": dd_hi, "ma20": ma20,
