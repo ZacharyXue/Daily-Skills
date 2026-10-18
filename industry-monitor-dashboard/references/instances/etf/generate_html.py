@@ -102,7 +102,11 @@ def render_row(r):
         return "var(--ok)"
     pro = r.get("dd_progress", 0)
     ddcol = dd_color(pro)
-    maxdd_html = (f'<div class="met pe5"><div class="lab">历史最大回撤</div>'
+    # 回撤窗口：必须显示统计起点（外盘 2000 年起 / A股港股ETF 为 K线可得起点），
+    # 否则「标普 -56.8%(26年窗口)」和「520600 -40.1%(1.8年窗口)」放一起会被误读成可比
+    win = r.get("kline_start") or "—"
+    maxdd_html = (f'<div class="met pe5"><div class="lab">历史最大回撤 '
+                  f'<b>(自 {win} 起)</b></div>'
                   f'<div class="val" style="color:var(--down);font-size:15px">{r["max_dd"]:.1f}%'
                   f' <span style="font-size:12px;color:var(--sub)">({r.get("max_dd_date","")})</span></div></div>')
     curdd_html = (f'<div class="met pe5"><div class="lab">当前回撤</div>'
@@ -201,6 +205,8 @@ def build_html(cfg, rows, errs, kline_date, src_status=None):
   {err_html}
   <div class="footer">
     <h3>指标速查</h3>
+    <b>历史最大回撤</b> = 统计窗口内「峰值→谷底」的最大跌幅，<b>窗口起点写在每张卡片的指标名里</b>（外盘标普/纳指/黄金 = 2000 年起全历史；A股/港股 ETF = 数据源可得的 K 线起点，通常≈上市以来，最长 5 年左右）。<b>窗口不同的回撤数值不能直接横向比较</b>——26 年窗口的 -56.8% 与 2 年窗口的 -40.1% 不是一回事。<br>
+    <b>回撤进度</b> = 当前回撤 ÷ 该标的历史最大回撤（同一窗口内自洽）；1.0 = 回到自身历史大底。<br>
     <b>MA20</b> = 20日均线，现价在其上=趋势偏多，之下=转弱。<br>
     <b>BIAS(乖离率)</b> = (现价−MA20)/MA20。<b>20 日口径参考区间</b>：±5% 内=常态、|BIAS|≥5%=偏大、≥8%=极端（公开口径：10 日乖离率 ±4% 常态/±8% 超买超卖，30 日 ±6%，20 日居中取值）。<br>
     <b>MA20 破位</b> = 现价跌破 20 日均线（标红），站上则标绿——破位代表短期趋势转弱，是「现在该怎么做」的前置过滤器。<br>
