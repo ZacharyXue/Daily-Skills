@@ -1,7 +1,7 @@
 ---
 name: zach-llm-wiki
 description: 子皓个人知识库的 LLM Wiki 工作流 — 博客 vs wiki 分工、ingest 提炼（含反馈闭环）、query 检索、lint 维护、git-crypt 加密恢复。数据本体在 /root/wiki。当子皓说"整理笔记/落库/我的知识库/wiki/queries" 或需要检索个人知识记忆时使用。
-version: 2.1.0
+version: 2.2.0
 tags: [wiki, knowledge-base, knowledge-management, llm-wiki, obsidian, git-crypt]
 ---
 
@@ -56,6 +56,17 @@ wiki 是内部认知（本质不变的知识经验）。
 密钥备份: /root/wiki-backup/wiki-gitcrypt-key.age（age+SSH公钥）
 恢复密钥: 子皓微信（恢复包 RECOVERY.md 指导）
 ```
+
+**秘密仓库统一跟踪（2026-10-18 定）：所有敏感仓 → zach-wiki 私有仓的独立分支，共用同一把 git-crypt 密钥**
+
+| 分支 | 本地实体仓 | 内容 |
+|---|---|---|
+| `main` | `/root/wiki` | 知识库 wiki |
+| `career-data` | `/root/zach-skills/career-data` | 职业/知识画像/深挖池 |
+| `social-data` | `/root/zach-skills/social-data` | 社交复盘 |
+| `resume` | `/root/Markdown-Resume/dist` | 简历（md/pdf/html/分项目） |
+
+新增秘密仓照 `references/git-crypt-setup.md` 的「标准四步」办（备份 → 复用同一把 key → 逐提交重建 → 挂 remote 推送），坑位（push.default=simple 拒推 / fetch 拉全分支 / 清明文对象要先断 remote 引用）也记在同一文档。
 
 **安全约定：**
 - 本 skill 只含方法论，绝不写入 /root/wiki 内容

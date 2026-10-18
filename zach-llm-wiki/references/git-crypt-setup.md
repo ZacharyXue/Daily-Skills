@@ -129,3 +129,53 @@ git gc --prune=now --quiet
 - 设置 upstream 后可直接 `git push`：`git branch --set-upstream-to=origin/career-data master`
 - 每个分支都放一份明文 `README.md`（加密/解密说明），`.gitattributes` 里加 `README.md !filter !diff`
 - ⚠️ **密钥保护范围扩大 = 备份重要性提升**：一把 key 丢了，三份数据全部无法解密
+
+## 当前分支清单（2026-10-18 全员归位）
+
+| zach-wiki 分支 | 本地实体仓 | upstream | 内容 |
+|---|---|---|---|
+| `main` | `/root/wiki` | `origin/main` | 知识库 wiki |
+| `career-data` | `/root/zach-skills/career-data` | `origin/career-data` | 职业/知识画像/深挖池 |
+| `social-data` | `/root/zach-skills/social-data` | `origin/social-data` | 社交复盘 |
+| `resume` | `/root/Markdown-Resume/dist` | `zach-wiki/resume` | 简历（md/pdf/html/分项目） |
+
+四个仓共用**同一把** git-crypt 密钥（存在各仓 `.git/git-crypt/keys/`；备份在 `~/wiki-backup/wiki-gitcrypt-key.age`）。
+
+## 新增一个秘密仓库 → 加密成独立分支（标准四步，2026-10-18 简历仓实测）
+
+```bash
+# 1. 备份 + 收集原历史（旧→新）
+tar czf /root/backup-<name>-$(date +%Y%m%d-%H%M%S).tar.gz -C <父目录> <仓目录>
+cd <仓目录> && git branch -f backup-plaintext HEAD
+git log --reverse --format='%H|%an|%ae|%aI|%s' master > /tmp/hist.txt
+
+# 2. 复用同一把 key unlock（不要 init 新 key）
+cd /root/wiki && git-crypt export-key /tmp/wiki-gitcrypt-key
+cd <仓目录> && git-crypt unlock /tmp/wiki-gitcrypt-key
+
+# 3. 逐提交重建（filter-branch 会漏加密，必须 read-tree + 清 index + add）
+git checkout --orphan encrypted-history -q && git rm -r --cached . -q
+while IFS='|' read -r sha an ae ad msg; do
+  git read-tree --reset -u "$sha"; git rm -r --cached . -q      # ★ 清 index，强制重过 filter
+  printf '* filter=git-crypt diff=git-crypt\n.gitattributes !filter !diff\nREADME.md !filter !diff\n' > .gitattributes
+  git add -A
+  git commit --allow-empty -q -m "$msg" --author="$an <$ae>" --date="$ad"
+done < /tmp/hist.txt
+git checkout -f encrypted-history -q && git branch -f master encrypted-history && git checkout -f master -q
+
+# 4. 挂远端 + 推送 + 收尾
+git remote add zach-wiki git@github.com:ZacharyXue/zach-wiki.git
+git push zach-wiki master:<name>
+git config remote.zach-wiki.fetch "+refs/heads/<name>:refs/remotes/zach-wiki/<name>"   # 收窄，避免拉进其他分支对象
+git branch --set-upstream-to=zach-wiki/<name> master
+git config push.default upstream        # ⚠️ 必须：simple 模式在「master → 异名远端分支」时拒绝推送
+git branch -D backup-plaintext && git reflog expire --expire=now --expire-unreachable=now --all && git gc --prune=now --quiet
+```
+
+### 本次新踩的坑（都验证过）
+
+- **`push.default=simple` 会直接拒绝推送**：本地分支 `master` ≠ 远端分支 `resume` 时，`git push` 报 "won't match the local branch"，**看起来像推了其实没推**；设 `push.default=upstream` 或用 `git push <remote> master:<name>` 显式推。
+- **`git fetch` 默认拉全部 branches**：一次 fetch 就把 wiki/career-data/social-data 的对象全塞进这个仓（对象数 207 → 518）；删掉多余的 `refs/remotes/*` 后 gc 才回落到正常（518 → 105）。
+- **清明文对象前必须先断开旧 remote 引用**：只 gc 没用，`origin/master`（旧明文历史）仍可达 → 明文 blob 一个都不掉。步骤：`git remote remove <旧remote>` → reflog expire → `gc --prune=now`。
+- **symlink 内容不受 git-crypt 过滤**：对象库里会留一个明文 blob（内容只是 `../assets` 这类路径串），不是泄露；别误判。
+- **验收标准（必做）**：`git clone`（**不带 key**）远端分支，`head -c 16 Resume.md | xxd` 必须是 `\0GITCRYPT\0`，而 `README.md` 应仍是明文；再全库扫一遍 blob 前缀。
