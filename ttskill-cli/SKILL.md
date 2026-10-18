@@ -1,6 +1,6 @@
 ---
 name: ttskill-cli
-description: Install, configure and use the TianTian Fund ttskill CLI (天天基金) — base package install, business skill sync, agent entry (Hermes/OpenCode), scan-code login, and headless ECS deployment (credential patch + cloudflared tunnel login). Use when the user mentions 天天基金, ttskill, 基金持仓/净值/季报, 基金经理, 指数估值, or needs ttskill deployed/logged in on a server.
+description: Install, configure and use the TianTian Fund ttskill CLI (天天基金) — base package install, business skill sync, agent entry (Hermes/OpenCode), scan-code login, and headless ECS deployment (credential patch + cloudflared tunnel login). Also hosts the fund analysis workflows (季报分析/业绩归因/单基对比/经理深研/主动基金评估/组合重叠体检/指数回撤). Use when the user mentions 天天基金, ttskill, 基金持仓/净值/季报, 基金经理, 基金组合买重了/重叠度, 指数估值, or needs ttskill deployed/logged in on a server.
 ---
 
 # 天天基金 ttskill CLI
@@ -228,6 +228,7 @@ ttskill skill update <skill_id> --env prod   # 业务包版本落后（HTTP 409 
 - **A股个股基本面分析**：走 `stock-analysis` skill（外部只读，用 `skill_view` 读它与它的 references）；README 之外的方法见下两条
 - **需求周期股估值**（水泥/钢铁/地产链，低ROE重资产）：参考 `references/demand-cycle-valuation.md`——先分价格周期vs需求周期；需求周期用净资产ROE锚定（合理PB=长期ROE÷要求回报率），别用"近N年平均净利"当正常化盈利
 - **医药公司新药管线分析 / ST摘帽判断**：参考 `references/pharma-rd-pipeline.md`——新药各阶段累计上市概率与投入占比、II期是最易失败坎、存量垄断业务才是价值锚、ST摘帽靠解决资金占用而非新药临床
+- **组合重叠体检**（我的基金是不是买重了 / 组合分散度 / 名义 N 只 → 实际几个独立 beta）：参考 `references/portfolio-overlap-check.md`——**两层法：净值相关性为主判、持仓 Σmin 为辅判**（指数基金只看前十大重叠会误判为"很分散"）；直接跑 `scripts/portfolio_overlap.py --from-holdings`（或 `--codes a,b,c`），产出 report.md + raw.json
 - **其他高频操作**（选基、回测等）：参考 `references/fund-analysis-workflows.md`
 
 ## 关键 Skill 调参速查
