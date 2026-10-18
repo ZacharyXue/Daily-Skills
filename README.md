@@ -10,8 +10,8 @@
 
 ```bash
 git clone git@github.com:ZacharyXue/Daily-Skills.git zach-skills
-# 或只取单个 skill
-ln -sfn $(pwd)/<skill-name> ~/.hermes/skills/<skill-name>
+# 本仓已被 Hermes 的 skills.external_dirs 直接扫描，clone 到 /root/zach-skills 即自动加载
+# （不要建软链，也不要拷贝副本到 ~/.hermes/skills —— 会造成"改了不生效"的两份实体）
 ```
 
 ## 本目录 Skill 索引
@@ -20,6 +20,7 @@ ln -sfn $(pwd)/<skill-name> ~/.hermes/skills/<skill-name>
 |-------|------|----------|
 | [career-coach](career-coach/) | 职业成长教练：复盘工作/学习、判断价值、深挖技术、对齐业界、规划路径、沉淀简历 | 晚间复盘、职业困惑、学习路径规划 |
 | [code-study](code-study/) | 问题驱动源码阅读系统：从用户可见行为出发追踪调用链，产出排查笔记推送飞书群 | 每日 cron 源码阅读、搞懂 bug 根因 |
+| [concept-digestion](code-study/concept-digestion/) | 概念素材消化（外部 AI 对话/公众号长文）：取素材→认知契约(Step0 预测门，先他出后我整)→纠偏→开放问题收尾，产出三段式(原始输出/整理稿/补了什么) | 「消化这部分内容」、发外部 AI 对话/长文让讲透、引用飞书附件 |
 | [skill-creation-guide](skill-creation-guide/) | 创建/管理重要自建 skill 的完整流程：规范、目录结构、挂载、README 维护 | 新建重要 skill、维护本仓库 |
 | [skill-health-check](skill-health-check/) | Skill 健康度检查：发现重叠去重、按用户画像补盲区维度、检查引用/脚本/索引完整性 | 「看看 skill 有没有重叠」「skill 健康度检查」「按我的画像补 skill」 |
 | [ETF 技术温度](industry-monitor-dashboard/references/instances/etf/README.md) | ETF 红利+行业/主题看板：5年估值分位+技术面+实时行情，双视角信号，HTML 落博客 public/exports/，手动触发更新（实例并入母纲，无独立skill） | 「更新ETF看板」「看红利该不该买/加仓」「改看板标的池」 |
