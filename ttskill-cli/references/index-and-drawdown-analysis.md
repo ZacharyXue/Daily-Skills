@@ -40,7 +40,8 @@ curl "https://www.csindex.com.cn/csindex-home/perf/index-perf?indexCode=931722&s
 直接跑脚本（更稳定，已封装官网拉取 + 回撤算法）：
 
 ```bash
-python3 ~/.hermes/skills/research/ttskill-cli/scripts/index_drawdown.py 931722 20160817 20260817
+# 脚本在本 skill 目录下（skill 本体在 /root/zach-skills/ttskill-cli，由 Hermes external_dirs 加载）
+python3 /root/zach-skills/ttskill-cli/scripts/index_drawdown.py 931722 20160817 20260817
 ```
 
 输出：全部回撤阶段、显著回撤(≥5%)分布与分位、恢复时间、当前状态。
