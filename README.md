@@ -21,15 +21,20 @@ git clone git@github.com:ZacharyXue/Daily-Skills.git zach-skills
 | [career-coach](career-coach/) | 职业成长教练：复盘工作/学习、判断价值、深挖技术、对齐业界、规划路径、沉淀简历 | 晚间复盘、职业困惑、学习路径规划 |
 | [code-study](code-study/) | 问题驱动源码阅读系统：从用户可见行为出发追踪调用链，产出排查笔记推送飞书群 | 每日 cron 源码阅读、搞懂 bug 根因 |
 | [concept-digestion](code-study/concept-digestion/) | 概念素材消化（外部 AI 对话/公众号长文）：取素材→认知契约(Step0 预测门，先他出后我整)→纠偏→开放问题收尾，产出三段式(原始输出/整理稿/补了什么) | 「消化这部分内容」、发外部 AI 对话/长文让讲透、引用飞书附件 |
+| [code-study-interactive](code-study/code-study-interactive/) | 交互式源码深读：用户提问驱动的代码追踪、图解与深度讲解（区别于 cron 定时阅读） | 问某段源码怎么走、让追调用链、要图解 |
+| [algorithm-problem-teaching](code-study/algorithm-problem-teaching/) | 算法题教学工作流：先原理后代码、渐进优化阶梯叙事、真实 benchmark 数据驱动、砍掉未掌握章节，并沉淀成博客 | 讲 LeetCode/面试题/数学题、要求出题解文章 |
 | [skill-creation-guide](skill-creation-guide/) | 创建/管理重要自建 skill 的完整流程：规范、目录结构、挂载、README 维护 | 新建重要 skill、维护本仓库 |
 | [skill-health-check](skill-health-check/) | Skill 健康度检查：发现重叠去重、按用户画像补盲区维度、检查引用/脚本/索引完整性 | 「看看 skill 有没有重叠」「skill 健康度检查」「按我的画像补 skill」 |
 | [ETF 技术温度](industry-monitor-dashboard/references/instances/etf/README.md) | ETF 红利+行业/主题看板：5年估值分位+技术面+实时行情，双视角信号，HTML 落博客 public/exports/，手动触发更新（实例并入母纲，无独立skill） | 「更新ETF看板」「看红利该不该买/加仓」「改看板标的池」 |
 | [stock-analysis](stock-analysis/) | 股票基本面深度分析：PDF 财报提取→商业模式→财务三表→利润构成→风险排查→企业道德/治理→同行对比→估值→芒格评估 | 分析个股、看商业模式/财务/同行 |
 | [active-fund-evaluation](active-fund-evaluation/) | 主动基金评估：六维（规模收益/季报言行一致/回撤夏普/机构占比/持仓风格/费率）+ 经理任期内近三年「观点→调仓→结果」时间线言行一致性验证；东财 PDF 拉取脚本 | 评估主动基金值不值得买、对比主动基金、分析经理言行是否一致 |
 | [investment-mindset](investment-mindset/) | 投资/人生决策思维模型库：芒格(25种心理倾向/多元思维模型/能力圈/逆向·第一视角)、巴菲特(价值投资四基石/护城河/安全边际/致股东信进阶概念)、李录(价值投资三基石/ROIC/文明演进/20年检验·防价值陷阱)、聂夫(低市盈率逆向/总回报公式)、马克斯(周期/第二层思维/情绪钟摆)、鹿鼎公(A股实战派/不亏损系统)、孙宇晨(按需召唤的另类视角) | 从大佬思维多角度分析投资/人生决策、避免单一视角偏颇、风险体检、大师对撞交叉验证 |
+| [technical-approach](technical-approach/) | 技术面/操作层：何时买/买多少/何时卖/怎么分散 —— 分层择时(L0指数/L1 ETF/L2周期)、趋势系统(均线/破位+死叉)、三层止损(仓位→趋势→逻辑)、仓位与杠杆纪律（来源：《超级鹿鼎公414》陪读产物） | 问买点/卖点/止损/仓位/分散/择时/技术面/止盈/被套怎么办 |
 | [whale-holdings](whale-holdings/) | 大佬持仓跟踪：SEC 13F 机构持仓披露，巴菲特/李录/Burry 等买什么、加仓、清仓 | 说「看下 XX 的持仓」「13F」 |
 | [industry-monitor-dashboard](industry-monitor-dashboard/) | **看板综合母纲**：行业+龙头/ETF 监测看板的通用方法论（注释驱动指标元数据、免费源取数、自包含HTML、财报提取）；水泥/ETF 作为**实例**并入 references/instances/，不单独成 skill | 「做XX监测看板」「更新水泥/ETF看板」「看水泥/红利现状」 |
 | [dashboard-style](dashboard-style/) | **看板风格模板+数据规范**：自包含HTML骨架(details折叠/多线SVG/表格/徽章)、数据走 data-source-router、看板索引(dashboards-index.md) | 「做新看板」「复用看板模板」「看有哪些看板」 |
+| [housing-rent-buy-dashboard](housing-rent-buy-dashboard/) | 北上广深+杭苏「租房vs买房」租售比看板：房价/租金/售租比/分区 + 房天下新房趋势 + LPR，含 fetch/render 脚本与逐月更新命令 | 问租售比、租房还是买房划算、城市/分区房价租金 |
+| [reits-dashboard](reits-dashboard/) | 保租房 REITs 看板：全量保租房 REITs 的分派率/P-NAV/出租率/回撤/收缴率「历史区间+当前位置」，数据取自定期报告原文 PDF | 更新保租房REITs看板、季报出来刷新、REITs 有没有性价比 |
 | [data-source-router](data-source-router/) | **统一数据源层**：数据源地图 + SQLite缓存 + Tier路由 + 合规红线。其他 skill 及未来 skill 一律通过本层取数，杜绝重复探索/拿错数据/烧token。覆盖 A股/港股/美股行情与K线(腾讯)、A股财报(东财datacenter)、美股财报(SEC)、宏观(统计局)、GitHub 仓库/Issues/PR/Release/搜索/健康度(REST) | 任何需要拉金融或 IT 数据的任务 |
 | [opencode-go-model-selection](opencode-go-model-selection/) | **opencode-go 模型选择 + 429 排错**：配额机制($12/5h+$30/周+$60/月)、模型性价比(便宜→请求多)、多模态判定、切换主模型、GoUsageLimitError(周配额用尽)排查 | 对话报「iteration/retry backoff」「429配额用尽」、问「哪个模型省钱/有多模态」、切换主模型 |
 | [zacharyxue-blog](zacharyxue-blog/) | 维护 ZacharyXue.github.io Astro 博客：写作偏好（图标多文字少/先提纲）、技术细节、部署 | 写博客、修渲染、发文章 |
