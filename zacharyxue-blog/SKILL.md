@@ -62,6 +62,39 @@ Trigger: any task on `/root/ZacharyXue.github.io/` — add/edit blog posts, proj
 ### Table styles
 `global.css` uses targeted `article *` selectors for markdown content. Tables were originally missing — add them via `article table` selectors. Reference: `references/table-styles.css` for the canonical block (borders, zebra striping, dark mode).
 
+**2026-10-18 表格结构改造（改前先读，别回退）**：
+- 表格本体现在是 `display: table` + `width: 100%`，**不要再写回 `display:block; overflow-x:auto`**。那个方案会让表格盒按 100% 宽绘制外框，而内层列宽按内容自适应 → 窄表右侧多出一段空白 + 竖线，看起来像多了一列（实测被误判为「Markdown 多写了一个 `|`」，查源文件才发现表只有 3 列）。
+- 滚动与外框改由 JS（BlogLayout 的 `<script>`）给每张表包一层 `div.table-scroll` 承担；`.table-scroll` 是 JS 动态创建的元素，**没有 Astro scoped 属性**，所以它的样式必须写在 `global.css` 而不是组件 `<style>` 里，否则不生效。
+- `article table td:first-child { white-space: nowrap }` 是修「`ls -lah` 被折成 `ls -` + `lah`」的，别删；表格过宽时交给外层横向滚动。
+- 无 JS 时表格仍有 `article table` 自身的边框兜底，不会裸奔。
+
+### 行内目录块（.toc-inline）
+文章头下方有一个 `<details class="toc-inline">`，**≥3 个 h2/h3 才渲染**（`showInlineToc`）。原因：左侧那个 34px 悬浮抽屉在桌面首屏几乎看不见，长文需要更明显的入口。抽屉（`.toc-sidebar`）保留，两者并存。
+展开态必须保持 `max-height: min(60vh,460px); overflow-y:auto` —— 实测 29 节的长目录展开后会占满整屏、把正文推到屏幕外。
+
+### 邮件讨论卡片（.discuss，零后端）
+文章底部一个 mailto 卡片，链接由 BlogLayout 头部常量生成：
+```js
+const DISCUSS_EMAIL = 'xuezihao2016@outlook.com';   // 改邮箱改这里
+const canonicalUrl = new URL(Astro.url.pathname, SITE).href;
+const mailtoHref = `mailto:${DISCUSS_EMAIL}?subject=${encodeURIComponent(discussSubject)}&body=${encodeURIComponent(discussBody)}`;
+```
+- subject = `讨论：《文章标题》`；body = `原文：<链接>\n\n我的评论：\n`（读者打开邮件后光标直接落在「我的评论」后面）。
+- 构建后 HTML 里 `&` 会被转义成 `&#38;`，**那是正确的**（浏览器解码回 `&`），别当 bug 修。校验：`grep -o 'href="mailto:[^"]*"' dist/blog/<slug>/index.html` 后 `html.unescape` + `parse_qsl` 解出收件人/subject/body 核对。
+- 选的是「零依赖 mailto」方案而非 Web3Forms/giscus：不引第三方、不暴露读者数据；代价是依赖读者本机邮件客户端。若以后要升级成网页表单，见 skill 讨论记录（Web3Forms 250 封/月免费）。
+
+### 改版后的视觉自查流程（无浏览器环境）
+
+```bash
+CH=$(ls /root/.cache/ms-playwright/chromium_headless_shell-*/chrome-headless-shell-linux64/chrome-headless-shell | head -1)
+$CH --no-sandbox --disable-gpu --hide-scrollbars --window-size=1280,1500 \
+    --screenshot=/tmp/x.png "http://localhost:4321/blog/<slug>/"
+```
+- 预览服务：`npx astro preview --port 4321`（**别用 `pkill -f "astro preview"` 停它**：你自己那条命令行里就含这个字符串，pkill 会连当前 shell 一起杀（实测 exit -15 两次）；用 `for p in $(pgrep -f "[a]stro preview"); do kill $p; done`，且**分成两条命令**跑——同一条命令里若出现字面量 `astro preview` 仍会自杀）。
+- 分块送 `vision_analyze` 自查：整页长图会被下采样看不清，用 PIL `crop` 切成 900–1300px 区块。
+- 截「页面最底部」的正确姿势：把 window 开很高（如 9000）再自动找内容底边——**按行统计非背景像素**（每行采样 `range(0,W,5)`，阈值 >20 才算内容行），取最深内容行上切；只比对单个像素会被底部 1px 杂点骗到。
+- 展开态没法直接截：`<details>` 默认收起。复制一份 `index.html` 到 dist 同目录、把 `<details class="toc-inline"` 替换成 `<details class="toc-inline" open`（**注意构建后标签上带 `data-astro-cid-*` 属性，所以匹配串不能写成 `<details class="toc-inline">`**），截完删文件。
+
 ### Custom project pages
 To override the generic `[slug].astro` for a single project, create `src/pages/projects/<slug>.astro`. It must:
 - `import { getCollection } from 'astro:content'` to read frontmatter
