@@ -97,6 +97,13 @@ class Cache:
 
     def put(self, namespace, raw_key, payload, source, ttl):
         k = self._key(raw_key)
+        # 毒缓存防护（2026-10-18 踩到）：空值/失败结果绝不写入。
+        # 曾出现失败回包（None / [] / {"ok": false, ...}）被缓存 → 后续命中缓存直接返回 None，
+        # 报出 「'NoneType' object has no attribute 'get'」这类误导性错误，排查绕远路。
+        if payload is None or payload == [] or payload == {} or (
+                isinstance(payload, dict) and payload.get("ok") is False):
+            log.warning("skip caching empty/failed payload: %s", namespace)
+            return
         with self._lock:
             with self._conn() as conn:
                 conn.execute("""

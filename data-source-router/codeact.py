@@ -55,13 +55,22 @@ def _sym(symbol):
         return "hk" + s  # 4/5位数字暂按港股
     return s
 
-def _secucode(code, mkt="SH"):
-    """裸A股代码 → 东财 SECUCODE（带后缀）"""
+def _secucode(code, mkt=None):
+    """裸A股代码 → 东财 SECUCODE（带后缀）。
+
+    ⚠️ 2026-10-18 修：原实现默认 mkt="SH"，把深市代码（000933 神火）错推成
+    000933.SH → 东财返回 {"result": null} → 静默取数失败（报 NoneType.get，误导排查）。
+    现按首位数字判交易所：6/9=SH，0/1/2/3=SZ，4/8=BJ（北交所）。
+    """
     c = str(code).strip()
     if "." in c:
         return c
     if c.startswith(("6", "9")):
         return c + ".SH"
+    if c.startswith(("0", "1", "2", "3")):
+        return c + ".SZ"
+    if c.startswith(("4", "8")):
+        return c + ".BJ"
     return c + (".SH" if mkt == "SH" else ".SZ")
 
 

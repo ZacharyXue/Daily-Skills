@@ -128,7 +128,7 @@ def cn_financial(code):
     url = EASTMONEY_FIN.format(code=code)
     r = _req(url)
     j = r.json()
-    data = j.get("result", {}).get("data", [])
+    data = (j.get("result") or {}).get("data", [])
     if not data:
         return {"code": code, "ok": False, "msg": "no data"}
     return {"code": code, "ok": True, "data": data[0]}
@@ -149,7 +149,7 @@ def cn_stock_dividend(secucode, page=12):
         try:
             r = _req(url, timeout=35)
             j = r.json()
-            return j.get("result", {}).get("data", [])
+            return (j.get("result") or {}).get("data", [])
         except Exception as e:
             last = e
             time.sleep(1.2)
@@ -208,7 +208,7 @@ def cn_financial_series(secucode, report_name="RPT_F10_FINANCE_MAINFINADATA", pa
         try:
             r = _req(url, timeout=35)
             j = r.json()
-            rows = j.get("result", {}).get("data", [])
+            rows = (j.get("result") or {}).get("data", [])
             return rows
         except Exception as e:
             last = e

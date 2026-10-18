@@ -103,7 +103,11 @@ def get(kind, cache_ns=None, force=False, **params):
         try:
             return fetch_fn(params)
         except Exception as e:
-            CACHE.record_failure(domain or source, str(e)[:200])
+            # 参数类错误（KeyError/TypeError）= 调用方传参问题，不算「源故障」。
+            # 否则一次传错参数（如 get('cn_stock_dividend', code=...) 应为 secucode）
+            # 连续 3 次就把整个域名打进 24h 冷却，误伤后续所有取数（2026-10-18 踩到）。
+            if type(e).__name__ not in ("KeyError", "TypeError"):
+                CACHE.record_failure(domain or source, str(e)[:200])
             raise
 
     if force:
