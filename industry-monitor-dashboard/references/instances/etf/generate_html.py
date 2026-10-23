@@ -179,6 +179,18 @@ def render_row(r):
 
 def build_html(cfg, rows, errs, kline_date, src_status=None):
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    # 🔴 数据过期护栏（2026-10-23 踩实：缓存/时间窗口参数会让 K线 静默停在过去，
+    #    页面却把旧价当"当前"显示）。K线截止距今 > 5 个自然日就红字警告，绝不静默。
+    stale_txt = ""
+    if kline_date:
+        try:
+            _d = datetime.datetime.strptime(kline_date[:10], "%Y-%m-%d").date()
+            _gap = (datetime.date.today() - _d).days
+            if _gap > 5:
+                stale_txt = (f' <span style="color:#c0392b;font-weight:700">'
+                             f'⚠️ K线已 {_gap} 天未更新，下列数值可能不是当前值</span>')
+        except Exception:
+            pass
     cards = "\n".join(render_row(r) for r in rows)
     err_html = f'<div class="err">⚠ 部分标的数据异常：{"；".join(errs)}</div>' if errs else ""
     # 数据源状态行（正确性铁律：可选源失效要明示，不静默）
@@ -198,7 +210,7 @@ def build_html(cfg, rows, errs, kline_date, src_status=None):
 <body>
   <div class="header">
     <h1>{cfg['title']}</h1>
-    <div class="meta">更新: {now} &nbsp;·&nbsp; K线截止: {kline_date or '—'} &nbsp;·&nbsp; 数据源: {src_line}</div>
+    <div class="meta">更新: {now} &nbsp;·&nbsp; K线截止: {kline_date or '—'}{stale_txt} &nbsp;·&nbsp; 数据源: {src_line}</div>
     <div class="note"><b>信号 = 技术面(回撤/MA/BIAS) × 估值面(PE 5年分位)</b> 双视角交叉。<br>「现在该怎么做」给的是可执行动作，判断前请结合估值分位(高位>90%别追高，<50%相对便宜)。本页不构成投资建议。</div>
   </div>
   <div class="grid">{cards}</div>

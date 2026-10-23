@@ -30,6 +30,9 @@ def _router_root():
 sys.path.insert(0, os.path.join(_router_root(), "data-source-router"))
 import data_router as DSR   # 统一数据层: 行情/K线/中证PE/天天基金 全部走 router, 见 data-source-router
 YEARS = 5  # 估值分位窗口(年)
+# 🔴 手动画板更新必须绕过 router 缓存，否则会拿跨天旧值当"当前"（2026-10-23 踩实：
+#    行情/K线走缓存 → 页头显示 K线截止=今天，但 BIAS/近5日 却是几天前的价算出来的）
+FORCE = os.environ.get("ETF_FORCE_REFRESH", "1") != "0"
 
 # ---------- 数据获取 ----------
 def http_json(url, timeout=15, retry=3):
@@ -49,7 +52,7 @@ def csindex_pe_pct(index_code):
     自己算 5 年分位与区间（比 index-perf 更全、更稳，且能给出 PE 波动区间供渲染）。
     """
     try:
-        d = DSR.get('cn_csindex_pe_series', index_code=index_code, years=6)[0]
+        d = DSR.get('cn_csindex_pe_series', index_code=index_code, years=6, force=FORCE)[0]
         if not (d and d.get("ok")):
             return None
         series = d.get("series") or []
@@ -127,14 +130,14 @@ def ttskill_index_info(index_id):
 def tencent_quote(symbol):
     """腾讯实时行情: 现价/涨跌幅 (走 router)"""
     try:
-        d = DSR.get('cn_stock_quote', symbol=symbol)[0]
+        d = DSR.get('cn_stock_quote', symbol=symbol, force=FORCE)[0]
         return {"name": d.get("name"), "price": d.get("price"), "chg_pct": d.get("change_pct")}
     except Exception as e:
         raise ValueError(f"腾讯行情失败 {symbol}: {e}")
 
 def tencent_kline(symbol, days=300):
     """腾讯前复权K线 -> [(date, close, high, vol)] (走 router)"""
-    kl = DSR.get('cn_stock_kline', symbol=symbol, count=days)[0]
+    kl = DSR.get('cn_stock_kline', symbol=symbol, count=days, force=FORCE)[0]
     return [(r["date"], r["close"], r["high"], r["volume"]) for r in kl]
 
 # ---------- 雅虎数据源（标普500/纳斯达克100/黄金，腾讯美股K线不可用） ----------
