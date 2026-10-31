@@ -18,7 +18,7 @@ dashboard-style 共享工具库 —— 各行业/个股看板复用（消除跨�
 数据正确性铁律（用户强要求）仅在共享层实现一次：
   - 正确性 > 及时性；远程失败诚实标 failed+error，绝不拿旧值冒充当前值。
 """
-import json, os, sys, time, html, urllib.request
+import json, os, os, sys, time, html, urllib.request
 
 # ---------- HTML 格式化 ----------
 def esc(x):
@@ -96,11 +96,19 @@ except Exception as e:
     print(f"[warn] data-source-router 未就绪({e})，共享库取数不可用")
 
 
+FORCE = os.environ.get("DASH_FORCE_REFRESH", "1") != "0"
+
 def _router_get(kind, **params):
-    """统一取数入口。DSR 不可用抛异常（调用方 catch）。"""
+    """统一取数入口。DSR 不可用抛异常（调用方 catch）。
+
+    ⚠️ 默认 force=True 绕过 router 缓存：手动看板更新必须拿当前值。
+    （2026-10 踩实：cn_financial_series TTL 90 天 → 三季报出来后看板仍显示中报；
+      同族事故另有 cn_cement_index 首调拿旧值、etf 行情/K线吃缓存。）
+    需要离线/省流量时设 DASH_FORCE_REFRESH=0。
+    """
     if DSR is None:
         raise RuntimeError("data-source-router 不可用")
-    d, _s, _m, _t = DSR.get(kind, **params)
+    d, _s, _m, _t = DSR.get(kind, force=FORCE, **params)
     return d
 
 
