@@ -57,6 +57,10 @@ python3 scripts/render_html.py      # -> output/cement_dashboard.html
 统计局产量、需会员/公告的数据 → 生成 prompt 让用户外部获取 → 用户贴回答案 → 我解析写 `cache/manual.json`（格式 `<id>:{value:{latest,latest_date,note,charts},date,note}`）→ fetch 读入标 `status=manual`，渲染「人工录入@日期(外部软件)」。采集 prompt 生成见 `extract_report.py` 同目录思路或 `prompts/collect_prompts.md`。
 
 ## Pitfalls（多轮踩过的坑，新手先看）
+- **🔴 报告期一律动态，禁止硬编码**（2026-10-31 踩实）：`fetch.py` 里原有 **18 处** `"2026中报"` / `"2025年报"` 字面量，海螺 2026 三季报（10-29）发布后，看板**继续显示中报数据**且不报错。已改为 `latest_r(rows)` / `pname(r)` / `prev_annual(rows)` 三个助手函数，动态取「最新已披露期」+「上一年年报」。新增取数逻辑时**不要**再写死报告期。
+- **财报类指标必须显式标「报告期」**：`更新时间` 是提取时间，不是数据期；三季报不披露销量/吨成本，所以吨售价/吨净利仍来自中报——卡片 meta 现在会打印 `报告期：海螺水泥:2026年半年度报告`，别删。
+- **`extract_report.py` 需要 pymupdf**：系统 `python3` 没有 → 跑 `ModuleNotFoundError`。用 `/root/hermes-venv/bin/python3 scripts/extract_report.py`。
+- **`fmt_val` 需特化「无 latest 但有 np/np_yoy」的 dict**：海螺归母净利卡曾显示「待接入」，其实数据在（`np`/`np_yoy`）。已加特化分支。
 - **index.ccement.com 不是限频，是偶发丢包**：单次请求可能超时，但**重试即恢复**。`_cget` 用 `timeout=14, retry=3`，失败才回退(绝不冒充)。别误判为被墙、别用 seed 冒充。
 - **东财 push2 实时行情本机不通**(记忆印证)——A股行情统一走腾讯 `qt.gtimg.cn` + ifzq。
 - **腾讯 ifzq 不复权参数**：`param=code,day,start,end,count,`(末尾逗号)才返回 `day`；不带逗号/加 `,qfq` 返回前复权 `qfqday`。算 PB(市值口径)必须不复权。

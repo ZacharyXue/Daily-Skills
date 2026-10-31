@@ -152,44 +152,69 @@ def em_find(rows, key):
         if r.get("REPORT_DATE_NAME") == key: return r
     return None
 
+# ---- 报告期一律动态取「最新已披露期」，禁止硬编码（2026-10 三季报发布后看板仍显示中报）----
+def latest_r(rows):
+    """最新报告期那一行（rows 按 REPORT_DATE 倒序）"""
+    for r in rows or []:
+        if r.get("REPORT_DATE_NAME"):
+            return r
+    return (rows or [{}])[0]
+
+def pname(r):
+    """报告期名，如 2026三季报"""
+    return (r or {}).get("REPORT_DATE_NAME") or "最新期"
+
+def prev_annual(rows, latest=None):
+    """上一年度年报行（同比/分红口径用）"""
+    lr = latest or latest_r(rows)
+    ly = str(lr.get("REPORT_DATE", ""))[:4]
+    if not ly.isdigit():
+        return None
+    target = str(int(ly) - 1) + "年报"
+    for r in rows or []:
+        if r.get("REPORT_DATE_NAME") == target:
+            return r
+    return None
+
 def get_helluo_np():
-    rows = em_fin("600585.SH"); r = em_find(rows, "2026中报")
+    rows = em_fin("600585.SH"); r = latest_r(rows)
     hist = sorted([{"d": str(x.get("REPORT_DATE",""))[:10], "v": round(x.get("PARENTNETPROFIT",0)/1e8,1)}
                    for x in rows if x.get("PARENTNETPROFIT") is not None], key=lambda t:t["d"])
     return {"np": round(r.get("PARENTNETPROFIT", 0)/1e8, 1), "np_yoy": round(r.get("PARENTNETPROFITTZ"), 1),
             "rev": round(r.get("TOTALOPERATEREVE", 0)/1e8, 1), "rev_yoy": round(r.get("TOTALOPERATEREVETZ"), 1),
-            "gm": r.get("XSMLL"), "nm": r.get("XSJLL"), "report": "2026中报",
+            "gm": r.get("XSMLL"), "nm": r.get("XSJLL"), "report": pname(r),
             "charts": [{"name": "归母净利(累计·亿)", "color": "#dc2626", "points": hist}], "stale": False}
 def get_cashflow_ratio():
-    rows = em_fin("600585.SH"); r = em_find(rows, "2026中报")
+    rows = em_fin("600585.SH"); r = latest_r(rows)
     eps = r.get("EPSJB") or 0; cf = r.get("MGJYXJJE") or 0
     hist = sorted([{"d": str(x.get("REPORT_DATE",""))[:10],
                     "v": round((x.get("MGJYXJJE") or 0)/(x.get("EPSJB") or 1), 2)}
                    for x in rows if x.get("MGJYXJJE") is not None and x.get("EPSJB")], key=lambda t:t["d"])
-    return {"latest": round(cf/eps, 2) if eps else None, "eps": eps, "cf_ps": cf, "report": "2026中报",
+    return {"latest": round(cf/eps, 2) if eps else None, "eps": eps, "cf_ps": cf, "report": pname(r),
             "charts": [{"name": "经营现金流/净利", "color": "#2563eb", "points": hist}], "stale": False}
 def get_debt_ratio():
-    rows = em_fin("600585.SH"); r = em_find(rows, "2026中报")
+    rows = em_fin("600585.SH"); r = latest_r(rows)
     hist = sorted([{"d": str(x.get("REPORT_DATE",""))[:10], "v": x.get("ZCFZL")}
                    for x in rows if x.get("ZCFZL") is not None], key=lambda t:t["d"])
-    return {"latest": round(r.get("ZCFZL", 0), 1), "latest_date": "2026中报",
+    return {"latest": round(r.get("ZCFZL", 0), 1), "latest_date": pname(r),
             "charts": [{"name": "资产负债率%", "color": "#2563eb", "points": hist}], "stale": False}
 def get_gm_rate():
-    rows = em_fin("600585.SH"); r = em_find(rows, "2026中报")
+    rows = em_fin("600585.SH"); r = latest_r(rows)
     hist = sorted([{"d": str(x.get("REPORT_DATE",""))[:10], "v": x.get("XSMLL")}
                    for x in rows if x.get("XSMLL") is not None], key=lambda t:t["d"])
-    return {"latest": round(r.get("XSMLL", 0), 1) if r else None, "latest_date": "2026中报",
+    return {"latest": round(r.get("XSMLL", 0), 1) if r else None, "latest_date": pname(r),
             "charts": [{"name": "毛利率%", "color": "#2563eb", "points": hist}], "stale": False}
 
 # ---------- 同行对比（头部五家） ----------
 PEERS = [("海螺水泥","600585.SH"),("华新水泥","600801.SH"),("天山股份","000877.SZ"),
          ("冀东水泥","000401.SZ"),("塔牌集团","002233.SZ")]
-def get_peers(report="2026中报"):
+def get_peers(report=None):
+    report = report or pname(latest_r(em_fin("600585.SH")))
     rows = []
     for name, code in PEERS:
         try:
             d = em_fin(code); r = em_find(d, report)
-            r25 = em_find(d, "2025年报")
+            r25 = prev_annual(d)
             if not r: raise RuntimeError("无报告期")
             p = lambda rr: rr or {}
             rows.append({"name": name, "code": code,
@@ -210,31 +235,31 @@ def em_stmt(secucode, report_arg):
            f"&filter=(SECUCODE%3D%22{secucode}%22)&pageNumber=1&pageSize=8&sortTypes=-1&sortColumns=REPORT_DATE")
     return _get(url, headers={"User-Agent":"Mozilla/5.0","Referer":"https://emweb.securities.eastmoney.com/"})["result"]["data"]
 def em_balance():
-    return em_find(em_stmt("600585.SH","RPT_F10_FINANCE_GBALANCE"), "2026中报")
+    return latest_r(em_stmt("600585.SH","RPT_F10_FINANCE_GBALANCE"))
 def em_cashflow():
-    return em_find(em_stmt("600585.SH","RPT_F10_FINANCE_GCASHFLOW"), "2026中报")
+    return latest_r(em_stmt("600585.SH","RPT_F10_FINANCE_GCASHFLOW"))
 def get_money():
     r = em_balance() or {}; g = lambda k: (r.get(k) or 0)
-    return {"latest": round(g("MONETARYFUNDS")/1e8, 1), "latest_date": "2026中报", "stale": False}
+    return {"latest": round(g("MONETARYFUNDS")/1e8, 1), "latest_date": pname(r), "stale": False}
 def get_idebt():
     r = em_balance() or {}; g = lambda k: (r.get(k) or 0)
     ib = g("SHORT_LOAN")+g("LONG_LOAN")+g("BOND_PAYABLE")+g("SHORT_BOND_PAYABLE")
     ta = r.get("TOTAL_ASSETS") or 1
-    return {"latest": round(ib/ta*100, 1), "latest_date": "2026中报",
+    return {"latest": round(ib/ta*100, 1), "latest_date": pname(r),
             "note": f"短借{g('SHORT_LOAN')/1e8:.1f}+长借{g('LONG_LOAN')/1e8:.1f}+债券{g('BOND_PAYABLE')/1e8:.1f}亿 / 总资产{ta/1e8:.0f}亿", "stale": False}
 def get_fcf():
     r = em_cashflow() or {}; g = lambda k: (r.get(k) or 0)
     op = g("NETCASH_OPERATE"); cap = g("CONSTRUCT_LONG_ASSET")
-    return {"latest": round((op-cap)/1e8, 1), "latest_date": "2026中报",
+    return {"latest": round((op-cap)/1e8, 1), "latest_date": pname(r),
             "note": f"经营现金{op/1e8:.1f}亿 - 资本开支{cap/1e8:.1f}亿", "stale": False}
 def get_payout_rate():
     d = _report(); dps = d.get("dps")
     bal = em_balance(); shares = (bal.get("SHARE_CAPITAL") or 0)
-    rows = em_fin("600585.SH"); r25 = em_find(rows, "2025年报")
+    rows = em_fin("600585.SH"); r25 = prev_annual(rows)
     np25 = r25.get("PARENTNETPROFIT") if r25 else None
     if dps and np25 and shares:
         sy = shares/1e8; total_div = dps*sy; ny = np25/1e8
-        return {"latest": round(total_div/ny*100, 1), "latest_date": "2025年报", "dps": dps,
+        return {"latest": round(total_div/ny*100, 1), "latest_date": pname(r25), "dps": dps,
                 "shares": round(sy, 2),
                 "note": f"每股{dps}元×{sy:.1f}亿股 / 归母净利{ny:.1f}亿 = {round(total_div/ny*100,1)}%",
                 "stale": False}
@@ -247,7 +272,7 @@ def tencent_quote(code):
     return {"name": f[1], "price": float(f[3]) if f[3] else None,
             "pe": float(f[39]) if f[39] else None, "pb": float(f[46]) if f[46] else None}
 def get_pb():
-    rows = em_fin("600585.SH"); r = em_find(rows, "2026中报")
+    rows = em_fin("600585.SH"); r = latest_r(rows)
     q = tencent_quote("sh600585"); bps = r.get("BPS") if r else None
     if not bps:
         return {"latest": None, "note": "缺每股净资产", "stale": False}
