@@ -50,6 +50,7 @@ def build():
         _rev_state, _rev_yoy_txt = "在收缩", f"{_ry:.1f}%"
     else:
         _rev_state, _rev_yoy_txt = "基本走平", f"{_ry:.1f}%"
+    pq = v("pq_table")   # 利润质量（扣非校验；id 是 pq_table，不是 getter 名）
     cost = v("cost_struct_latest")   # 费用占比
     cb = v("contrib_breakdown")   # 降本贡献度
 
@@ -81,6 +82,16 @@ def build():
     snap_cards += snap_card("ROE(加权)", fnum(snap.get("roe"), 2) + "%", "最新一期")
     snap_cards += snap_card("资产负债率", fnum(snap.get("debt"), 2) + "%", "去杠杆中" if (snap.get("debt") is not None and snap.get("debt") < 45) else "偏高")
     snap_cards += snap_card("有息负债率", fnum(snap.get("idebt"), 2) + "%", "去杠杆红利" if (snap.get("idebt") is not None and snap.get("idebt") < 30) else "关注")
+    # 扣非校验：归母净利可能含卖资产等一次性收益，必须并列展示扣非
+    _kfj_yoy = snap.get("kfj_yoy")
+    snap_cards += snap_card("扣非归母净利", fnum(snap.get("kfj"), 2) + " 亿",
+                            f"同比 {_kfj_yoy:+.1f}%" if _kfj_yoy is not None else "同比 —",
+                            "pos" if (_kfj_yoy is not None and _kfj_yoy > 0) else "neg")
+    _nrp = snap.get("non_rec_pct")
+    snap_cards += snap_card("非经常损益占净利", fnum(_nrp, 1) + "%",
+                            "一次性主导" if (_nrp is not None and _nrp >= 20) else (
+                                "需看说明" if (_nrp is not None and _nrp >= 10) else "干净"),
+                            "neg" if (_nrp is not None and _nrp >= 20) else "")
 
     # ---- 四大财务走势卡片 ----
     trend_items = [
@@ -190,7 +201,7 @@ def build():
 
     # ---- 降本拆解⑤：可持续性判断 ----
     rd_sus = f"""<div class="costcard">
-      <div class="chead">⑥ 可持续性判断——哪些是真降本、哪些是一次性</div>
+      <div class="chead">⑥ 可持续性判断——哪些是真降本、哪些是一次性<span class="tw" style="font-weight:400">（口径：2026中报 vs 2025中报 的公司披露明细，非最新期）</span></div>
       <div class="sus-pills">
         <span class="sus-pill ok">✅ 降本质量：中等偏上</span>
         <span class="sus-pill bad">⛔ 硬伤：营收未扩张</span>
@@ -209,6 +220,65 @@ def build():
     </div>"""
 
     cards_html = "".join(trend_cards)
+
+    # ---- 利润质量区块（归母 vs 扣非） ----
+    def _fv(x, unit="亿", nd=2):
+        return f"{x:,.{nd}f} {unit}" if isinstance(x, (int, float)) else "—"
+
+    pq_html = ""
+    if pq:
+        _flag = pq.get("flag")
+        _vcls = {"oneoff-inflated": "warn", "oneoff-cushion": "bad"}.get(_flag, "ok")
+        _prev = pq.get("prev") or {}
+        _q = pq.get("quarter") or {}
+        _rep, _prep = pq.get("report", ""), pq.get("prev_report", "")
+        _np_yoy, _kfj_yoy2 = pq.get("np_yoy"), pq.get("kfj_yoy")
+        _tdir = lambda x: ("pos" if (isinstance(x, (int, float)) and x > 0) else "neg")
+        t1 = (f"<table class='costtab'><thead><tr><th>科目</th><th>{esc(_rep)}</th>"
+              f"<th>{esc(_prep)}</th><th>同比</th></tr></thead><tbody>"
+              f"<tr><td class='pn'>归母净利</td><td>{_fv(pq.get('np'))}</td>"
+              f"<td>{_fv(_prev.get('np'))}</td><td class='{_tdir(_np_yoy)}'>"
+              f"{f'{_np_yoy:+.1f}%' if _np_yoy is not None else '—'}</td></tr>"
+              f"<tr><td class='pn'>扣非归母净利</td><td>{_fv(pq.get('kfj'))}</td>"
+              f"<td>{_fv(_prev.get('kfj'))}</td><td class='{_tdir(_kfj_yoy2)}'>"
+              f"{f'{_kfj_yoy2:+.1f}%' if _kfj_yoy2 is not None else '—'}</td></tr>"
+              f"<tr><td class='pn'>非经常性损益</td><td>{_fv(pq.get('non_rec'))}</td>"
+              f"<td>{_fv(_prev.get('non_rec'))}</td><td>—</td></tr>"
+              f"<tr><td class='pn'>非经常占归母</td><td>{_fv(pq.get('non_rec_pct'), '%', 1)}</td>"
+              f"<td>{_fv(_prev.get('non_rec_pct'), '%', 1)}</td><td>—</td></tr>"
+              f"</tbody></table>")
+        t2 = ""
+        if _q:
+            t2 = (f"<table class='costtab'><thead><tr><th>单季拆解（{esc(_q.get('label',''))}）</th>"
+                  f"<th>金额</th></tr></thead><tbody>"
+                  f"<tr><td class='pn'>单季归母净利</td><td>{_fv(_q.get('np'))}</td></tr>"
+                  f"<tr><td class='pn'>单季扣非净利</td><td>{_fv(_q.get('kfj'))}</td></tr>"
+                  f"<tr><td class='pn'>单季非经常损益</td><td>{_fv(_q.get('non_rec'))}</td></tr>"
+                  f"<tr><td class='pn'>单季非经常占归母</td><td>{_fv(_q.get('non_rec_pct'), '%', 1)}</td></tr>"
+                  f"</tbody></table>")
+        t3 = (f"<div class='cnote'>增量归因：归母 {_fv(pq.get('np_delta'))} = "
+              f"扣非 <b>{_fv(pq.get('kfj_delta'))}</b> + 非经常 <b>{_fv(pq.get('non_rec_delta'))}</b>"
+              + (f"；一次性贡献占增量 <b>{pq.get('oneoff_share')}%</b>" if pq.get("oneoff_share") is not None else "")
+              + "</div>")
+        t4 = (f"<div class='cnote'>一次性来源（累计 {esc(_rep)}）：投资收益 <b>{_fv(pq.get('invest_income'))}</b>"
+              + (f"（其中本轮单季 {_fv(pq.get('invest_income_quarter'))}）" if pq.get("invest_income_quarter") is not None else "")
+              + f" · 资产处置收益 {_fv(pq.get('asset_disposal'))} · 其他收益 {_fv(pq.get('other_income'))}"
+              + "</div>")
+        pq_html = f"""<section class="grp">
+    <h2 class="gtitle">利润质量：归母 vs 扣非（卖资产等一次性收益不能当财务好转）</h2>
+    <div class="costgrid">
+      <div class="costcard" style="grid-column:1/-1">
+        <div class="chead">① 累计对比 ＋ ② 单季拆解</div>
+        {t1}
+        {t2}
+        <div class="chead">③ 增量归因 ＋ ④ 一次性科目</div>
+        {t3}
+        {t4}
+        <div class="sus-verdict {_vcls}">{"⚠️" if _vcls == "warn" else ("⛔" if _vcls == "bad" else "✅")} <b>扣非校验：</b>{esc(pq.get("verdict",""))}</div>
+        <div class="cnote">口径：东财 KCFJCXSYJLR（扣非归母净利）；非经常性损益 = 归母净利 − 扣非净利。判级：非经常占归母 ≥20% 或 一次性贡献占增量 ≥50% 即视为一次性主导。</div>
+      </div>
+    </div>
+  </section>"""
 
     cost_html = f"""<section class="grp">
     <h2 class="gtitle">降本拆解（全部动态取数，来源：东财利润表 GINCOME；研发明细/可持续性来自公司中报披露）</h2>
@@ -326,7 +396,7 @@ footer {{ margin-top:30px; color:var(--sub); font-size:12px; line-height:1.8; bo
 {st_banner}
 
 <div class="summary">
-  <div class="verdict">📌 <b>核心结论</b>：营收{_rev_state}（{esc(snap.get("report","最新期"))}同比 {esc(_rev_yoy_txt)}），但净利靠 <b>降本 + 去杠杆</b> 支撑 —— 有息负债率 {fnum(snap.get("idebt"),1)}%、资产负债率 {fnum(snap.get("debt"),1)}%，<b>降本真实、可见</b>；矛盾点在于 <b>非收入扩张</b>，是典型「降本保利润」。</div>
+  <div class="verdict">📌 <b>核心结论</b>：营收{_rev_state}（{esc(snap.get("report","最新期"))}同比 {esc(_rev_yoy_txt)}），但净利靠 <b>降本 + 去杠杆</b> 支撑 —— 有息负债率 {fnum(snap.get("idebt"),1)}%、资产负债率 {fnum(snap.get("debt"),1)}%，<b>降本真实、可见</b>；矛盾点在于 <b>非收入扩张</b>，是典型「降本保利润」。{(f'<br><span class="k">⚠️ 扣非校验：</span>{esc(pq.get("verdict"))}' if pq and pq.get("flag") != "clean" else "")}</div>
   <div class="scards">{snap_cards}</div>
 </div>
 
@@ -334,6 +404,7 @@ footer {{ margin-top:30px; color:var(--sub); font-size:12px; line-height:1.8; bo
 <div class="tgrid">{cards_html}
 </div></section>
 
+{pq_html}
 {cost_html}
 
 <footer>

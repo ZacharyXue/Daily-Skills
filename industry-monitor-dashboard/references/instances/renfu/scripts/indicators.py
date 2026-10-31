@@ -22,7 +22,7 @@
 }
 """
 
-GROUPS = ["快照(最新一期)", "四大财务走势(年度)", "降本拆解(费用结构)", "去杠杆红利验证"]
+GROUPS = ["快照(最新一期)", "利润质量(扣非校验)", "四大财务走势(年度)", "降本拆解(费用结构)", "去杠杆红利验证"]
 
 INDICATORS = [
     # ============ 快照：最新已披露报告期四个核心（报告期动态，勿写死） ============
@@ -51,6 +51,24 @@ INDICATORS = [
          meaning="有息负债/总资产(短借+长借+债券等)。有息负债率下行是财务费用降、进而净利增的根源。",
          signal="36%→22% 大幅去杠杆 = 利息负担显著下降(降本红利)；上行=重新加杠杆",
          getter="snap"),
+
+
+    # ============ 利润质量（扣非校验：卖资产不能当财务好转） ============
+    dict(id="pq_kfj", group="利润质量(扣非校验)", name="扣非归母净利", unit="亿元", ttl="quarter",
+         source="东财 datacenter(KCFJCXSYJLR)", source_url="https://datacenter.eastmoney.com",
+         meaning="扣除非经常性损益后的归母净利，是「经营本身赚的钱」。看净利变化必须先看这一项，再看归母。",
+         signal="扣非同比才是经营趋势；归母与扣非背离越大，说明一次性损益占比越高",
+         getter="profit_quality"),
+    dict(id="pq_nonrec", group="利润质量(扣非校验)", name="非经常性损益占归母净利", unit="%", ttl="quarter",
+         source="计算：归母 − 扣非", source_url="https://datacenter.eastmoney.com",
+         meaning="非经常性损益（卖资产、处置股权、公允价值变动、政府补助等）占归母净利的比重。占比越高，报表利润越不能代表经营。",
+         signal="<10% 干净；10-20% 需看说明；≥20% 视为一次性主导，不得据此判定「财务好转」",
+         getter="profit_quality"),
+    dict(id="pq_table", group="利润质量(扣非校验)", name="利润质量拆解", unit="", ttl="quarter",
+         source="东财 MAINFINADATA + GINCOME", source_url="https://datacenter.eastmoney.com",
+         meaning="归母/扣非/非经常的三层拆解：累计同比、单季拆解、增量归因、一次性科目来源（投资收益/资产处置/其他收益）。",
+         signal="增量归因里「非经常贡献占比」超过 50%=利润增长主要靠一次性，不可外推",
+         getter="profit_quality"),
 
     # ============ 四大财务走势（年度 SVG） ============
     dict(id="trend_rev", group="四大财务走势(年度)", name="营收(年度)", unit="亿元", ttl="quarter",

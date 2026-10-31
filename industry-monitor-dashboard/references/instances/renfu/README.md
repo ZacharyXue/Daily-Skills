@@ -84,3 +84,13 @@ fetch.py 里 `em_fin(secucode, report_arg)` / `em_stmt(...)` 调 `DSR.get('cn_fi
 ## 关系
 
 复用 `dashboard-style`（风格/骨架/索引）、`data-source-router`（统一取数 `cn_financial_series`）。`stock-analysis` 可对同一标的做基本面深挖。同类看板：`cement-dashboard`(行业+龙头盈利底)、`etf-dashboard`(ETF估值+技术)——均走 data-source-router 取数 + dashboard-style 模板。
+
+## 利润质量（扣非校验）——2026-10-31 新增，用户指出的硬规则
+
+**归母净利同比不能单独看**：卖资产/处置股权/公允价值变动的收益属于非经常性损益，「净利大增」可能全靠它。
+
+- 指标：`pq_kfj`（扣非归母净利）、`pq_nonrec`（非经常占归母%）、`pq_table`（利润质量拆解表）
+- 取数：`get_profit_quality()`（fetch.py）；字段 `KCFJCXSYJLR` / `KCFJCXSYJLRTZ`；非经常 = 归母 − 扣非
+- 页面：快照卡并列「扣非归母净利 / 非经常损益占净利」+ 独立区块「利润质量：归母 vs 扣非」（累计对比 / 单季拆解 / 增量归因 / 一次性科目）+ 核心结论自动追加扣非警示
+- 判级：非经常占归母 ≥20% 或 一次性贡献占增量 ≥50% → `flag=oneoff-inflated`（增长被撑起）/ `oneoff-cushion`（下滑被托底）
+- **实测（2026三季报）**：归母 24.15亿(+43.0%) vs 扣非 17.97亿(+7.9%)；非经常 6.18亿 = 25.6%；增量 7.26亿 里非经常贡献 5.95亿（**82%**）；Q3 单季归母 10.85亿 里非经常 5.77亿（**53%**）；来源＝投资收益 7.09亿（单季 6.69亿）

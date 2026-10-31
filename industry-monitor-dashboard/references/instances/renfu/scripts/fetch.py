@@ -107,6 +107,9 @@ def get_snap():
                 np_yoy = round((np_ - np_l) / np_l * 100, 1)
             break
     rev_yoy = yoy_map.get(nm)
+    # 扣非归母净利（KCFJCXSYJLR）与非经常性损益 = 归母 − 扣非
+    kfj = r.get("KCFJCXSYJLR")
+    non_rec = (np_ - kfj) if (np_ is not None and kfj is not None) else None
     return {"report": nm,
             "rev": round(rev / 1e8, 1) if rev else None,
             "rev_yoy": rev_yoy,
@@ -115,7 +118,140 @@ def get_snap():
             "roe": r.get("ROEJQ"),
             "debt": round(r.get("ZCFZL"), 1) if r.get("ZCFZL") is not None else None,
             "idebt": round(r.get("INTEREST_DEBT_RATIO"), 1) if r.get("INTEREST_DEBT_RATIO") is not None else None,
+            # 扣非校验：归母净利含非经常性损益（卖资产/处置股权等），不能直接当经营改善
+            "kfj": round(kfj / 1e8, 2) if kfj is not None else None,
+            "kfj_yoy": round(r.get("KCFJCXSYJLRTZ"), 1) if r.get("KCFJCXSYJLRTZ") is not None else None,
+            "non_rec": round(non_rec / 1e8, 2) if non_rec is not None else None,
+            "non_rec_pct": round(non_rec / np_ * 100, 1) if (non_rec is not None and np_) else None,
             "stale": False}
+
+# ========== 利润质量（扣非校验：卖资产不能当财务好转） ==========
+_ORDER = ["一季报", "中报", "三季报", "年报"]
+
+
+def _period_shift(name):
+    """报告期名 → (年份, 次序index)；用于算「同年度上一期」以便拆单季。"""
+    for i, k in enumerate(_ORDER):
+        if name.endswith(k):
+            try:
+                return int(name[:4]), i
+            except ValueError:
+                return None, None
+    return None, None
+
+
+def get_profit_quality():
+    """归母 vs 扣非、非经常性损益、单季拆解、一次性来源科目。
+
+    核心规则（2026-10 用户指出后固化）：
+      归母净利的同比变化必须用「扣非净利」复核。卖资产/处置股权/公允价值变动等
+      一次性收益属于非经常性损益，**不能**当作财务好转（或恶化被掩盖）的证据。
+    """
+    rows = em_fin("600079.SH")
+    if not rows:
+        return {}
+    r = rows[0]
+    nm = r.get("REPORT_DATE_NAME", "")
+    yr, idx = _period_shift(nm)
+    by_name = {x.get("REPORT_DATE_NAME"): x for x in rows}
+
+    def _np(x): return (x or {}).get("PARENTNETPROFIT")
+    def _kfj(x): return (x or {}).get("KCFJCXSYJLR")
+
+    # 去年同期（同月段）
+    d = str(r.get("REPORT_DATE"))[:10]
+    prev = None
+    if yr:
+        for x in rows:
+            d2 = str(x.get("REPORT_DATE"))[:10]
+            if d2[:4] == str(yr - 1) and d2[5:7] == d[5:7]:
+                prev = x
+                break
+
+    def _pack(x, y):
+        np_, kfj_ = y(x), _kfj(x)
+        if np_ is None:
+            return None
+        nr = (np_ - kfj_) if kfj_ is not None else None
+        return {"np": round(np_ / 1e8, 2),
+                "kfj": round(kfj_ / 1e8, 2) if kfj_ is not None else None,
+                "non_rec": round(nr / 1e8, 2) if nr is not None else None,
+                "non_rec_pct": round(nr / np_ * 100, 1) if (nr is not None and np_) else None,
+                "np_raw": np_, "kfj_raw": kfj_, "nr_raw": nr}
+
+    cur = _pack(r, _np)
+    prv = _pack(prev, _np)
+    if not cur or prv is None:
+        return {"report": nm, "note": "去年同期数据缺失，无法做扣非对比"}
+
+    # 增量归因：归母增量 = 扣非增量 + 非经常增量
+    np_delta = round((cur["np_raw"] - prv["np_raw"]) / 1e8, 2)
+    kfj_delta = (round((cur["kfj_raw"] - prv["kfj_raw"]) / 1e8, 2)
+                 if cur["kfj_raw"] is not None and prv["kfj_raw"] is not None else None)
+    nr_delta = (round((cur["nr_raw"] - prv["nr_raw"]) / 1e8, 2)
+                if cur["nr_raw"] is not None and prv["nr_raw"] is not None else None)
+    oneoff_share = (round(nr_delta / np_delta * 100, 1)
+                    if (nr_delta is not None and np_delta) else None)
+
+    # 单季拆解：最新期 − 同年度上一期（如 三季报 − 中报 = Q3 单季）
+    q = None
+    prev_same_year = by_name.get(f"{yr}{_ORDER[idx-1]}") if (yr and idx) else None
+    if prev_same_year:
+        q_np = (_np(r) - _np(prev_same_year)) if _np(prev_same_year) is not None else None
+        q_kfj = (_kfj(r) - _kfj(prev_same_year)) if _kfj(prev_same_year) is not None else None
+        q_nr = (q_np - q_kfj) if (q_np is not None and q_kfj is not None) else None
+        _qname = {0: "Q1", 1: "Q2", 2: "Q3", 3: "Q4"}.get(idx, "单季")
+        q = {"label": f"{_qname}（{nm} − {_ORDER[idx-1]}）",
+             "np": round(q_np / 1e8, 2) if q_np is not None else None,
+             "kfj": round(q_kfj / 1e8, 2) if q_kfj is not None else None,
+             "non_rec": round(q_nr / 1e8, 2) if q_nr is not None else None,
+             "non_rec_pct": round(q_nr / q_np * 100, 1) if (q_nr is not None and q_np) else None}
+
+    # 一次性来源科目（累计）：投资收益 / 资产处置 / 其他收益
+    inv = dis = oth = inv_mid = None
+    try:
+        g = em_stmt("600079.SH", "RPT_F10_FINANCE_GINCOME", page=80)
+        gm = {x.get("REPORT_DATE_NAME"): x for x in g}
+        if gm.get(nm):
+            inv = gm[nm].get("INVEST_INCOME")
+            dis = gm[nm].get("ASSET_DISPOSAL_INCOME")
+            oth = gm[nm].get("OTHER_INCOME")
+        if idx and gm.get(f"{yr}{_ORDER[idx-1]}"):
+            inv_mid = gm[f"{yr}{_ORDER[idx-1]}"].get("INVEST_INCOME")
+    except Exception:
+        pass
+    inv_q = (inv - inv_mid) if (inv is not None and inv_mid is not None) else None
+
+    # 判定：一次性收益是否主导了归母净利的同比变化
+    flag, verdict = "clean", "扣非与归母同步，利润变化可归因于经营"
+    heavy = (cur["non_rec_pct"] is not None and cur["non_rec_pct"] >= 20) or \
+            (oneoff_share is not None and abs(oneoff_share) >= 50)
+    if heavy:
+        direction = "增长" if np_delta > 0 else "下滑"
+        if np_delta > 0:
+            flag = "oneoff-inflated"
+            verdict = (f"归母净利 {direction} {np_delta:+.2f}亿 中，非经常性损益贡献 {nr_delta:+.2f}亿"
+                       f"（占增量 {oneoff_share}%），扣非仅 {kfj_delta:+.2f}亿 —— "
+                       f"一次性收益撑起来的{direction}，不能当财务好转")
+        else:
+            flag = "oneoff-cushion"
+            verdict = (f"归母净利 {direction} {np_delta:+.2f}亿 已被一次性收益托底"
+                       f"（非经常性损益 {nr_delta:+.2f}亿），扣非 {kfj_delta:+.2f}亿 —— "
+                       f"真实经营恶化比报表更深")
+
+    return {"report": nm, "prev_report": (prev or {}).get("REPORT_DATE_NAME"),
+            "kfj": cur["kfj"], "kfj_yoy": round(r.get("KCFJCXSYJLRTZ"), 1) if r.get("KCFJCXSYJLRTZ") is not None else None,
+            "np": cur["np"], "np_yoy": round(r.get("PARENTNETPROFITTZ"), 1) if r.get("PARENTNETPROFITTZ") is not None else None,
+            "non_rec": cur["non_rec"], "non_rec_pct": cur["non_rec_pct"],
+            "prev": prv, "np_delta": np_delta, "kfj_delta": kfj_delta,
+            "non_rec_delta": nr_delta, "oneoff_share": oneoff_share,
+            "quarter": q,
+            "invest_income": round(inv / 1e8, 2) if inv is not None else None,
+            "invest_income_quarter": round(inv_q / 1e8, 2) if inv_q is not None else None,
+            "asset_disposal": round(dis / 1e8, 2) if dis is not None else None,
+            "other_income": round(oth / 1e8, 2) if oth is not None else None,
+            "flag": flag, "verdict": verdict}
+
 
 # ========== 四大财务走势（年度） ==========
 def get_trend_rev():
@@ -249,6 +385,7 @@ GETTER_MAP = {
     "trend_rev": get_trend_rev, "trend_roe": get_trend_roe,
     "trend_debt": get_trend_debt, "trend_idebt": get_trend_idebt,
     "cost_struct": get_cost_struct,
+    "profit_quality": get_profit_quality,
     "trend_fin_exp": get_trend_fin_exp,
     "trend_idebt_fin": get_trend_idebt_fin,
     "contrib_breakdown": get_contrib_breakdown,
@@ -295,6 +432,14 @@ def fetch_all():
             disp = (f"销售{v.get('sale')} 管理{v.get('manage')} 研发{v.get('research')} "
                     f"财务{v.get('finance')} 成本{v.get('oper_cost')} @{v.get('report')}")
         if disp is None and ind["id"] == "contrib_breakdown": disp = v.get("np_delta")
+        if disp is None and ind["id"] == "pq_kfj":
+            disp = (f"{v.get('kfj')} 亿 (同比 {v.get('kfj_yoy'):+.1f}%)"
+                    if v.get("kfj") is not None and v.get("kfj_yoy") is not None else v.get("kfj"))
+        if disp is None and ind["id"] == "pq_nonrec":
+            disp = (f"{v.get('non_rec_pct')}% ({v.get('non_rec')}亿) [{v.get('flag')}]"
+                    if v.get("non_rec_pct") is not None else None)
+        if disp is None and ind["id"] == "pq_table":
+            disp = v.get("verdict")
         print(f"  [{ind['status']:6s}] {ind['name']}: {disp}")
     return out
 
