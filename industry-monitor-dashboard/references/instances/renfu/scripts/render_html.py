@@ -40,6 +40,16 @@ def build():
     def ind(id_): return by_id.get(id_) or {}
 
     snap = v("snap_rev")   # 快照(单dict含全部)
+    # 核心结论中的营收表述随最新报告期动态生成（原为写死「2026中报同比 -0.0%」，会过期）
+    _ry = snap.get("rev_yoy")
+    if _ry is None:
+        _rev_state, _rev_yoy_txt = "增长情况待确认", "—"
+    elif _ry >= 0.5:
+        _rev_state, _rev_yoy_txt = "已恢复增长", f"+{_ry:.1f}%"
+    elif _ry <= -0.5:
+        _rev_state, _rev_yoy_txt = "在收缩", f"{_ry:.1f}%"
+    else:
+        _rev_state, _rev_yoy_txt = "基本走平", f"{_ry:.1f}%"
     cost = v("cost_struct_latest")   # 费用占比
     cb = v("contrib_breakdown")   # 降本贡献度
 
@@ -99,7 +109,7 @@ def build():
 
     # ---- 降本拆解①：费用占比(2026中报 vs 2025年报) ----
     if cost:
-        fh = ("<table class='costtab'><thead><tr><th>费用科目</th><th>2026中报</th>"
+        fh = (f"<table class='costtab'><thead><tr><th>费用科目</th><th>{cost.get('report','最新期')}</th>"
               "<th>2025年报</th><th>说明</th></tr></thead><tbody>")
         rows_def = [
             ("营业成本率", "oper_cost", None, "毛利率 50%+，成本占比近半"),
@@ -316,7 +326,7 @@ footer {{ margin-top:30px; color:var(--sub); font-size:12px; line-height:1.8; bo
 {st_banner}
 
 <div class="summary">
-  <div class="verdict">📌 <b>核心结论</b>：营收在收缩(2024→2025 -5.8%，2026中报同比 -0.0%)，但净利靠 <b>降本 + 去杠杆</b> 支撑 —— 有息负债率 36%→22%、资产负债率 56%→40%，<b>降本真实、可见</b>；矛盾点在于 <b>非收入扩张</b>，是典型「降本保利润」。</div>
+  <div class="verdict">📌 <b>核心结论</b>：营收{_rev_state}（{esc(snap.get("report","最新期"))}同比 {esc(_rev_yoy_txt)}），但净利靠 <b>降本 + 去杠杆</b> 支撑 —— 有息负债率 {fnum(snap.get("idebt"),1)}%、资产负债率 {fnum(snap.get("debt"),1)}%，<b>降本真实、可见</b>；矛盾点在于 <b>非收入扩张</b>，是典型「降本保利润」。</div>
   <div class="scards">{snap_cards}</div>
 </div>
 

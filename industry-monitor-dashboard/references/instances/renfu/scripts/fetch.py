@@ -9,7 +9,7 @@
   - 所有数值只来自东财 datacenter 自动取数，禁止 hardcode 明细。
   - 统一走 data-source-router.get('cn_financial_series')，DSR 不可用才直连兜底。
 """
-import json, os, sys, time, datetime
+import json, os, re, sys, time, datetime
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(BASE, "scripts"))
@@ -197,11 +197,23 @@ def get_trend_idebt_fin():
                 {"name": "财务费用(亿)", "color": "#7c3aed", "points": fin_annual}],
             "stale": False}
 
-# ========== 降本贡献度拆解（2026中报 vs 2025中报） ==========
+# ========== 降本贡献度拆解（最新期 vs 去年同期） ==========
 def get_contrib_breakdown():
     rows = em_stmt("600079.SH", "RPT_F10_FINANCE_GINCOME", page=80)
     rm = {r.get("REPORT_DATE_NAME"): r for r in rows}
-    cur = rm.get("2026中报") or {}; prev = rm.get("2025中报") or {}
+    # 报告期动态：最新已披露期 vs 去年同期（原来硬编码 2026中报/2025中报，
+    # 三季报出来后会静默继续用中报 —— 2026-10 踩实）
+    def _latest_name():
+        for r in rows:
+            if r.get("REPORT_DATE_NAME"):
+                return r.get("REPORT_DATE_NAME")
+        return None
+    def _same_period_last_year(name):
+        m = re.match(r"(\d{4})(\D+)", name or "")
+        return (str(int(m.group(1)) - 1) + m.group(2)) if m else None
+    cur_name = _latest_name()
+    prev_name = _same_period_last_year(cur_name)
+    cur = rm.get(cur_name) or {}; prev = rm.get(prev_name) or {}
     def b(k):
         c, p = cur.get(k), prev.get(k)
         if c is None or p is None: return None
@@ -274,6 +286,14 @@ def fetch_all():
         disp = v.get("latest") if isinstance(v, dict) else None
         if disp is None and ind["id"] == "snap_rev": disp = v.get("rev")
         if disp is None and ind["id"] == "snap_np": disp = v.get("np")
+        # 快照三维在同一个 dict 里（get_snap 返回 rev/np/roe/debt/idebt），
+        # 原来只特化 rev/np，导致 ROE/负债率 控制台显示 None（数据其实在）—— 2026-10 修
+        if disp is None and ind["id"] == "snap_roe": disp = v.get("roe")
+        if disp is None and ind["id"] == "snap_debt": disp = v.get("debt")
+        if disp is None and ind["id"] == "snap_idebt": disp = v.get("idebt")
+        if disp is None and ind["id"] == "cost_struct_latest":
+            disp = (f"销售{v.get('sale')} 管理{v.get('manage')} 研发{v.get('research')} "
+                    f"财务{v.get('finance')} 成本{v.get('oper_cost')} @{v.get('report')}")
         if disp is None and ind["id"] == "contrib_breakdown": disp = v.get("np_delta")
         print(f"  [{ind['status']:6s}] {ind['name']}: {disp}")
     return out

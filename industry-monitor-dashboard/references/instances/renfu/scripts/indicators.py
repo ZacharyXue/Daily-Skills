@@ -25,30 +25,30 @@
 GROUPS = ["快照(最新一期)", "四大财务走势(年度)", "降本拆解(费用结构)", "去杠杆红利验证"]
 
 INDICATORS = [
-    # ============ 快照：最新一期(2026中报)四个核心 ============
+    # ============ 快照：最新已披露报告期四个核心（报告期动态，勿写死） ============
     dict(id="snap_rev", group="快照(最新一期)", name="营业总收入", unit="亿元", ttl="quarter",
          source="东财 datacenter", source_url="https://datacenter.eastmoney.com",
-         meaning="最新报告期(2026中报)累计营收。人福 2025年报 239.6亿→2026中报 120.6亿，处于收缩轨道。",
+         meaning="最新已披露报告期的累计营收。人福营收处收缩轨道（2025年报 239.6亿 → 2026中报 120.6亿 为例），看点是能否止跌。",
          signal="营收同比转正=重回扩张；增速持续为负=靠降本保利润而非收入扩张(当前 -0.0%)",
          getter="snap"),
     dict(id="snap_np", group="快照(最新一期)", name="归母净利", unit="亿元", ttl="quarter",
          source="东财 datacenter", source_url="https://datacenter.eastmoney.com",
-         meaning="最新报告期归母净利。2026中报 13.30亿(+15.1%)，逆营收收缩而增长——靠降本+去杠杆。",
+         meaning="最新已披露报告期的归母净利。近年利润逆营收收缩而增长，主要靠降本+去杠杆（2026中报 13.30亿/+15.1% 为例）。",
          signal="净利同比>0 且营收同比<0 = 典型降本驱动(当前正是)；两者同增=健康扩张",
          getter="snap"),
     dict(id="snap_roe", group="快照(最新一期)", name="ROE(加权)", unit="%", ttl="quarter",
          source="东财 datacenter", source_url="https://datacenter.eastmoney.com",
-         meaning="最新报告期加权 ROE(2026中报 6.82%)。年度中枢约 8-13%，资本回报中上。",
+         meaning="最新已披露报告期的加权 ROE（单季累计口径必然低于年报）。年度中枢约 8-13%，资本回报中上。",
          signal="ROE 站稳 10%+ = 盈利质量修复；<8% = 净资产回报偏弱",
          getter="snap"),
     dict(id="snap_debt", group="快照(最新一期)", name="资产负债率", unit="%", ttl="quarter",
          source="东财 datacenter", source_url="https://datacenter.eastmoney.com",
-         meaning="最新报告期总负债率(2026中报 39.66%)。五年从 56%→40%，去杠杆核心亮点。",
+         meaning="最新已披露报告期的资产负债率。五年从 56%→40%，是去杠杆的核心亮点。",
          signal="持续下行=资产负债表修复；ST 后需鉴别是否因剥离资产被动下降",
          getter="snap"),
     dict(id="snap_idebt", group="快照(最新一期)", name="有息负债率", unit="%", ttl="quarter",
          source="东财 datacenter(INTEREST_DEBT_RATIO)", source_url="https://datacenter.eastmoney.com",
-         meaning="有息负债/总资产(短借+长借+债券等)。2026中报 22.1%，是降本(财务费用)的根源。",
+         meaning="有息负债/总资产(短借+长借+债券等)。有息负债率下行是财务费用降、进而净利增的根源。",
          signal="36%→22% 大幅去杠杆 = 利息负担显著下降(降本红利)；上行=重新加杠杆",
          getter="snap"),
 
@@ -77,7 +77,7 @@ INDICATORS = [
     # ============ 降本拆解（费用结构，核心） ============
     dict(id="cost_struct_latest", group="降本拆解(费用结构)", name="费用占比(最新一期)", unit="%", ttl="quarter",
          source="东财利润表 GINCOME", source_url="https://datacenter.eastmoney.com",
-         meaning="2026中报销售/管理/研发/财务费用占营收比。医药销售费用是最大费用项(19.5%)，研发 5.3%，财务费 1.8%——财务费最低是去杠杆红利。",
+         meaning="最新已披露报告期的销售/管理/研发/财务费用占营收比。医药销售费用是最大费用项、财务费最低（去杠杆红利）。表内同时给上一年年报作对照。",
          signal="销售费用率下行=营销效率提升；财务费用率==1.8%低点=去杠杆见效；研发费用率稳=未来蓄力",
          getter="cost_struct"),
     dict(id="fin_expense", group="降本拆解(费用结构)", name="财务费用(年度)", unit="亿元", ttl="quarter",
@@ -92,7 +92,7 @@ INDICATORS = [
          getter="trend_idebt_fin"),
     dict(id="contrib_breakdown", group="降本拆解(费用结构)", name="降本贡献度拆解(同比)", unit="亿元", ttl="quarter",
          source="东财利润表 GINCOME", source_url="https://datacenter.eastmoney.com",
-         meaning="2026中报 vs 2025中报，归母净利 +1.75亿 的每一分增量从哪来：营业成本-2.39亿/研发-1.03亿/管理-0.63亿是贡献，销售+1.41亿/财务+0.90亿是拖累，净+1.75亿。",
+         meaning="最新披露期 vs 去年同报告期：归母净利的每一分增量从哪来。营业成本下降/研发下降/管理下降是贡献，销售上升/财务上升是拖累。条目标注当期实际金额，随报告期自动更新。",
          signal="绿色(降本)=救利润，红色(费用增)=吞噬利润。头号功臣=营业成本，最需警惕研发(利润种子)",
          getter="contrib_breakdown"),
 ]

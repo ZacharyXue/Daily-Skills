@@ -60,6 +60,12 @@ fetch.py 里 `em_fin(secucode, report_arg)` / `em_stmt(...)` 调 `DSR.get('cn_fi
 
 ## Pitfalls（本会话重新踩过，排列按重要性）
 
+- **🔴 报告期动态 + 取数必须 force**（2026-10-31 踩实，三季报事件）：人福 2026 三季报（报告期 2026-09-30）发布后，看板仍显示 2026中报——两个独立原因：
+  ① `dashboard_shared._router_get` 未传 `force`，`cn_financial_series` 的 **TTL 90 天**缓存把中报当最新；已在共享库加 `FORCE`（`DASH_FORCE_REFRESH` 默认开）→ 手动看板一律回源。
+  ② `get_contrib_breakdown` 硬编码 `2026中报 vs 2025中报`；已改为「最新已披露期 vs 去年同期（同月段）」。
+  同类还有渲染层写死：核心结论的「2026中报同比 -0.0%」、费用结构表表头 → 均已改为读 `snap['report']`/`cost['report']` 动态生成。
+- **控制台 summary 显示 None ≠ 没数据**：`snap_roe/snap_debt/snap_idebt/cost_struct_latest` 的值都在 `get_snap()` 同一个 dict 里（`roe/debt/idebt`），summary 只特化了 `rev/np` → 打印 None。已补特化分支。排查时看 `cache/dashboard_data.json` 才是准的。
+
 - **id 必须与 fetch/render 三方对齐**：indicators.py 的 id 是 `snap_rev`/`cost_struct_latest`(不是 `snap`/`cost_struct`)，fetch GETTER_MAP 用 getter 名(`snap`/`cost_struct`)，render 取 value 用 **indicator 的 id**。取错 `v("cost_struct")` 会得到空 dict → 渲染显示"费用数据缺失"。README 里子 agent 曾记过，但仍易踩。
 - **`_series_of` 必须按年份升序**：东财返回按 REPORT_DATE 倒序(最新在前)，不 sort 时取 `points[-1]` 拿到的是**最早**(2006年报)，导致 `latest_date` 显示"2006年报"、latest=0.52 这种错误。`out.sort(key=lambda x: x["d"])` 后 `[-1]`=最新。
 - **营收同比别信东财字段**：`TOTALOPERATEREVETZ` 有 bug(2025年报=-579%)。必须重算。
