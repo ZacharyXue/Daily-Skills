@@ -180,10 +180,121 @@ def get_helluo_np():
     rows = em_fin("600585.SH"); r = latest_r(rows)
     hist = sorted([{"d": str(x.get("REPORT_DATE",""))[:10], "v": round(x.get("PARENTNETPROFIT",0)/1e8,1)}
                    for x in rows if x.get("PARENTNETPROFIT") is not None], key=lambda t:t["d"])
+    _kfj = r.get("KCFJCXSYJLR")
+    _np = r.get("PARENTNETPROFIT")
+    _nr = (_np - _kfj) if (_np is not None and _kfj is not None) else None
     return {"np": round(r.get("PARENTNETPROFIT", 0)/1e8, 1), "np_yoy": round(r.get("PARENTNETPROFITTZ"), 1),
             "rev": round(r.get("TOTALOPERATEREVE", 0)/1e8, 1), "rev_yoy": round(r.get("TOTALOPERATEREVETZ"), 1),
             "gm": r.get("XSMLL"), "nm": r.get("XSJLL"), "report": pname(r),
+            # 扣非校验：归母可能被一次性收益托底/撑起，不能单看归母同比
+            "kfj": round(_kfj/1e8, 2) if _kfj is not None else None,
+            "kfj_yoy": round(r.get("KCFJCXSYJLRTZ"), 1) if r.get("KCFJCXSYJLRTZ") is not None else None,
+            "non_rec": round(_nr/1e8, 2) if _nr is not None else None,
+            "non_rec_pct": round(_nr/_np*100, 1) if (_nr is not None and _np) else None,
             "charts": [{"name": "归母净利(累计·亿)", "color": "#dc2626", "points": hist}], "stale": False}
+# ---------- 利润质量（扣非校验） ----------
+_ORD = ["一季报", "中报", "三季报", "年报"]
+
+
+def _psum(name):
+    for i, k in enumerate(_ORD):
+        if name.endswith(k):
+            try:
+                return int(name[:4]), i
+            except ValueError:
+                return None, None
+    return None, None
+
+
+def get_profit_quality():
+    """海螺 归母 vs 扣非：非经常性损益（卖资产/投资收益等）不得当经营改善，
+    也不得让它掩盖真实恶化。规则同人福看板（2026-10-31 固化）。"""
+    rows = em_fin("600585.SH")
+    if not rows:
+        return {}
+    r = latest_r(rows)
+    nm = pname(r); yr, idx = _psum(nm)
+    by = {x.get("REPORT_DATE_NAME"): x for x in rows}
+    d = str(r.get("REPORT_DATE", ""))[:10]
+
+    prev = None
+    if yr:
+        for x in rows:
+            d2 = str(x.get("REPORT_DATE", ""))[:10]
+            if d2[:4] == str(yr - 1) and d2[5:7] == d[5:7]:
+                prev = x
+                break
+
+    def pack(x):
+        if not x: return None
+        np_, kfj_ = x.get("PARENTNETPROFIT"), x.get("KCFJCXSYJLR")
+        if np_ is None: return None
+        nr = (np_ - kfj_) if kfj_ is not None else None
+        return {"np": round(np_/1e8, 2), "kfj": round(kfj_/1e8, 2) if kfj_ is not None else None,
+                "non_rec": round(nr/1e8, 2) if nr is not None else None,
+                "non_rec_pct": round(nr/np_*100, 1) if (nr is not None and np_) else None,
+                "np_raw": np_, "kfj_raw": kfj_, "nr_raw": nr}
+
+    cur, prv = pack(r), pack(prev)
+    if not cur:
+        return {}
+    np_delta = round((cur["np_raw"] - prv["np_raw"])/1e8, 2) if prv else None
+    kfj_delta = (round((cur["kfj_raw"] - prv["kfj_raw"])/1e8, 2)
+                 if (prv and cur["kfj_raw"] is not None and prv.get("kfj_raw") is not None) else None)
+    nr_delta = (round((cur["nr_raw"] - prv["nr_raw"])/1e8, 2)
+                if (prv and cur["nr_raw"] is not None and prv.get("nr_raw") is not None) else None)
+    oneoff_share = round(nr_delta/np_delta*100, 1) if (nr_delta is not None and np_delta) else None
+
+    q = None
+    ps = by.get(f"{yr}{_ORD[idx-1]}") if (yr and idx) else None
+    if ps is not None:
+        q_np = (r.get("PARENTNETPROFIT") - ps.get("PARENTNETPROFIT")) if ps.get("PARENTNETPROFIT") is not None else None
+        q_kfj = (r.get("KCFJCXSYJLR") - ps.get("KCFJCXSYJLR")) if ps.get("KCFJCXSYJLR") is not None else None
+        q_nr = (q_np - q_kfj) if (q_np is not None and q_kfj is not None) else None
+        q = {"label": f"{ {0:'Q1',1:'Q2',2:'Q3',3:'Q4'}.get(idx,'单季') }（{nm} − {_ORD[idx-1]}）",
+             "np": round(q_np/1e8, 2) if q_np is not None else None,
+             "kfj": round(q_kfj/1e8, 2) if q_kfj is not None else None,
+             "non_rec": round(q_nr/1e8, 2) if q_nr is not None else None,
+             "non_rec_pct": round(q_nr/q_np*100, 1) if (q_nr is not None and q_np) else None}
+
+    inv = dis = oth = inv_prev = None
+    try:
+        g = em_stmt("600585.SH", "RPT_F10_FINANCE_GINCOME", page=80)
+        gm = {x.get("REPORT_DATE_NAME"): x for x in g}
+        if gm.get(nm):
+            inv = gm[nm].get("INVEST_INCOME"); dis = gm[nm].get("ASSET_DISPOSAL_INCOME")
+            oth = gm[nm].get("OTHER_INCOME")
+        if idx and gm.get(f"{yr}{_ORD[idx-1]}"):
+            inv_prev = gm[f"{yr}{_ORD[idx-1]}"].get("INVEST_INCOME")
+    except Exception:
+        pass
+    inv_q = (inv - inv_prev) if (inv is not None and inv_prev is not None) else None
+
+    flag, verdict = "clean", "扣非与归母同向，利润变化可归因于经营"
+    if (cur["non_rec_pct"] is not None and cur["non_rec_pct"] >= 20) or \
+       (oneoff_share is not None and abs(oneoff_share) >= 50):
+        if np_delta is not None and np_delta > 0:
+            flag = "oneoff-inflated"
+            verdict = (f"归母增长 {np_delta:+.2f}亿 里非经常贡献 {nr_delta:+.2f}亿（占增量 {oneoff_share}%），"
+                       f"扣非仅 {kfj_delta:+.2f}亿 —— 一次性收益撑起来的增长")
+        else:
+            flag = "oneoff-cushion"
+            verdict = (f"归母 {np_delta:+.2f}亿 已被一次性收益托底（非经常 {nr_delta:+.2f}亿），"
+                       f"扣非 {kfj_delta:+.2f}亿 —— 真实经营恶化比报表更深")
+
+    return {"report": nm, "prev_report": (prev or {}).get("REPORT_DATE_NAME"),
+            "np": cur["np"], "np_yoy": round(r.get("PARENTNETPROFITTZ"), 1) if r.get("PARENTNETPROFITTZ") is not None else None,
+            "kfj": cur["kfj"], "kfj_yoy": round(r.get("KCFJCXSYJLRTZ"), 1) if r.get("KCFJCXSYJLRTZ") is not None else None,
+            "non_rec": cur["non_rec"], "non_rec_pct": cur["non_rec_pct"], "prev": prv,
+            "np_delta": np_delta, "kfj_delta": kfj_delta, "non_rec_delta": nr_delta,
+            "oneoff_share": oneoff_share, "quarter": q,
+            "invest_income": round(inv/1e8, 2) if inv is not None else None,
+            "invest_income_quarter": round(inv_q/1e8, 2) if inv_q is not None else None,
+            "asset_disposal": round(dis/1e8, 2) if dis is not None else None,
+            "other_income": round(oth/1e8, 2) if oth is not None else None,
+            "flag": flag, "verdict": verdict}
+
+
 def get_cashflow_ratio():
     rows = em_fin("600585.SH"); r = latest_r(rows)
     eps = r.get("EPSJB") or 0; cf = r.get("MGJYXJJE") or 0
@@ -230,9 +341,9 @@ def get_peers(report=None):
     return rows
 
 # ---------- 财务细项（资产负债表/现金流量表） ----------
-def em_stmt(secucode, report_arg):
+def em_stmt(secucode, report_arg, page=8):
     url = ("https://datacenter.eastmoney.com/securities/api/data/v1/get?reportName=" + report_arg + "&columns=ALL"
-           f"&filter=(SECUCODE%3D%22{secucode}%22)&pageNumber=1&pageSize=8&sortTypes=-1&sortColumns=REPORT_DATE")
+           f"&filter=(SECUCODE%3D%22{secucode}%22)&pageNumber=1&pageSize={page}&sortTypes=-1&sortColumns=REPORT_DATE")
     return _get(url, headers={"User-Agent":"Mozilla/5.0","Referer":"https://emweb.securities.eastmoney.com/"})["result"]["data"]
 def em_balance():
     return latest_r(em_stmt("600585.SH","RPT_F10_FINANCE_GBALANCE"))
@@ -424,6 +535,7 @@ GETTER_MAP = {
     "po425_price": get_po425, "cempi_index": get_cempi, "clinker_price": get_clinker,
     "concrete_price": get_concrete, "spread_calc": get_spread, "coal_index": get_coal,
     "helluo_np_yoy": get_helluo_np, "cashflow_ratio": get_cashflow_ratio,
+    "profit_quality": get_profit_quality,
     "debt_ratio": get_debt_ratio, "pb_percentile": get_pb, "ma_calc": get_ma,
     "macd_rsi_calc": get_macd_rsi, "dividend_yield_calc": get_dividend_yield,
     "rep_ton_gm": get_rep_ton_gm, "rep_ton_cost": get_rep_ton_cost, "rep_sales_yoy": get_rep_sales_yoy,

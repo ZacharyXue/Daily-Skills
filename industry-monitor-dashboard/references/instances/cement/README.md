@@ -86,3 +86,13 @@ python3 scripts/render_html.py      # -> output/cement_dashboard.html
 
 ## 与 stock-analysis 的关系
 `stock-analysis` 是**个股基本面深挖**流水线(含 data-apis.md、cycle-stock.md)。本 skill 是**行业/个股盈利底监测看板**的持续维护范式，两都共享东财/腾讯/公告PDF接口。财报公告PDF提取接口(via list_ann)可回填进 stock-analysis 的 data-apis.md。
+
+## 利润质量（扣非校验）——2026-10-31 新增
+
+海螺归母净利必须与扣非并排看：水泥下行周期里，处置资产/投资收益常被用来托底净利。
+
+- 指标：`pq_kfj`（海螺扣非归母净利）、`pq_nonrec`（非经常占归母%）、`pq_verdict`（扣非校验结论），均在「盈利组」
+- 取数：`get_profit_quality()`；字段 `KCFJCXSYJLR`；非经常 = 归母 − 扣非；一次性科目来自 `INVEST_INCOME`/`ASSET_DISPOSAL_INCOME`/`OTHER_INCOME`
+- 页面：新增独立区块「利润质量：归母 vs 扣非」（累计/单季/增量归因/一次性来源 + 判定）
+- `em_stmt()` 已加 `page` 参数（原来 pageSize=8 写死，取 80 期历史会报 TypeError 被 except 吞掉）
+- **实测（2026三季报）**：归母 27.43亿(-56.9%) vs 扣非 20.09亿(**-66.5%**)；非经常 7.34亿占 26.8%；Q3 单季归母仅 2.16亿、非经常 1.10亿（50.7%）；一次性收益对冲了 10.1% 的跌幅 → **真实恶化比报表更深**

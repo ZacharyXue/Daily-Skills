@@ -32,6 +32,15 @@ def fmt_val(ind):
     # 不特化会被判成「待接入」（README 记录过同类坑）2026-10 修
     if v.get("np_yoy") is not None and v.get("np") is not None and v.get("latest") is None:
         return f"{v['np']:,.1f} 亿 · 同比 {v['np_yoy']:+.1f}%", "", v.get("report")
+    # 特化：扣非相关（pq_*）—— value 里有 kfj/non_rec/verdict，无 latest 的走 note
+    if ind.get("id") == "pq_kfj" and v.get("kfj") is not None:
+        _ky = v.get("kfj_yoy")
+        return f"{v['kfj']:,.2f} 亿", (f"同比 {_ky:+.1f}%" if _ky is not None else ""), v.get("report")
+    if ind.get("id") == "pq_nonrec" and v.get("non_rec_pct") is not None:
+        return (f"{v['non_rec_pct']:.1f} %",
+                f"{v.get('non_rec')}亿 [{v.get('flag')}]", v.get("report"))
+    if ind.get("id") == "pq_verdict" and v.get("verdict"):
+        return v.get("verdict"), "", v.get("report")
     # 通用单值
     val = v.get("latest") if v.get("latest") is not None else v.get("close")
     unit = ind.get("unit", "")
@@ -218,6 +227,42 @@ def build():
                      f'<div class="ptwrap"><table class="ptable"><thead><tr>{rows_h}</tr></thead><tbody>{body}</tbody></table></div>'
                      f'<div style="color:var(--sub);font-size:12px;margin-top:8px">海螺高亮 · 来源：东方财富 datacenter · 五家口径统一 {esc(rep)}</div></section>')
 
+    # ---- 利润质量（扣非校验）区块 ----
+    _pq = next((x.get("value") for x in inds if gid(x) == "pq_verdict"), None) or {}
+    pq_html = ""
+    if _pq:
+        def _fv(x, u="亿", nd=2):
+            return f"{x:,.{nd}f} {u}" if isinstance(x, (int, float)) else "—"
+        _prev = _pq.get("prev") or {}
+        _q = _pq.get("quarter") or {}
+        _vcls = {"oneoff-inflated": "var(--warn)", "oneoff-cushion": "var(--err)"}.get(_pq.get("flag"), "#059669")
+        _ic = "⚠️" if _pq.get("flag") == "oneoff-inflated" else ("⛔" if _pq.get("flag") == "oneoff-cushion" else "✅")
+        _np_y, _kfj_y = _pq.get("np_yoy"), _pq.get("kfj_yoy")
+        pq_html = f"""<section class="grp">
+    <h2 class="gtitle">利润质量：归母 vs 扣非（一次性收益不得当盈利修复）</h2>
+    <div class="cbody">
+    <table class="ptable"><thead><tr><th>科目</th><th>{esc(_pq.get("report",""))}</th><th>{esc(_pq.get("prev_report",""))}</th><th>同比</th></tr></thead>
+    <tbody>
+      <tr><td>归母净利</td><td>{_fv(_pq.get("np"))}</td><td>{_fv(_prev.get("np"))}</td>
+          <td class="{'neg' if (isinstance(_np_y,(int,float)) and _np_y<0) else ''}">{f"{_np_y:+.1f}%" if _np_y is not None else "—"}</td></tr>
+      <tr><td>扣非归母净利</td><td>{_fv(_pq.get("kfj"))}</td><td>{_fv(_prev.get("kfj"))}</td>
+          <td class="{'neg' if (isinstance(_kfj_y,(int,float)) and _kfj_y<0) else ''}">{f"{_kfj_y:+.1f}%" if _kfj_y is not None else "—"}</td></tr>
+      <tr><td>非经常性损益</td><td>{_fv(_pq.get("non_rec"))}</td><td>{_fv(_prev.get("non_rec"))}</td><td>—</td></tr>
+      <tr><td>非经常占归母</td><td>{_fv(_pq.get("non_rec_pct"),"%",1)}</td><td>{_fv(_prev.get("non_rec_pct"),"%",1)}</td><td>—</td></tr>
+      {f'<tr><td>单季拆解（{esc(_q.get("label",""))}）</td><td>归母 {_fv(_q.get("np"))} / 扣非 {_fv(_q.get("kfj"))} / 非经常 {_fv(_q.get("non_rec"))}（占 {_fv(_q.get("non_rec_pct"),"%",1)}）</td><td colspan="2"></td></tr>' if _q else ""}
+    </tbody></table>
+    <div class="cnote" style="margin-top:8px">
+      <b>增量归因</b>：归母 {_fv(_pq.get("np_delta"))} = 扣非 <b>{_fv(_pq.get("kfj_delta"))}</b> + 非经常 <b>{_fv(_pq.get("non_rec_delta"))}</b>
+      {f'；一次性贡献占增量 <b>{_pq.get("oneoff_share")}%</b>' if (_pq.get("oneoff_share") is not None and (_pq.get("np_delta") or 0) > 0) else (f'；一次性收益<b>对冲了 {abs(_pq.get("oneoff_share"))}% 的跌幅</b>' if _pq.get("oneoff_share") is not None else "")}<br>
+      <b>一次性来源</b>（累计 {esc(_pq.get("report",""))}）：投资收益 {_fv(_pq.get("invest_income"))}
+      {f'（本季新增 {_fv(_pq.get("invest_income_quarter"))}）' if _pq.get("invest_income_quarter") is not None else ""}
+      · 资产处置收益 {_fv(_pq.get("asset_disposal"))} · 其他收益 {_fv(_pq.get("other_income"))}
+    </div>
+    <div class="cnote" style="color:{_vcls};font-weight:600;margin-top:6px">{_ic} <b>扣非校验：</b>{esc(_pq.get("verdict",""))}</div>
+    <div class="cnote">口径：东财 KCFJCXSYJLR；非经常 = 归母 − 扣非。判级：非经常占归母 ≥20% 或 一次性贡献占增量 ≥50% = 一次性主导。</div>
+    </div>
+</section>"""
+
     html_doc = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -291,6 +336,8 @@ footer {{ margin-top:30px; color:var(--sub); font-size:12px; line-height:1.8; bo
 </div>
 
 {peer_html}
+
+{pq_html}
 
 {''.join(cards)}
 
