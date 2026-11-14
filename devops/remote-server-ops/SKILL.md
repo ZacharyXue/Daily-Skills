@@ -173,6 +173,71 @@ iptables -I INPUT 1 -j GUARD
 - 爆破现状量化：`journalctl -u ssh --since today | grep -oE 'from [0-9.]+' | awk '{print $2}' | sort | uniq -c | sort -rn`（本机 5229 次/天、115 个源 IP，TOP1 单 IP 2066 次）；按 /24 聚拢能看出 C 段轮询（如 `45.148.10.x` 有 4 个 IP）。
 - **agent 在机器上本来就有 root shell（不经 SSH）**，iptables 改错随时可 `-F` 回滚，比定时回滚脚本可靠。注意 Hermes 会拦截 `nohup`/`setsid` 后台包装（报 "Foreground command uses shell-level background wrappers"），要后台跑得用 `background=true`。
 
+### 持久化（重启不丢）—— systemd oneshot + 两个必踩的坑
+
+iptables 规则默认**重启即失**。用 oneshot unit 挂开机执行。
+**不要用 `iptables-persistent`**：它把当前全表快照成静态文件，后续刷新黑名单还得手改 `/etc/iptables/rules.v4`；oneshot 每次开机跑脚本，改完脚本即生效。
+
+`/etc/systemd/system/ssh-hardening.service`：
+```ini
+[Unit]
+Description=SSH hardening - hashlimit rate limit + static IP blacklist
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/ssh-hardening.sh
+# 自检：规则写完必须真挂到 INPUT 上，否则服务判失败
+ExecStartPost=/bin/sh -c 'iptables -S INPUT | grep -q SSH_GUARD || { echo "SSH_GUARD not attached"; exit 1; }'
+
+[Install]
+WantedBy=multi-user.target
+```
+
+**坑1：清理顺序 —— `-X` 必须在解除引用之后（实测防护归零）**
+```bash
+# ❌ 错，实测 exit 1 且防护直接归零：
+iptables -F SSH_GUARD; iptables -X SSH_GUARD; iptables -D INPUT -j SSH_GUARD
+# 原因：-X 要求链无任何引用，而 INPUT 还挂着跳转 → -X 失败 → 链残留
+#       → -N 报 "Chain already exists" → 脚本 exit 1
+#       但 -F 已把旧规则清空 ⇒ 变成「链在但零规则」= 防护归零，比不加还危险
+
+# ✅ 对：删跳转 → 清空 → 删链
+while iptables -D INPUT -j SSH_GUARD 2>/dev/null; do :; done   # while 可清掉重复跳转
+iptables -F SSH_GUARD 2>/dev/null
+iptables -X SSH_GUARD 2>/dev/null
+```
+
+**坑2：`RemainAfterExit=yes` 的服务，`systemctl start` 是空操作**
+服务已处于 `active(exited)` 时再 `start` **不会重跑 ExecStart，而且返回 0**。
+实测：手动清空规则后 `systemctl start` → exit 0，但 `iptables -S SSH_GUARD` 报 `No chain/target/match by that name`，规则数 0。
+→ **改完脚本或手动清空规则后必须用 `systemctl restart`**；只有开机（服务仍 inactive）才走 `start`。
+
+**强制验收（三条全过才算完）**
+```bash
+systemctl restart ssh-hardening.service && systemctl is-active ssh-hardening.service  # active
+systemctl is-enabled ssh-hardening.service                                            # enabled
+
+iptables -S SSH_GUARD | grep -c '^-A'   # 稳定值，多次 restart 不翻倍
+ss -tn '( sport = :22 )'                # 现有会话必须还在（ESTABLISHED 放行生效）
+
+# 模拟真实开机：stop → 彻底清空 → start，规则应完整重建
+systemctl stop ssh-hardening.service
+iptables -D INPUT -j SSH_GUARD; iptables -F SSH_GUARD; iptables -X SSH_GUARD
+systemctl start ssh-hardening.service && iptables -S SSH_GUARD | grep -c '^-A'
+```
+本机清单 = 1 ESTABLISHED 放行 + 12 精确 IP + 1 个 /24 + 1 hashlimit 放行 + 1 兜底 DROP + 1 收尾 RETURN = **17 条**。
+⚠️ 服务执行的是 `/usr/local/sbin/ssh-hardening.sh`（部署到系统路径才能开机跑）。
+**源本已入仓：`scripts/ssh-hardening.sh`** —— 改完先回写仓里再部署：
+```bash
+cp scripts/ssh-hardening.sh /usr/local/sbin/ssh-hardening.sh   # 仓 → 系统
+chmod +x /usr/local/sbin/ssh-hardening.sh
+bash -n /usr/local/sbin/ssh-hardening.sh                        # 先验语法
+systemctl restart ssh-hardening.service                         # 注意用 restart 不用 start
+```
+
 ## Pitfall 0.8：客户端报错原文 = 分流第一手证据
 
 **先要到用户贴的原样报错**，不同文案指向完全不同的层，别一上来就查内存：

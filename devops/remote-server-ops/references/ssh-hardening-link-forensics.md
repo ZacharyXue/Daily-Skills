@@ -106,8 +106,10 @@ BAD_NETS=( 45.148.10.0/24 )   # 段内多 IP 轮询才封整段，单 IP 攻击�
 
 log() { logger -t ssh-hardening "$*"; echo "[ssh-hardening] $*"; }
 
-iptables -F SSH_GUARD 2>/dev/null; iptables -X SSH_GUARD 2>/dev/null
-iptables -D INPUT -j SSH_GUARD 2>/dev/null          # 幂等
+# 幂等清理：顺序必须是 删跳转 → 清空 → 删链（顺序错了会防护归零，见坑 1）
+while iptables -D INPUT -j SSH_GUARD 2>/dev/null; do :; done
+iptables -F SSH_GUARD 2>/dev/null
+iptables -X SSH_GUARD 2>/dev/null
 
 iptables -N SSH_GUARD || { log "ERROR: 建链失败"; exit 1; }
 iptables -A SSH_GUARD -m conntrack --ctstate ESTABLISHED,RELATED -j RETURN   # 必须第 1 条
@@ -130,6 +132,76 @@ cat /proc/net/xt_hashlimit/SSHG              # 空 = 没限到任何源
 本次实测：hashlimit RETURN 命中 19 packets（用户正常放行）、兜底 DROP **0 packets**、hashlimit 表为空 → 证明用户连不上**不是**新规则造成的，避免了误判回滚。
 
 > 5 小时后的复测：RETURN 449 包 / 兜底 DROP 仅 2 包 / 黑名单累计丢 925 包 —— 规则长期在正常工作，且始终没挡住用户主会话。
+
+## 六·补、持久化到重启（2026-11-14 实测落地）
+
+规则默认重启即失。选用 **systemd oneshot** 而非 `iptables-persistent`（后者把全表快照成静态文件，刷黑名单还得手改 rules.v4）。
+
+```ini
+# /etc/systemd/system/ssh-hardening.service
+[Unit]
+Description=SSH hardening - hashlimit rate limit + static IP blacklist
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/ssh-hardening.sh
+ExecStartPost=/bin/sh -c 'iptables -S INPUT | grep -q SSH_GUARD || { echo "SSH_GUARD not attached"; exit 1; }'
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+install -m 644 /tmp/ssh-hardening.service /etc/systemd/system/
+systemctl daemon-reload && systemctl enable --now ssh-hardening.service
+```
+
+### 坑 1：`-X` 必须在解除 INPUT 引用之后（错了會防护归零）
+
+首次 `systemctl start` 成功（当时链不存在），`systemctl restart` **直接失败**：
+```
+iptables: Chain already exists.
+[ssh-hardening] ERROR: 建链失败      → status=1/FAILURE
+```
+结果 `iptables -S INPUT` 变空、`SSH_GUARD` 规则数 0。
+
+根因：`-X` 要求链无任何引用，但当时 INPUT 还挂着 `-j SSH_GUARD` → `-X` 静默失败 → 链残留
+→ `-N` 报 exists → 脚本 `exit 1`；**而 `-F` 已把旧规则清空 ⇒ 「链在但零规则」= 防护归零，比不加还危险**。
+
+修正（把删跳转提到最前，并用 while 清掉重复跳转）：
+```bash
+while iptables -D INPUT -j SSH_GUARD 2>/dev/null; do :; done
+iptables -F SSH_GUARD 2>/dev/null
+iptables -X SSH_GUARD 2>/dev/null
+iptables -N SSH_GUARD || { log "ERROR: 建链失败"; exit 1; }
+```
+
+### 坑 2：`RemainAfterExit=yes` 时 `systemctl start` 是空操作
+
+服务已 `active(exited)` 时再 `start` **不重跑 ExecStart，且返回 0**。
+实测：手动清空规则 → `systemctl start` → exit 0，但 `iptables -S SSH_GUARD` 报
+`No chain/target/match by that name`，规则数 0。
+→ **改脚本 / 手动清空后必须用 `systemctl restart`**；开机（inactive）才走 `start`。
+
+### 验收（四条全过）
+
+```bash
+systemctl is-enabled ssh-hardening.service   # enabled
+systemctl is-active  ssh-hardening.service   # active
+systemctl restart ssh-hardening.service      # 无报错
+iptables -S SSH_GUARD | grep -c '^-A'        # 17（多次 restart 不翻倍）
+iptables -S INPUT | grep -c SSH_GUARD        # 1（无重复跳转）
+ss -tn '( sport = :22 )'                     # 现有会话仍在
+```
+
+本机实测连跑 4 次 `restart` → 规则数稳定 **17**、INPUT 跳转恒为 1；
+「stop + 彻底清空 + start」模拟真实开机 → 17 条完整重建 ✓
+
+清单 = 1 ESTABLISHED 放行 + 12 精确 IP + 1 个 /24 + 1 hashlimit 放行 + 1 兜底 DROP + 1 收尾 RETURN = **17**。
+⚠️ 服务跑的是 `/usr/local/sbin/ssh-hardening.sh`；**源本在 `scripts/ssh-hardening.sh`（已入仓）**，修改流程永远是「仓里改 → cp 到系统路径 → `bash -n` → `systemctl restart`」。
 
 ## 七、爆破规模量化（决定要不要动手）
 
