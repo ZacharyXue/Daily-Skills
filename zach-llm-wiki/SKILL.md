@@ -124,6 +124,33 @@ wiki 的公开子集单向同步到博客站，供浏览和检索；**源永远�
 
 **写博客时自动 ingest**：收尾动作已固化进 `zacharyxue-blog` skill（自动判断够格→建页→commit→sync→build→报告），用户不必再提醒「顺便落库」。
 
+### 点↔线互跳（2026-11-22 建，P0 闭环）
+
+sync 额外产出 `src/data/wiki-links.json`，三张关系表：
+
+| 表 | 含义 | 渲染位置 |
+|---|---|---|
+| `blogToWiki` | 博客 slug → 它拆出的知识点 | 博客页底部「本文涉及的知识点」 |
+| `wikiToBlog` | 知识点 → 它的长文出处 | wiki 页「出处」（来源：`sources` 里的本站博客 URL） |
+| `wikiBacklinks` | 知识点 → 谁引用了它（wikilink 入链） | wiki 页「被这些知识点引用」 |
+
+**重要推论：`sources` 里写本站博客 URL 是有效动作**——自动生成双向入口，不需要额外维护。写法必须是全站绝对地址：
+
+```yaml
+sources:
+  - https://zacharyxue.github.io/blog/<slug>/     # slug 支持中文
+  - https://外部文档...                            # 外部参考单独列为外链
+```
+
+首轮数据：24 篇博客挂知识点 / 30 个知识点挂长文 / 48 个知识点被引用（158 条入链）。
+
+### 两个已踩过的坑（别重蹈）
+
+- **代码块里的 `[[...]]` 不是 wikilink**：BuildKit 配置有 `[[worker.oci.gcpolicy]]` 这类 TOML 数组表语法，转换和出链统计都必须先跳过围栏代码块（`scripts/wiki-sync.py` 的 `iter_prose()`）。否则会被当成死链降级成纯文本，把配置示例改坏。
+- **中文 slug 博客要能反查**：`/blog/关键对话-读书笔记/` 这类中文 URL，正则必须用 `[\w\-]+`（Python3 的 `\w` 默认 Unicode），写成 `[A-Za-z0-9\-_]` 会漏掉全部中文命名的文章。
+
+**写博客时自动 ingest**：收尾动作已固化进 `zacharyxue-blog` skill（自动判断够格→建页→commit→sync→build→报告），用户不必再提醒「顺便落库」。
+
 ## 三大操作
 
 ### 1. Ingest（落库/整理笔记）

@@ -31,6 +31,8 @@ Trigger: any task on `/root/ZacharyXue.github.io/` — add/edit blog posts, proj
    - 不够格（纯数据展示 / 时点结论 / 企业对比） → 跳过，报告里写清原因
 2. **commit wiki 源**：`cd /root/wiki && git add -A && git commit -m "ingest: ..."`（只 commit 不 push）
 3. **同步到站点**：`cd /root/ZacharyXue.github.io && npm run wiki:sync`（先 `npm run wiki:sync:dry` 出报告更稳）
+   - 顺带重算 `src/data/wiki-links.json`：博客页会自动长出「本文涉及的知识点」区块，不需要你在文章里手动加链接
+   - 想让它挂上知识点：在建/改 wiki 页时，把这篇博客的 URL 写进它的 `sources`（`https://zacharyxue.github.io/blog/<slug>/`）
 4. **构建验证 + commit 博客仓**：`npm run build`，确认 `/wiki/<domain>/<slug>/` 产出，然后 commit
 
 **最后给用户一条报告**：建了/更新了哪些页、哪些跳过及原因（不要沉默，也不要贴长清单）。
