@@ -161,6 +161,33 @@ KICK：**别用 `--dump-dom` + 插在 `</body>` 前的诊断脚本自测**——
 
 ### 改版后的视觉自查流程（无浏览器环境）
 
+**移动端体检（优先做这个，溢出是手机阅读的头号毛病）**
+
+```bash
+# 先用 dist 起静态服务（比 astro preview 快，还能避开 pkill 自杀坑）
+cd dist && python3 -m http.server 4321 &
+# CDP 手机视口(390x844)断言：横向溢出 / 表格与代码块是否包裹 / 字号 / 触摸目标
+/root/.hermes/hermes-agent/venv/bin/python scripts/mobile-check.py http://127.0.0.1:4321 / /wiki/ /wiki/<domain>/<slug>/
+```
+
+- 脚本在仓库 `scripts/mobile-check.py`（依赖 websockets，用 `/root/.hermes/hermes-agent/venv/bin/python` 跑——`/root/hermes-venv` 已不存在）
+- 会直接点名“谁把页面撑宽”（tag/class/right/scrollWidth）以及哪些表格/代码块没包滚动容器
+- ⚠️ **新 layout 必须接上 `src/scripts/article-enhance.ts`**：表格/代码块横向滚动包装与标题锚点都在里面，BlogLayout 和 WikiLayout 共用。漏了就会出现“手机上一半页面正常、一半页面溢出 197px”（WikiLayout 刚踩过）
+
+**移动端硬性清单**（改完逐条对）
+
+| 项 | 判据 |
+|---|---|
+| 横向溢出 | `documentElement.scrollWidth == clientWidth` |
+| 表格 | 全部包 `.table-scroll`，溢出时出「↔ 左右滑动」提示 |
+| 代码块 | 全部包 `.code-scroll` 且 `white-space: pre`（Astro 默认 pre-wrap 会软折行，代码会被读错） |
+| 正文字号 | ≥ 16px（15.2px 就偏小了） |
+| 触摸目标 | 可点元素 ≥ 32px（主操作按钮 ≥ 44px，汉堡菜单已补到 44） |
+| 安全区 | 长页面底部 `calc(x + env(safe-area-inset-bottom))` |
+| 整卡可点 | 卡片只有标题包在 `<a>` 里时，用 `a::after { inset:0 }` 拉伸，交互子元素抬 `z-index` |
+
+**桌面截图自查**
+
 ```bash
 # 浏览器可能被 slim 搬到 .trash-slim，两个位置都试
 CH=$(ls /root/.cache/ms-playwright/chromium_headless_shell-*/chrome-headless-shell-linux64/chrome-headless-shell \
