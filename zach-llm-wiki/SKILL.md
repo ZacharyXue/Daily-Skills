@@ -83,6 +83,7 @@ wiki/
 ├── index.md        # 内容目录：先读这里定位所有页面
 ├── log.md          # 行动日志（append-only）
 ├── concepts/       # 概念/框架页（五大域：investing/cloud-native/llm-eng/algorithms/soft-skills）
+│                   # 公开白名单只含前四个域；soft-skills 用户定为不公开
 ├── entities/
 │   ├── investing/  # 公司/基金/指数/个股 → 公开站白名单
 │   └── systems/    # 个人系统（简历/看板/技能库/内网代理）→ 默认私有，不出网
@@ -112,10 +113,11 @@ wiki 的公开子集单向同步到博客站，供浏览和检索；**源永远�
 - **公开判定（默认私有，白名单放行）**，优先级从高到低：
   1. 页级 `visibility: private` → 阻断（白名单内的例外页）
   2. 页级 `visibility: public` → 放行（白名单外的单页）
-  3. 目录白名单 `PUBLIC_DIRS`（脚本内配置）→ 放行。当前 = concepts 五个域（investing / cloud-native / llm-eng / algorithms / soft-skills）+ entities/investing（个股/指数/基金）
-  4. 其余 → **默认私有，不出网**（包括 `entities/systems/` 和任何新开的目录）
-- 当前状态：52 页发布（concepts 48 + 个股实体 4）/ 4 页私有（都在 entities/systems/）
-- **新增页自动继承目录可见性**：`concepts/investing/新页`、`entities/investing/新个股` → 自动公开；`entities/systems/新系统`、全新目录 → 自动私有。这一条已实测验证（造测试页跑 dry-run）。
+  3. 目录白名单 `PUBLIC_DIRS`（脚本内配置）→ 放行。当前 = concepts 四个域（investing / cloud-native / llm-eng / algorithms）+ entities/investing（个股/指数/基金）
+  4. 其余 → **默认私有，不出网**（包括 `concepts/soft-skills/`、`entities/systems/` 和任何新开的目录）
+- 当前状态：51 页发布（concepts 47 + 个股实体 4）/ 5 页私有（soft-skills 1 + entities/systems 4）
+- **新增页自动继承目录可见性**：`concepts/investing/新页`、`entities/investing/新个股` → 自动公开；`concepts/soft-skills/新页`、`entities/systems/新系统`、全新目录 → 自动私有。这一条已实测验证（造测试页跑 dry-run）。
+- **用户不公开的类别**（2026-11-22）：个人软技能/读书笔记（concepts/soft-skills）、简历与个人系统（entities/systems）。别自作主张把它们加回白名单。
 - 敏感词兜底（zach-skills / .hermes / career-data / social-data / 总包 / 薪资 / 成本价 / 持仓），命中即拒发并列报告——若被拦，先在 wiki 源里脱敏再重跑
 - `[[wikilink]]` 在同步时转成站内链接 `/wiki/<domain>/<slug>`，死链降级为纯文本（报告里点名）
 - 内网/私网 IP、云厂商只警告不拦（网络原理文的示例地址属正常）
