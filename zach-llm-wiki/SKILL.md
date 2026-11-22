@@ -87,6 +87,35 @@ wiki/
 └── queries/        # 有价值的查询结论回填
 ```
 
+## 公开层：站点 /wiki（2026-11-22 建）
+
+wiki 的公开子集单向同步到博客站，供浏览和检索；**源永远是 /root/wiki，别反向编辑站点目录**。
+
+**公开性铁律（2026-11-22 用户拍板，默认值方向跟仓库性质走）：**
+
+| 仓 | 性质 | 默认值 |
+|---|---|---|
+| 博客 ZacharyXue.github.io | **公开项目** | 全公开。`hide_from_home` 只是不在首页列出，`draft: true` 只是不构建——**都不是隐私手段，也没有“私有博客”这种东西** |
+| wiki /root/wiki | **加密私有仓** | 默认**不公开**。只有显式放行才出网 |
+
+所以：不要因为隐私理由去动博客侧任何东西（博客本来就是公开的，内容要么写就不写）；要担心泄漏只担心 wiki → 公开站这一个方向。
+
+- 同步脚本：`/root/ZacharyXue.github.io/scripts/wiki-sync.py`（`npm run wiki:sync`，`--dry-run` 出报告）
+- 产出：`src/content/wiki/<domain>/<slug>.md`（生成物，禁手改）+ `src/data/wiki-index.json`
+- 路由：`/wiki`（六大域分区 + 实时搜索）/ `/wiki/<domain>/<slug>`
+- **公开判定（默认私有，白名单放行）**，优先级从高到低：
+  1. 页级 `visibility: private` → 阻断（白名单内的例外页）
+  2. 页级 `visibility: public` → 放行（白名单外的单页）
+  3. 目录白名单 `PUBLIC_DIRS`（脚本内配置）→ 放行。当前 = concepts 五个域（investing / cloud-native / llm-eng / algorithms / soft-skills）
+  4. 其余 → **默认私有，不出网**
+- 当前状态：52 页发布（concepts 48 + 个股实体 4）/ 4 页私有（daily-skills-library、investment-dashboard、markdown-resume-system、github-cache-proxy）
+- **新建 wiki 页默认就是不公开的**。要公开：概念页放对目录即可；实体页/新目录需页级 `visibility: public`。别把安全默认改回“默认公开”—那意味着忘标就自动泄漏。
+- 敏感词兜底（zach-skills / .hermes / career-data / social-data / 总包 / 薪资 / 成本价 / 持仓），命中即拒发并列报告——若被拦，先在 wiki 源里脱敏再重跑
+- `[[wikilink]]` 在同步时转成站内链接 `/wiki/<domain>/<slug>`，死链降级为纯文本（报告里点名）
+- 内网/私网 IP、云厂商只警告不拦（网络原理文的示例地址属正常）
+
+**写博客时自动 ingest**：收尾动作已固化进 `zacharyxue-blog` skill（自动判断够格→建页→commit→sync→build→报告），用户不必再提醒「顺便落库」。
+
 ## 三大操作
 
 ### 1. Ingest（落库/整理笔记）

@@ -12,6 +12,56 @@ Trigger: any task on `/root/ZacharyXue.github.io/` — add/edit blog posts, proj
 - 提纲按「纠正误解 → 核心知识 → 对比/选型」等递进结构组织，标注是否需展开的章节。
 - **用户确认提纲后，落到 `src/content/blog/YYYY-MM-DD-slug.md`，再 `npm run build` 验证。**
 
+## 收尾：wiki 知识点同步（2026-11-22 起，默认自动，不必等用户提醒）
+
+**写完一篇博客的最后一步固定是 wiki 同步。** 用户明确要求「自动判断，够格就建，只报告做了什么」，所以不要反问要不要落库。
+
+两个层级的区别（别混，也别互相替代）：
+
+| | 博客 | wiki |
+|---|---|---|
+| 抽象层 | **线**：多个知识点串起来解决一个项目问题 | **点**：单个知识点的判据卡 |
+| 形态 | 数据 + 推导 + 完整叙事，均值 7200 字 | 一句话本质 + 判据表 + 因果链，均值 1950 字 |
+| 归宿 | 公开叙事（读者读全文） | 判据调用（自己和 AI 快速定位） |
+
+**收尾四步：**
+
+1. **判断够不够格**：这篇是否产出/更新了「去掉日期和数据后依然成立」的知识点？
+   - 够格 → 建/更新 wiki 页（分工铁律与页面规范见 `zach-llm-wiki` skill）
+   - 不够格（纯数据展示 / 时点结论 / 企业对比） → 跳过，报告里写清原因
+2. **commit wiki 源**：`cd /root/wiki && git add -A && git commit -m "ingest: ..."`（只 commit 不 push）
+3. **同步到站点**：`cd /root/ZacharyXue.github.io && npm run wiki:sync`（先 `npm run wiki:sync:dry` 出报告更稳）
+4. **构建验证 + commit 博客仓**：`npm run build`，确认 `/wiki/<domain>/<slug>/` 产出，然后 commit
+
+**最后给用户一条报告**：建了/更新了哪些页、哪些跳过及原因（不要沉默，也不要贴长清单）。
+
+**站点 /wiki 链路（2026-11-22 建）**
+
+```
+/root/wiki/                              ← 唯一事实源（git-crypt 加密仓，默认不公开）
+   ↓ scripts/wiki-sync.py（本地跑，持密钥）
+   ├─ 先查页级 visibility：private 阻断 / public 放行
+   ├─ 再查目录白名单 PUBLIC_DIRS（concepts 五个域）→ 放行
+   ├─ 两者都没匹到 → 默认私有，不出网
+   ├─ 敏感词兜底：zach-skills/.hermes/career-data/总包/薪资/持仓成本 → 命中即拒发
+   ├─ [[wikilink]] → [中文](/wiki/<domain>/<slug>)，死链降级纯文本
+   └─ 提取「一句话本质」当卡片摘要
+   ↓
+src/content/wiki/<domain>/<slug>.md     ← 生成物，手改会被覆盖！
+   + src/data/wiki-index.json
+   ↓
+/wiki（六大域分区 + 搜索）  /wiki/<domain>/<slug>（详情页）
+```
+
+**公开性：博客 vs wiki 的默认值不同（2026-11-22 用户纠正）**
+
+- 博客仓是**公开项目**：所有文章都是公开的，`hide_from_home` 只是不在首页列出、`draft: true` 只是不构建——**都不是隐私手段，没有“私有博客”这回事**。不要因为隐私顾虑去动博客侧。
+- wiki 是**加密私有仓**：默认不出网，只有显式放行（目录白名单 / 页级 `visibility: public`）才进公开站。新建 wiki 页默认躺在私有侧。
+- 别把同步的安全默认改回“默认公开”——那意味着忘标就自动泄漏。
+- `src/content/wiki/` 是**生成物**，必须入库（GitHub Actions 要在云端构建），但**禁止手改**——改 wiki 源再重跑 sync。
+- 同步是单向的：公开站 → wiki 无回写路径，别试图双向。
+- 站点导航已有「知识点」入口；wiki 页自动进 pagefind 全站搜索。
+
 ## 写作格式偏好（用户明确要求，2026-08-17 确认）
 
 - **图标多、文字少**：正文优先用表格 + emoji 图标（✅/⚠️/🔴/🟡/🟢/📉/💰 等）传递信息，减少大段纯文字。表格能承载的信息不要用段落写。
@@ -83,10 +133,37 @@ const mailtoHref = `mailto:${DISCUSS_EMAIL}?subject=${encodeURIComponent(discuss
 - 构建后 HTML 里 `&` 会被转义成 `&#38;`，**那是正确的**（浏览器解码回 `&`），别当 bug 修。校验：`grep -o 'href="mailto:[^"]*"' dist/blog/<slug>/index.html` 后 `html.unescape` + `parse_qsl` 解出收件人/subject/body 核对。
 - 选的是「零依赖 mailto」方案而非 Web3Forms/giscus：不引第三方、不暴露读者数据；代价是依赖读者本机邮件客户端。若以后要升级成网页表单，见 skill 讨论记录（Web3Forms 250 封/月免费）。
 
+### 正文交互组件（2026-10-18 新增，改前先读）
+
+| 组件 | 实现要点 |
+|---|---|
+| `S5 引用块配色` | `article blockquote { color: var(--text-color) }`。**别改回 `--text-muted`**：长引用发灰，实测读起来发淡 |
+| `S6 标题锚点` | JS 给 `.article-body` 里带 id 的 h2/h3/h4 追加 `<a class="heading-anchor">#</a>`；静息 `opacity:0`，`:hover` 才显形；点击复制 `origin+pathname#id`，剪贴板失败**回退 `location.hash`**（headless 里无剪贴板权限，走的正是这条回退路径） |
+| `S7 代码块` | 见下节（不换行 + 溢出提示） |
+| `S8 阅读设置` | 右下角固定 `Aa` 按钮 → `#rp-panel`（字号 15/16/18、行距 1.6/1.8/2.1）；写 `localStorage['reading-pref']`；字号写 `documentElement.style.fontSize`、行距写 `--reading-line-height`。**BaseLayout 头部内联脚本里也要套用一次**，否则刷新会先按默认渲染再跳变 |
+
+`.rp-panel` 有 `display:flex`，**必须配 `.rp-panel[hidden]{display:none}`**，否则 `hidden` 属性失效（flex 覆盖了 UA 的 `[hidden]` 规则）。
+
+### 代码块：不要自动折行（S7）
+
+**Astro 会给每个 `<pre>` 内联 `white-space:pre-wrap; word-wrap:break-word; overflow-x:auto`**（不是我们的 CSS，也不是全局样式表，而是写死在每个 pre 的 `style` 属性里）。后果：代码永远不横向溢出、只能软折行 —— 折行后的行看起来像新语句、注释被拆断、Python 缩进错乱（手机端最明显，实测一眼就会读错代码）。
+
+处置：BlogLayout 里包 `.code-scroll` 时同时覆盖内联样式（`pre.style.whiteSpace='pre'; pre.style.wordWrap='normal';`，**赋值即覆盖，不需要 `!important`**），让代码保持原貌 + 横向滚动；真溢出（`scrollWidth > clientWidth`）时给 `.is-scrollable`，`global.css` 里用 `::after` 在块下方显示「↔ 左右滑动看完整代码」。
+- 排查时别只看 CSS 文件：`grep -rl pre-wrap dist/_astro/*.css` 是空的不代表没有，要在 HTML 里 `grep -o ".\{120\}pre-wrap.\{60\}"` 才看得到内联样式。
+- mermaid 块不包（会被替换成图形，留空壳）。
+
+### 交互态怎么验（截图验不了 hover/clipboard/localStorage）
+
+用 `scripts/cdp_check.py <url> [--mobile]`：CDP 驱动 headless chrome，真派发鼠标事件 + 读计算样式 + 断言 scrollWidth/clientWidth。
+KICK：**别用 `--dump-dom` + 插在 `</body>` 前的诊断脚本自测**——经典 inline 脚本比 Astro 的 module 脚本先执行，测到的是「业务 JS 还没跑」的中间态（实测误判成「包装 JS 没生效」）。
+
 ### 改版后的视觉自查流程（无浏览器环境）
 
 ```bash
-CH=$(ls /root/.cache/ms-playwright/chromium_headless_shell-*/chrome-headless-shell-linux64/chrome-headless-shell | head -1)
+# 浏览器可能被 slim 搬到 .trash-slim，两个位置都试
+CH=$(ls /root/.cache/ms-playwright/chromium_headless_shell-*/chrome-headless-shell-linux64/chrome-headless-shell \
+        /root/.trash-slim/ms-playwright/chromium_headless_shell-*/chrome-headless-shell-linux64/chrome-headless-shell \
+        2>/dev/null | head -1)
 $CH --no-sandbox --disable-gpu --hide-scrollbars --window-size=1280,1500 \
     --screenshot=/tmp/x.png "http://localhost:4321/blog/<slug>/"
 ```
