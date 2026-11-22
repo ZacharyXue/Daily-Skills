@@ -41,8 +41,8 @@ Trigger: any task on `/root/ZacharyXue.github.io/` — add/edit blog posts, proj
 /root/wiki/                              ← 唯一事实源（git-crypt 加密仓，默认不公开）
    ↓ scripts/wiki-sync.py（本地跑，持密钥）
    ├─ 先查页级 visibility：private 阻断 / public 放行
-   ├─ 再查目录白名单 PUBLIC_DIRS（concepts 五个域）→ 放行
-   ├─ 两者都没匹到 → 默认私有，不出网
+   ├─ 再查目录白名单 PUBLIC_DIRS（concepts 五域 + entities/investing）→ 放行
+   ├─ 两者都没匹到 → 默认私有，不出网（entities/systems、新开目录均如此）
    ├─ 敏感词兜底：zach-skills/.hermes/career-data/总包/薪资/持仓成本 → 命中即拒发
    ├─ [[wikilink]] → [中文](/wiki/<domain>/<slug>)，死链降级纯文本
    └─ 提取「一句话本质」当卡片摘要

@@ -79,13 +79,19 @@ wiki 是内部认知（本质不变的知识经验）。
 
 ```
 wiki/
-├── SCHEMA.md       # 领域规则 + 标签 taxonomy + 页面阈值（权威配置）
+├── SCHEMA.md       # 领域规则 + 标签 taxonomy + 页面阈值 + 可见性规则（权威配置）
 ├── index.md        # 内容目录：先读这里定位所有页面
 ├── log.md          # 行动日志（append-only）
 ├── concepts/       # 概念/框架页（五大域：investing/cloud-native/llm-eng/algorithms/soft-skills）
-├── entities/       # 实体页（公司/指数/基金，只存本质）
+├── entities/
+│   ├── investing/  # 公司/基金/指数/个股 → 公开站白名单
+│   └── systems/    # 个人系统（简历/看板/技能库/内网代理）→ 默认私有，不出网
 └── queries/        # 有价值的查询结论回填
 ```
+
+**目录即可见性（2026-11-22 用户拍板）**：往已知主题目录里加页 → 自动继承该目录的可见性；开新目录 → 默认私有，要公开得显式加白名单。所以实体页按性质分两个目录，别把个股和个人系统再混在一个 `entities/` 里。
+
+站点 domain id 映射：concepts 五个域同名；`entities/investing` → `stocks`（URL `/wiki/stocks/<slug>`）；`entities/systems` 不出网。
 
 ## 公开层：站点 /wiki（2026-11-22 建）
 
@@ -106,10 +112,10 @@ wiki 的公开子集单向同步到博客站，供浏览和检索；**源永远�
 - **公开判定（默认私有，白名单放行）**，优先级从高到低：
   1. 页级 `visibility: private` → 阻断（白名单内的例外页）
   2. 页级 `visibility: public` → 放行（白名单外的单页）
-  3. 目录白名单 `PUBLIC_DIRS`（脚本内配置）→ 放行。当前 = concepts 五个域（investing / cloud-native / llm-eng / algorithms / soft-skills）
-  4. 其余 → **默认私有，不出网**
-- 当前状态：52 页发布（concepts 48 + 个股实体 4）/ 4 页私有（daily-skills-library、investment-dashboard、markdown-resume-system、github-cache-proxy）
-- **新建 wiki 页默认就是不公开的**。要公开：概念页放对目录即可；实体页/新目录需页级 `visibility: public`。别把安全默认改回“默认公开”—那意味着忘标就自动泄漏。
+  3. 目录白名单 `PUBLIC_DIRS`（脚本内配置）→ 放行。当前 = concepts 五个域（investing / cloud-native / llm-eng / algorithms / soft-skills）+ entities/investing（个股/指数/基金）
+  4. 其余 → **默认私有，不出网**（包括 `entities/systems/` 和任何新开的目录）
+- 当前状态：52 页发布（concepts 48 + 个股实体 4）/ 4 页私有（都在 entities/systems/）
+- **新增页自动继承目录可见性**：`concepts/investing/新页`、`entities/investing/新个股` → 自动公开；`entities/systems/新系统`、全新目录 → 自动私有。这一条已实测验证（造测试页跑 dry-run）。
 - 敏感词兜底（zach-skills / .hermes / career-data / social-data / 总包 / 薪资 / 成本价 / 持仓），命中即拒发并列报告——若被拦，先在 wiki 源里脱敏再重跑
 - `[[wikilink]]` 在同步时转成站内链接 `/wiki/<domain>/<slug>`，死链降级为纯文本（报告里点名）
 - 内网/私网 IP、云厂商只警告不拦（网络原理文的示例地址属正常）
