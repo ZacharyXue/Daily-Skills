@@ -185,6 +185,11 @@ def build():
                 if lg and isinstance(lg, dict) and lg.get("latest") is not None:
                     errnote += (f'<div class="meta"><span class="m errline">上次成功值 {lg.get("latest")}'
                                 f' @{esc(ind.get("last_good_at",""))}（非当前，仅参考）</span></div>')
+            # 数据说明（人工补录/特殊口径必带；原来 note 完全不渲染，导致口径与月度明细丢失）
+            _note = v.get("note") if isinstance(v, dict) else None
+            noteline = (f'<div class="note" style="margin:8px 0 0;padding:8px 10px;'
+                        f'background:#f8fafc;border-left:3px solid #94a3b8;color:#334155;'
+                        f'font-size:13px;line-height:1.7">📝 {esc(_note)}</div>') if _note else ""
             # 趋势图
             svg = ""
             if v.get("charts"):
@@ -199,6 +204,7 @@ def build():
                 f'<div class="cbody">'
                 f'<div class="why"><b>为什么关注</b>：{esc(ind.get("meaning",""))}</div>'
                 f'<div class="signal"><b>看什么信号</b>：{esc(ind.get("signal",""))}</div>'
+                f'{noteline}'
                 f'{errnote}'
                 f'<div class="meta">🤖 {meta}</div>'
                 f'{svg}'

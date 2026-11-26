@@ -64,9 +64,9 @@ INDICATORS = [
 
     # ============ ③ 量组（月度·验证止跌回稳而非增长） ============
     dict(id="national_output", group="量组", name="全国水泥产量同比", unit="%", ttl="month",
-         source="国家统计局(待换通道)", source_url="",
-         meaning="需求最直接的量。产量同比收窄到0附近=止跌回稳；仍在-8%=塌方未止。",
-         signal="-8%收窄到-3%~0%=止跌回稳",
+         source="国家统计局(人工补录)", source_url="", 
+         meaning="需求最直接的量。看两条线：单月同比（边际动能）与累计同比（趋势水位）。单月收窄到 -3%~0 = 止跌回稳；累计仍在 -8% 左右 = 全年需求塌方未修复。",
+         signal="单月 -3%~0% 且累计降幅连续收窄=止跌回稳；单月再度掉头向下或累计不收敛=磨底反复",
          getter="national_output_yoy", pending=True),
     dict(id="helluo_sales", group="量组", name="海螺自产品销量同比", unit="%", ttl="quarter",
          source="海螺财报PDF提取", source_url="https://pdf.dfcfw.com",
